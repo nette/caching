@@ -1,12 +1,23 @@
-<h1>Nette\Caching\FileStorage stress test - run it twice (or more) simultaneously</h1>
-
-<pre>
 <?php
-require_once '../../Nette/loader.php';
 
-/*use Nette\Debug;*/
+/**
+ * Test: FileStorage sliding expiration test.
+ *
+ * @author     David Grudl
+ * @category   Nette
+ * @package    Nette\Caching
+ * @subpackage UnitTests
+ */
+
+/*use Nette\Caching\Cache;*/
 
 
+
+require dirname(__FILE__) . '/../NetteTest/initialize.php';
+
+
+
+// TODO: run it twice (or more) simultaneously</h1>
 set_time_limit(0);
 
 
@@ -26,7 +37,6 @@ function checkStr($s)
 
 
 
-
 define('COUNT_FILES', 3);
 
 
@@ -40,8 +50,7 @@ for ($i=0; $i<=COUNT_FILES; $i++) {
 
 
 // test loop
-echo "Testing...\n";
-Debug::timer();
+/*Nette\*/Debug::timer();
 
 $hits = array('ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0);
 for ($counter=0; $counter<1000; $counter++) {
@@ -61,12 +70,10 @@ for ($counter=0; $counter<1000; $counter++) {
 	elseif (checkStr($res)) $hits['ok']++;
 	else $hits['error']++;
 }
-$time = Debug::timer();
+$time = /*Nette\*/Debug::timer();
 
 
-echo "Results:\n";
-Debug::dump($hits);
-
+dump( $hits );
 // expected results are:
 //    [ok] => 1000       // should be 1000. If unlink() is used, sum [ok] + [notfound] should be 1000
 //    [notfound] => 0    // means "file not found", should be 0 if delete() is not used
@@ -74,5 +81,22 @@ Debug::dump($hits);
 //    [cantwrite] => ?,  // means "somebody else is writing this file"
 //    [cantdelete] => 0  // means "delete() has timeout",  should be 0
 
-echo $hits['error'] == 0 ? 'PASSED' : 'NOT PASSED!';
-echo "\ntakes $time ms";
+message($hits['error'] == 0 ? 'PASSED' : 'NOT PASSED!');
+message("takes $time ms");
+
+
+
+__halt_compiler();
+
+------EXPECT------
+array(5) {
+	"ok" => int(1000)
+	"notfound" => int(0)
+	"error" => int(0)
+	"cantwrite" => int(0)
+	"cantdelete" => int(0)
+}
+
+PASSED
+
+takes %f% ms
