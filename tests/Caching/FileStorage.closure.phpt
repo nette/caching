@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage & Nette\Callback & Closure.
+ * Test: Nette\Caching\Storages\FileStorage
  *
  * @author     David Grudl
  */
@@ -27,19 +27,6 @@ Assert::false( isset($cache[$key]) );
 $res = $cache->save($key, function() use ($value) {
 	return $value;
 });
-
-Assert::same( $res, $value );
-
-Assert::same( $cache->load($key), $value );
-
-
-// Removing from cache using unset()...
-unset($cache[$key]);
-
-// Writing cache using Nette\Callback...
-$res = $cache->save($key, new Nette\Callback(function() use ($value) {
-	return $value;
-}));
 
 Assert::same( $res, $value );
 
