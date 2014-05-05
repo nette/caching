@@ -2,7 +2,7 @@ Nette Caching
 =============
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/caching.svg)](https://packagist.org/packages/nette/caching)
-[![Build Status](https://travis-ci.org/nette/caching.svg?branch=master)](https://travis-ci.org/nette/caching)
+[![Build Status](https://travis-ci.org/nette/caching.svg?branch=v2.2)](https://travis-ci.org/nette/caching)
 
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
