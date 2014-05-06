@@ -1,6 +1,9 @@
 Nette Caching
 =============
 
+[![Downloads this Month](https://img.shields.io/packagist/dm/nette/caching.svg)](https://packagist.org/packages/nette/caching)
+[![Build Status](https://travis-ci.org/nette/caching.svg?branch=master)](https://travis-ci.org/nette/caching)
+
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
 Nette offers a very intuitive API for cache manipulation. After all, you wouldn't expect anything else, right? ;-)
@@ -231,7 +234,3 @@ $result = $cache->save($key, function() { // or callback(...)
 
 Framework will ensure that the body of the function will be called only by one thread at once, and other threads will be waiting.
 If the thread fails for some reason, another gets chance.
-
------
-
-[![Build Status](https://secure.travis-ci.org/nette/caching.png?branch=master)](http://travis-ci.org/nette/caching)
