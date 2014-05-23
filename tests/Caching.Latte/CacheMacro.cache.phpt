@@ -2,8 +2,6 @@
 
 /**
  * Test: {cache ...}
- *
- * @author     David Grudl
  */
 
 use Nette\Bridges\CacheLatte\CacheMacro,
