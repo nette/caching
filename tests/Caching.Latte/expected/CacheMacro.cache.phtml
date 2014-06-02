@@ -15,6 +15,6 @@ Noncached content
 
 <h1><?php echo Latte\Runtime\Filters::escapeHtml($template->upper($title), ENT_NOQUOTES) ?></h1>
 
-<?php $_l->templates['%[a-z0-9]+%']->renderChildTemplate('include.cache.latte', array('localvar' => 11) + $template->getParameters()) ?>
+<?php $_b->templates['%[a-z0-9]+%']->renderChildTemplate('include.cache.latte', array('localvar' => 11) + $template->getParameters()) ?>
 
 <?php $_l->tmp = array_pop($_g->caches); if (!$_l->tmp instanceof stdClass) $_l->tmp->end(); }
