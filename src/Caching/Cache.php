@@ -268,11 +268,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 
 	/**
-	 * Inserts (replaces) item into the cache (\ArrayAccess implementation).
-	 * @param  mixed key
-	 * @param  mixed
-	 * @return void
-	 * @throws Nette\InvalidArgumentException
+	 * @deprecated
 	 */
 	public function offsetSet($key, $data)
 	{
@@ -281,10 +277,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 
 	/**
-	 * Retrieves the specified item from the cache or NULL if the key is not found (\ArrayAccess implementation).
-	 * @param  mixed key
-	 * @return mixed|NULL
-	 * @throws Nette\InvalidArgumentException
+	 * @deprecated
 	 */
 	public function offsetGet($key)
 	{
@@ -298,10 +291,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 
 	/**
-	 * Exists item in cache? (\ArrayAccess implementation).
-	 * @param  mixed key
-	 * @return bool
-	 * @throws Nette\InvalidArgumentException
+	 * @deprecated
 	 */
 	public function offsetExists($key)
 	{
@@ -311,10 +301,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 
 	/**
-	 * Removes the specified item from the cache.
-	 * @param  mixed key
-	 * @return void
-	 * @throws Nette\InvalidArgumentException
+	 * @deprecated
 	 */
 	public function offsetUnset($key)
 	{
@@ -323,8 +310,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 
 	/**
-	 * Discards the internal cache used by ArrayAccess.
-	 * @return void
+	 * @deprecated
 	 */
 	public function release()
 	{
