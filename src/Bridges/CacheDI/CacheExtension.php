@@ -17,26 +17,31 @@ use Nette;
  */
 class CacheExtension extends Nette\DI\CompilerExtension
 {
+	/** @var string */
+	private $tempDir;
+
+
+	public function __construct($tempDir)
+	{
+		$this->tempDir = $tempDir;
+	}
+
 
 	public function loadConfiguration()
 	{
-		if (empty($container->parameters['tempDir'])) {
-			throw new Nette\InvalidStateException('Missing parameter tempDir.');
-		}
-
 		$container = $this->getContainerBuilder();
 
 		$container->addDefinition('nette.cacheJournal')
 			->setClass('Nette\Caching\Storages\IJournal')
-			->setFactory('Nette\Caching\Storages\FileJournal', array($container->expand('%tempDir%')));
+			->setFactory('Nette\Caching\Storages\FileJournal', array($this->tempDir));
 
 		$container->addDefinition('cacheStorage') // no namespace for back compatibility
 			->setClass('Nette\Caching\IStorage')
-			->setFactory('Nette\Caching\Storages\FileStorage', array($container->expand('%tempDir%/cache')));
+			->setFactory('Nette\Caching\Storages\FileStorage', array($this->tempDir . '/cache'));
 
 		if (class_exists('Nette\Caching\Storages\PhpFileStorage')) {
 			$container->addDefinition('nette.templateCacheStorage')
-				->setClass('Nette\Caching\Storages\PhpFileStorage', array($container->expand('%tempDir%/cache')))
+				->setClass('Nette\Caching\Storages\PhpFileStorage', array($this->tempDir . '/cache'))
 				->addSetup('::trigger_error', array('Service templateCacheStorage is deprecated.', E_USER_DEPRECATED))
 				->setAutowired(FALSE);
 		}
@@ -54,7 +59,7 @@ class CacheExtension extends Nette\DI\CompilerExtension
 		$container = $this->getContainerBuilder();
 		$class->methods['initialize']->addBody(
 			'Nette\Caching\Storages\FileStorage::$useDirectories = ?;',
-			array($this->checkTempDir($container->expand('%tempDir%/cache')))
+			array($this->checkTempDir($this->tempDir . '/cache'))
 		);
 	}
 
