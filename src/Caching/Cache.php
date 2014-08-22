@@ -221,7 +221,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 	 * Caches results of function/method calls.
 	 * @param  mixed
 	 * @param  array  dependencies
-	 * @return Closure
+	 * @return \Closure
 	 */
 	public function wrap($function, array $dependencies = NULL)
 	{
