@@ -34,7 +34,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 		ALL = 'all';
 
 	/** @internal */
-	const NAMESPACE_SEPARATOR = "\x00";
+	const NAMESPACE_SEPARATOR = "\x01";
 
 	/** @var IStorage */
 	private $storage;
