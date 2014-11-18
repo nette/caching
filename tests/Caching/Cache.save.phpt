@@ -5,7 +5,7 @@
  */
 
 use Nette\Caching\Cache,
-    Tester\Assert;
+	Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
