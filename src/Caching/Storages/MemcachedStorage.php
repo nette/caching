@@ -83,7 +83,7 @@ class MemcachedStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function read($key)
 	{
-		$key = $this->prefix . $key;
+		$key = $this->prepareKey($key);
 		$meta = $this->memcache->get($key);
 		if (!$meta) {
 			return NULL;
@@ -133,7 +133,7 @@ class MemcachedStorage extends Nette\Object implements Nette\Caching\IStorage
 			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
 		}
 
-		$key = $this->prefix . $key;
+		$key = $this->prepareKey($key);
 		$meta = array(
 			self::META_DATA => $data,
 		);
@@ -168,7 +168,8 @@ class MemcachedStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function remove($key)
 	{
-		$this->memcache->delete($this->prefix . $key, 0);
+		$key = $this->prepareKey($key);
+		$this->memcache->delete($key, 0);
 	}
 
 
@@ -188,5 +189,21 @@ class MemcachedStorage extends Nette\Object implements Nette\Caching\IStorage
 			}
 		}
 	}
+
+
+	/**
+	 * Prepare generic key for storing in memcache
+	 *
+	 * Control characters and whitespaces are forbidden in a valid memcache key.
+	 *
+	 * @param string $key
+	 * @see https://github.com/memcached/memcached/blob/master/doc/protocol.txt#L41
+	 * @return string
+	 */
+	protected function prepareKey($key)
+	{
+		return urlencode($this->prefix . $key);
+	}
+
 
 }
