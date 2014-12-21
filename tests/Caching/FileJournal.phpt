@@ -178,7 +178,7 @@ $result = $journal->clean(array(Cache::ALL => TRUE));
 $result2 = $journal->clean(array(Cache::TAGS => 'test:all'));
 check($result, ($result === NULL and empty($result2)), 'Clean ALL');
 
-$journal->write('a', [Cache::TAGS => ['gamma']]);
-$journal->write('b', [Cache::TAGS => ['alpha', 'beta', 'gamma']]);
-$result = $journal->clean([Cache::TAGS => ['alpha', 'beta', 'gamma']]);
+$journal->write('a', array(Cache::TAGS => array('gamma')));
+$journal->write('b', array(Cache::TAGS => array('alpha', 'beta', 'gamma')));
+$result = $journal->clean(array(Cache::TAGS => array('alpha', 'beta', 'gamma')));
 check($result, count($result) === 2, 'Remove item with multiple tags');
