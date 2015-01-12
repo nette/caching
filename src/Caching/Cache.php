@@ -211,7 +211,9 @@ class Cache extends Nette\Object implements \ArrayAccess
 	public function call($function)
 	{
 		$key = func_get_args();
-		$key[0] = Callback::toReflection($function);
+		if (is_array($function) && is_object($function[0])) {
+			$key[0][0] = get_class($function[0]);
+		}
 		return $this->load($key, function() use ($function, $key) {
 			return Callback::invokeArgs($function, array_slice($key, 1));
 		});
@@ -228,7 +230,10 @@ class Cache extends Nette\Object implements \ArrayAccess
 	{
 		$cache = $this;
 		return function() use ($cache, $function, $dependencies) {
-			$key = array(Callback::toReflection($function), func_get_args());
+			$key = array($function, func_get_args());
+			if (is_array($function) && is_object($function[0])) {
+				$key[0][0] = get_class($function[0]);
+			}
 			$data = $cache->load($key);
 			if ($data === NULL) {
 				$data = $cache->save($key, Callback::invokeArgs($function, $key[1]), $dependencies);
