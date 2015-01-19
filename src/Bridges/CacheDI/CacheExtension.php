@@ -65,6 +65,8 @@ class CacheExtension extends Nette\DI\CompilerExtension
 
 	private function checkTempDir($dir)
 	{
+		@mkdir($dir); // @ - directory may exists
+
 		// checks whether directory is writable
 		$uniq = uniqid('_', TRUE);
 		if (!@mkdir("$dir/$uniq")) { // @ - is escalated to exception
