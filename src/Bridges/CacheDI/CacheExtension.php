@@ -31,26 +31,18 @@ class CacheExtension extends Nette\DI\CompilerExtension
 	{
 		$container = $this->getContainerBuilder();
 
-		$container->addDefinition('nette.cacheJournal')
+		$container->addDefinition($this->prefix('journal'))
 			->setClass('Nette\Caching\Storages\IJournal')
 			->setFactory('Nette\Caching\Storages\FileJournal', array($this->tempDir));
 
-		$container->addDefinition('cacheStorage') // no namespace for back compatibility
+		$container->addDefinition($this->prefix('storage'))
 			->setClass('Nette\Caching\IStorage')
 			->setFactory('Nette\Caching\Storages\FileStorage', array($this->tempDir . '/cache'));
 
-		if (class_exists('Nette\Caching\Storages\PhpFileStorage')) {
-			$container->addDefinition('nette.templateCacheStorage')
-				->setClass('Nette\Caching\Storages\PhpFileStorage', array($this->tempDir . '/cache'))
-				->addSetup('::trigger_error', array('Service templateCacheStorage is deprecated.', E_USER_DEPRECATED))
-				->setAutowired(FALSE);
+		if ($this->name === 'cache') {
+			$container->addAlias('nette.cacheJournal', $this->prefix('journal'));
+			$container->addAlias('cacheStorage', $this->prefix('storage'));
 		}
-
-		$container->addDefinition('nette.cache')
-			->setClass('Nette\Caching\Cache', array(1 => $container::literal('$namespace')))
-			->addSetup('::trigger_error', array('Service cache is deprecated.', E_USER_DEPRECATED))
-			->setParameters(array('namespace' => NULL))
-			->setAutowired(FALSE);
 	}
 
 
