@@ -1,6 +1,5 @@
 <?php
 // source: %a%
-
 %A%
 // prolog Nette\Bridges\CacheLatte\CacheMacro
 Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);
@@ -15,3 +14,4 @@ Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);
 	<?php echo Latte\Runtime\Filters::escapeHtml($template->lower($title), ENT_NOQUOTES) ?>
 
 <?php $_l->tmp = array_pop($_g->caches); if (!$_l->tmp instanceof stdClass) $_l->tmp->end(); }
+%A%

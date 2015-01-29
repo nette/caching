@@ -1,6 +1,5 @@
 <?php
 // source: %a%
-
 %A%
 // prolog Nette\Bridges\CacheLatte\CacheMacro
 Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);
@@ -18,3 +17,4 @@ Noncached content
 <?php $_b->templates['%[a-z0-9]+%']->renderChildTemplate('include.cache.latte', array('localvar' => 11) + $template->getParameters()) ?>
 
 <?php $_l->tmp = array_pop($_g->caches); if (!$_l->tmp instanceof stdClass) $_l->tmp->end(); }
+%A%
