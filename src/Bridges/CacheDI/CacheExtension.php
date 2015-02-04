@@ -49,7 +49,7 @@ class CacheExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		if (!$this->checkTempDir($this->tempDir . '/cache')) {
-			$class->methods['initialize']->addBody('Nette\Caching\Storages\FileStorage::$useDirectories = FALSE;');
+			$class->getMethod('initialize')->addBody('Nette\Caching\Storages\FileStorage::$useDirectories = FALSE;');
 		}
 	}
 
