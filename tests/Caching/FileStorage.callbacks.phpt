@@ -29,7 +29,7 @@ $cache->save($key, $value, array(
 	Cache::CALLBACKS => array(array('dependency', 1)),
 ));
 
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );
 
 
 // Writing cache...
@@ -37,4 +37,4 @@ $cache->save($key, $value, array(
 	Cache::CALLBACKS => array(array('dependency', 0)),
 ));
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

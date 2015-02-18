@@ -35,7 +35,7 @@ $cache->save('nette-tags-key3', 'value3', array(
 	Cache::TAGS => array('two', 'three'),
 ));
 
-$cache['nette-tags-key4'] = 'value4';
+$cache->save('nette-tags-key4', 'value4');
 
 
 // Cleaning by tags...
@@ -43,7 +43,7 @@ $cache->clean(array(
 	Cache::TAGS => 'one',
 ));
 
-Assert::false( isset($cache['nette-tags-key1']) );
-Assert::false( isset($cache['nette-tags-key2']) );
-Assert::true( isset($cache['nette-tags-key3']) );
-Assert::true( isset($cache['nette-tags-key4']) );
+Assert::null( $cache->load('nette-tags-key1') );
+Assert::null( $cache->load('nette-tags-key2') );
+Assert::truthy( $cache->load('nette-tags-key3') );
+Assert::truthy( $cache->load('nette-tags-key4') );

@@ -18,17 +18,15 @@ $cacheB = new Cache($storage, 'b');
 
 
 // Writing cache...
-$cacheA['key'] = 'hello';
-$cacheB['key'] = 'world';
+$cacheA->save('key', 'hello');
+$cacheB->save('key', 'world');
 
-Assert::true( isset($cacheA['key']) );
-Assert::true( isset($cacheB['key']) );
-Assert::same( $cacheA['key'], 'hello' );
-Assert::same( $cacheB['key'], 'world' );
+Assert::same( $cacheA->load('key'), 'hello' );
+Assert::same( $cacheB->load('key'), 'world' );
 
 
-// Removing from cache #2 using unset()...
-unset($cacheB['key']);
+// Removing from cache #2 using remove()...
+$cacheB->remove('key');
 
-Assert::true( isset($cacheA['key']) );
-Assert::false( isset($cacheB['key']) );
+Assert::truthy( $cacheA->load('key') );
+Assert::null( $cacheB->load('key') );

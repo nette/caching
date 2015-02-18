@@ -21,4 +21,4 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 
 // Deleting dependent const
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

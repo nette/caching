@@ -30,7 +30,7 @@ for ($i = 0; $i < 5; $i++) {
 	sleep(1);
 	clearstatcache();
 
-	Assert::true( isset($cache[$key]) );
+	Assert::truthy( $cache->load($key) );
 
 }
 
@@ -38,4 +38,4 @@ for ($i = 0; $i < 5; $i++) {
 sleep(5);
 clearstatcache();
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

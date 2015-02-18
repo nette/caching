@@ -23,13 +23,13 @@ $cache->save($key, $value, array(
 	Cache::ITEMS => array('dependent'),
 ));
 
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );
 
 
 // Modifing dependent cached item
-$cache['dependent'] = 'hello world';
+$cache->save('dependent', 'hello world');
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache...
@@ -37,14 +37,14 @@ $cache->save($key, $value, array(
 	Cache::ITEMS => 'dependent',
 ));
 
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );
 
 
 // Modifing dependent cached item
 sleep(2);
-$cache['dependent'] = 'hello europe';
+$cache->save('dependent', 'hello europe');
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache...
@@ -52,10 +52,10 @@ $cache->save($key, $value, array(
 	Cache::ITEMS => 'dependent',
 ));
 
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );
 
 
 // Deleting dependent cached item
-$cache['dependent'] = NULL;
+$cache->save('dependent', NULL);
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

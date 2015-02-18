@@ -23,31 +23,26 @@ $value = range("\x00", "\xFF");
 
 $cache = new Cache(new SQLiteStorage(TEMP_DIR . '/db.db3'));
 
-Assert::false( isset($cache[$key]) );
-
-Assert::null( $cache[$key] );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache...
-$cache[$key] = $value;
+$cache->save($key, $value);
+
+Assert::same( $cache->load($key), $value );
 
 
-Assert::true( isset($cache[$key]) );
+// Removing from cache using remove()...
+$cache->remove($key);
 
-Assert::same( $cache[$key], $value );
-
-
-// Removing from cache using unset()...
-unset($cache[$key]);
-
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Removing from cache using set NULL...
-$cache[$key] = $value;
-$cache[$key] = NULL;
+$cache->save($key, $value);
+$cache->save($key, NULL);
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache...
