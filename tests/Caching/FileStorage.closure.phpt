@@ -18,7 +18,7 @@ $value = range("\x00", "\xFF");
 
 $cache = new Cache(new FileStorage(TEMP_DIR));
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache using Closure...
@@ -36,4 +36,4 @@ $cache->save($key, function() {
 	return NULL;
 });
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

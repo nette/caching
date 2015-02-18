@@ -20,8 +20,9 @@ $dependencies = array(Cache::TAGS => 'tag');
 
 $cache->save('key', 'value', $dependencies);
 
-Assert::equal('value', $cache['key']['data']);
-Assert::equal($dependencies, $cache['key']['dependencies']);
+$res = $cache->load('key');
+Assert::equal('value', $res['data']);
+Assert::equal($dependencies, $res['dependencies']);
 
 
 // save callback return value
@@ -32,8 +33,9 @@ $cache->save('key', function() {
 	return 'value';
 });
 
-Assert::equal('value', $cache['key']['data']);
-Assert::equal(array(), $cache['key']['dependencies']);
+$res = $cache->load('key');
+Assert::equal('value', $res['data']);
+Assert::equal(array(), $res['dependencies']);
 
 
 // save callback return value with dependencies
@@ -45,5 +47,6 @@ $cache->save('key', function() {
 	return 'value';
 }, $dependencies);
 
-Assert::equal('value', $cache['key']['data']);
-Assert::equal($dependencies, $cache['key']['dependencies']);
+$res = $cache->load('key');
+Assert::equal('value', $res['data']);
+Assert::equal($dependencies, $res['dependencies']);

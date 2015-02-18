@@ -16,24 +16,21 @@ $storage = new FileStorage(TEMP_DIR);
 $cacheA = new Cache($storage);
 $cacheB = new Cache($storage,'B');
 
-$cacheA['test1'] = 'David';
-$cacheA['test2'] = 'Grudl';
-$cacheB['test1'] = 'divaD';
-$cacheB['test2'] = 'ldurG';
+$cacheA->save('test1', 'David');
+$cacheA->save('test2', 'Grudl');
+$cacheB->save('test1', 'divaD');
+$cacheB->save('test2', 'ldurG');
 
 Assert::same( 'David Grudl divaD ldurG', implode(' ',array(
-	$cacheA['test1'],
-	$cacheA['test2'],
-	$cacheB['test1'],
-	$cacheB['test2'],
+	$cacheA->load('test1'),
+	$cacheA->load('test2'),
+	$cacheB->load('test1'),
+	$cacheB->load('test2'),
 )));
 
 $storage->clean(array(Cache::ALL => TRUE));
 
-Assert::null( $cacheA['test1'] );
-
-Assert::null( $cacheA['test2'] );
-
-Assert::null( $cacheB['test1'] );
-
-Assert::null( $cacheB['test2'] );
+Assert::null( $cacheA->load('test1') );
+Assert::null( $cacheA->load('test2') );
+Assert::null( $cacheB->load('test1') );
+Assert::null( $cacheB->load('test2') );

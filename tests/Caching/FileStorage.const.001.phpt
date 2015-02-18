@@ -26,4 +26,4 @@ $cache->save($key, $value, array(
 	Cache::CONSTS => 'ANY_CONST',
 ));
 
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );

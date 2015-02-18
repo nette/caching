@@ -35,7 +35,7 @@ $cache->save('nette-priority-key3', 'value3', array(
 	Cache::PRIORITY => 300,
 ));
 
-$cache['nette-priority-key4'] = 'value4';
+$cache->save('nette-priority-key4', 'value4');
 
 
 // Cleaning by priority...
@@ -43,7 +43,7 @@ $cache->clean(array(
 	Cache::PRIORITY => '200',
 ));
 
-Assert::false( isset($cache['nette-priority-key1']) );
-Assert::false( isset($cache['nette-priority-key2']) );
-Assert::true( isset($cache['nette-priority-key3']) );
-Assert::true( isset($cache['nette-priority-key4']) );
+Assert::null( $cache->load('nette-priority-key1') );
+Assert::null( $cache->load('nette-priority-key2') );
+Assert::truthy( $cache->load('nette-priority-key3') );
+Assert::truthy( $cache->load('nette-priority-key4') );

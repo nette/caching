@@ -34,11 +34,11 @@ for ($i = 0; $i < 5; $i++) {
 	// Sleeping 1 second
 	sleep(1);
 
-	Assert::true( isset($cache[$key]) );
+	Assert::truthy( $cache->load($key) );
 
 }
 
 // Sleeping few seconds...
 sleep(5);
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

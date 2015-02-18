@@ -19,27 +19,23 @@ $value = '"Hello World"';
 $cache = new Cache(new DevNullStorage, 'myspace');
 
 
-Assert::false( isset($cache[$key]) );
-
-Assert::null( $cache[$key] );
+Assert::null( $cache->load($key) );
 
 
 // Writing cache...
-$cache[$key] = $value;
+$cache->save($key, $value);
 
-Assert::false( isset($cache[$key]) );
-
-Assert::notSame( $cache[$key], $value );
+Assert::null( $cache->load($key) );
 
 
-// Removing from cache using unset()...
-unset($cache[$key]);
+// Removing from cache using remove()...
+$cache->remove($key);
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
 
 
 // Removing from cache using set NULL...
-$cache[$key] = $value;
-$cache[$key] = NULL;
+$cache->save($key, $value);
+$cache->save($key, NULL);
 
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );

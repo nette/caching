@@ -27,10 +27,10 @@ $cache->save($key, $value, array(
 // Sleeping 1 second
 sleep(1);
 clearstatcache();
-Assert::true( isset($cache[$key]) );
+Assert::truthy( $cache->load($key) );
 
 
 // Sleeping 3 seconds
 sleep(3);
 clearstatcache();
-Assert::false( isset($cache[$key]) );
+Assert::null( $cache->load($key) );
