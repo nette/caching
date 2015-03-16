@@ -1051,7 +1051,7 @@ class FileJournal extends Nette\Object implements IJournal
 
 	/**
 	 * Complete delete all nodes from file.
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
 	 */
 	private function deleteAll()
 	{
@@ -1063,7 +1063,7 @@ class FileJournal extends Nette\Object implements IJournal
 
 	/**
 	 * Lock file for writing and reading and delete node cache when file has changed.
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
 	 */
 	private function lock()
 	{
@@ -1088,7 +1088,7 @@ class FileJournal extends Nette\Object implements IJournal
 
 	/**
 	 * Open btfj.dat file (or create it if not exists) and load metainformation
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
 	 */
 	private function prepare()
 	{
@@ -1152,7 +1152,7 @@ class FileJournal extends Nette\Object implements IJournal
 	 * @param  int $nodeId
 	 * @param  array $nodeData
 	 * @return int
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
 	 */
 	private function findNextFreeKey($nodeId, array & $nodeData)
 	{
