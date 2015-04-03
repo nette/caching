@@ -105,11 +105,11 @@ class CacheMacro extends Nette\Object implements Latte\IMacro
 
 		$cache = new Nette\Caching\Cache($cacheStorage, 'Nette.Templating.Cache');
 		if ($helper = $cache->start($key)) {
-			if (isset($args['expire'])) {
-				$args['expiration'] = $args['expire']; // back compatibility
-			}
 			if (isset($args['dependencies'])) {
 				$args += call_user_func($args['dependencies']);
+			}
+			if (isset($args['expire'])) {
+				$args['expiration'] = $args['expire']; // back compatibility
 			}
 			$helper->dependencies = array(
 				Nette\Caching\Cache::TAGS => isset($args['tags']) ? $args['tags'] : NULL,
