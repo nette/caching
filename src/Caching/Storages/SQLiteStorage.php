@@ -30,12 +30,14 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 			PRAGMA foreign_keys = ON;
 			CREATE TABLE IF NOT EXISTS cache (
 				key BLOB NOT NULL PRIMARY KEY,
-				data BLOB NOT NULL
+				data BLOB NOT NULL,
+				expire INTEGER
 			);
 			CREATE TABLE IF NOT EXISTS tags (
 				key BLOB NOT NULL REFERENCES cache ON DELETE CASCADE,
 				tag BLOB NOT NULL
 			);
+			CREATE INDEX IF NOT EXISTS cache_expire ON cache(expire);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
 		');
@@ -49,8 +51,8 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function read($key)
 	{
-		$stmt = $this->pdo->prepare('SELECT data FROM cache WHERE key=?');
-		$stmt->execute(array($key));
+		$stmt = $this->pdo->prepare('SELECT data FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
+		$stmt->execute(array($key, time()));
 		if ($res = $stmt->fetchColumn()) {
 			return unserialize($res);
 		}
@@ -76,9 +78,11 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function write($key, $data, array $dependencies)
 	{
+		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : NULL;
+
 		$this->pdo->exec('BEGIN TRANSACTION');
-		$this->pdo->prepare('REPLACE INTO cache (key, data) VALUES (?, ?)')
-			->execute(array($key, serialize($data)));
+		$this->pdo->prepare('REPLACE INTO cache (key, data, expire) VALUES (?, ?, ?)')
+			->execute(array($key, serialize($data), $expire));
 
 		if (!empty($dependencies[Cache::TAGS])) {
 			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
@@ -114,10 +118,17 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
 
-		} elseif (!empty($conditions[Cache::TAGS])) {
-			$tags = (array) $conditions[Cache::TAGS];
-			$this->pdo->prepare('DELETE FROM cache WHERE key IN (SELECT key FROM tags WHERE tag IN (?'
-				. str_repeat(',?', count($tags) - 1) . '))')->execute($tags);
+		} else {
+			$sql = 'DELETE FROM cache WHERE expire < ?';
+			$args = array(time());
+
+			if (!empty($conditions[Cache::TAGS])) {
+				$tags = (array) $conditions[Cache::TAGS];
+				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
+				$args = array_merge($args, $tags);
+			}
+
+			$this->pdo->prepare($sql)->execute($args);
 		}
 	}
 
