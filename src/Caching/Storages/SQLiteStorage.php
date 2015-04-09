@@ -41,6 +41,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 			CREATE INDEX IF NOT EXISTS cache_expire ON cache(expire);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
+			PRAGMA synchronous = OFF;
 		');
 	}
 
