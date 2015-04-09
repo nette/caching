@@ -21,7 +21,7 @@ if (!extension_loaded('pdo_sqlite')) {
 $key = array(1, TRUE);
 $value = range("\x00", "\xFF");
 
-$cache = new Cache(new SQLiteStorage(TEMP_DIR . '/db.db3'));
+$cache = new Cache(new SQLiteStorage);
 
 Assert::null( $cache->load($key) );
 
