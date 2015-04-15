@@ -126,7 +126,7 @@ abstract class IJournalTestCase extends Tester\TestCase
 
 	final public function testDifferentCleaning()
 	{
-		for ($i = 1; $i <= 10; $i++) {
+		for ($i = 1; $i <= 9; $i++) {
 			$this->journal->write('ok_test6_' . $i, array(
 				Cache::TAGS => array('test:homepage', 'test:homepage/' . $i),
 				Cache::PRIORITY => $i,
@@ -155,7 +155,6 @@ abstract class IJournalTestCase extends Tester\TestCase
 			'ok_test6_6',
 			'ok_test6_8',
 			'ok_test6_9',
-			'ok_test6_10',
 		), $this->journal->clean(array(Cache::TAGS => array('test:homepage'))));
 	}
 
@@ -276,10 +275,13 @@ abstract class IJournalTestCase extends Tester\TestCase
 	{
 		$this->journal->write('a', array(Cache::TAGS => array('gamma')));
 		$this->journal->write('b', array(Cache::TAGS => array('alpha', 'beta', 'gamma')));
+
+		$res = $this->journal->clean(array(Cache::TAGS => array('alpha', 'beta', 'gamma')));
+		sort($res);
 		Assert::same(array(
-			'b',
 			'a',
-		), $this->journal->clean(array(Cache::TAGS => array('alpha', 'beta', 'gamma'))));
+			'b',
+		), $res);
 	}
 
 }
