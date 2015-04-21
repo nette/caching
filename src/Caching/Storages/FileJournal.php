@@ -1175,7 +1175,7 @@ class FileJournal extends Nette\Object implements IJournal
 
 	/**
 	 * Append $append to $array.
-	 * This function is much faster then $array = array_merge($array, $append)
+	 * This function is much faster than $array = array_merge($array, $append)
 	 * @param  array
 	 * @param  array
 	 * @return void
@@ -1190,7 +1190,7 @@ class FileJournal extends Nette\Object implements IJournal
 
 	/**
 	 * Append $append to $array with preserve keys.
-	 * This function is much faster then $array = $array + $append
+	 * This function is much faster than $array = $array + $append
 	 * @param  array
 	 * @param  array
 	 * @return void
