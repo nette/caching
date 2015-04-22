@@ -18,7 +18,7 @@ use Nette,
  */
 class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 {
-	/** @var PDO */
+	/** @var \PDO */
 	private $pdo;
 
 
@@ -29,14 +29,19 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
 			CREATE TABLE IF NOT EXISTS cache (
-				key BLOB NOT NULL PRIMARY KEY, data BLOB NOT NULL
+				key BLOB NOT NULL PRIMARY KEY,
+				data BLOB NOT NULL,
+				expire INTEGER,
+				slide INTEGER
 			);
 			CREATE TABLE IF NOT EXISTS tags (
 				key BLOB NOT NULL REFERENCES cache ON DELETE CASCADE,
 				tag BLOB NOT NULL
 			);
+			CREATE INDEX IF NOT EXISTS cache_expire ON cache(expire);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
+			PRAGMA synchronous = OFF;
 		');
 	}
 
@@ -48,10 +53,13 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function read($key)
 	{
-		$stmt = $this->pdo->prepare('SELECT data FROM cache WHERE key=?');
-		$stmt->execute(array($key));
-		if ($res = $stmt->fetchColumn()) {
-			return unserialize($res);
+		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
+		$stmt->execute(array($key, time()));
+		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			if ($row['slide'] !== NULL) {
+				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute(array(time(), $key));
+			}
+			return unserialize($row['data']);
 		}
 	}
 
@@ -75,9 +83,12 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function write($key, $data, array $dependencies)
 	{
-		$this->pdo->prepare('BEGIN TRANSACTION');
-		$this->pdo->prepare('REPLACE INTO cache (key, data) VALUES (?, ?)')
-			->execute(array($key, serialize($data)));
+		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : NULL;
+		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : NULL;
+
+		$this->pdo->exec('BEGIN TRANSACTION');
+		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')
+			->execute(array($key, serialize($data), $expire, $slide));
 
 		if (!empty($dependencies[Cache::TAGS])) {
 			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
@@ -87,7 +98,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
 				->execute($arr);
 		}
-		$this->pdo->prepare('COMMIT');
+		$this->pdo->exec('COMMIT');
 	}
 
 
@@ -113,10 +124,17 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
 
-		} elseif (!empty($conditions[Cache::TAGS])) {
-			$tags = (array) $conditions[Cache::TAGS];
-			$this->pdo->prepare('DELETE FROM cache WHERE key IN (SELECT key FROM tags WHERE tag IN (?'
-				. str_repeat(',?', count($tags) - 1) . '))')->execute($tags);
+		} else {
+			$sql = 'DELETE FROM cache WHERE expire < ?';
+			$args = array(time());
+
+			if (!empty($conditions[Cache::TAGS])) {
+				$tags = (array) $conditions[Cache::TAGS];
+				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
+				$args = array_merge($args, $tags);
+			}
+
+			$this->pdo->prepare($sql)->execute($args);
 		}
 	}
 
