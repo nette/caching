@@ -1,0 +1,131 @@
+<?php
+
+/**
+ * This file is part of the Nette Framework (http://nette.org)
+ * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ */
+
+namespace Nette\Caching\Storages;
+
+use Nette,
+	Nette\Caching\Cache;
+
+
+/**
+ * SQLite based journal.
+ */
+class SqliteJournal extends Nette\Object implements IJournal
+{
+	/** @var \PDO */
+	private $pdo;
+
+
+	/**
+	 * @param  string
+	 */
+	public function __construct($path = ':memory:')
+	{
+		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, array(\PDO::ATTR_PERSISTENT => TRUE));
+		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+		$this->pdo->exec('
+			PRAGMA foreign_keys = ON;
+			CREATE TABLE IF NOT EXISTS tags (
+				key BLOB NOT NULL,
+				tag BLOB NOT NULL
+			);
+			CREATE TABLE IF NOT EXISTS priorities (
+				key BLOB NOT NULL,
+				priority INT NOT NULL
+			);
+			CREATE INDEX IF NOT EXISTS idx_tags_key ON tags(key);
+			CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags(tag);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_tags_key_tag ON tags(key, tag);
+			CREATE INDEX IF NOT EXISTS idx_priorities_key ON priorities(key);
+			CREATE INDEX IF NOT EXISTS idx_priorities_priority ON priorities(priority);
+		');
+	}
+
+
+	/**
+	 * Writes entry information into the journal.
+	 * @param  string
+	 * @param  array
+	 * @return bool
+	 */
+	public function write($key, array $dependencies)
+	{
+		$this->pdo->exec('BEGIN');
+
+		if (!empty($dependencies[Cache::TAGS])) {
+			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute(array($key));
+
+			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
+				$arr[] = $key;
+				$arr[] = $tag;
+			}
+			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
+				->execute($arr);
+		}
+
+		if (!empty($dependencies[Cache::PRIORITY])) {
+			$this->pdo->prepare('REPLACE INTO priorities (key, priority) VALUES (?, ?)')
+				->execute(array($key, (int) $dependencies[Cache::PRIORITY]));
+		}
+
+		$this->pdo->exec('COMMIT');
+
+		return TRUE;
+	}
+
+
+	/**
+	 * Cleans entries from journal.
+	 * @param  array
+	 * @return array|NULL  removed items or NULL when performing a full cleanup
+	 */
+	public function clean(array $conditions)
+	{
+		if (!empty($conditions[Cache::ALL])) {
+			$this->pdo->exec('
+				BEGIN;
+				DELETE FROM tags;
+				DELETE FROM priorities;
+				COMMIT;
+			');
+
+			return NULL;
+		}
+
+		$unions = $args = array();
+		if (!empty($conditions[Cache::TAGS])) {
+			$tags = (array) $conditions[Cache::TAGS];
+			$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
+			$args = $tags;
+		}
+
+		if (!empty($conditions[Cache::PRIORITY])) {
+			$unions[] = 'SELECT DISTINCT key FROM priorities WHERE priority <= ?';
+			$args[] = (int) $conditions[Cache::PRIORITY];
+		}
+
+		if (empty($unions)) {
+			return array();
+		}
+
+		$stmt = $this->pdo->prepare(implode(' UNION ', $unions));
+		$stmt->execute($args);
+		$keys = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+		if (empty($keys)) {
+			return array();
+		}
+
+		$in = '(?' . str_repeat(', ?', count($keys) - 1) . ')';
+		$this->pdo->exec('BEGIN');
+		$this->pdo->prepare("DELETE FROM tags WHERE key IN $in")->execute($keys);
+		$this->pdo->prepare("DELETE FROM priorities WHERE key IN $in")->execute($keys);
+		$this->pdo->exec('COMMIT');
+
+		return $keys;
+	}
+
+}
