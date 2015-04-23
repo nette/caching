@@ -17,7 +17,7 @@ use Nette\Utils\Callback;
  * @property-read IStorage $storage
  * @property-read string $namespace
  */
-class Cache extends Nette\Object implements \ArrayAccess
+class Cache extends Nette\Object
 {
 	/** dependency */
 	const PRIORITY = 'priority',
@@ -39,12 +39,6 @@ class Cache extends Nette\Object implements \ArrayAccess
 
 	/** @var string */
 	private $namespace;
-
-	/** @var string  last query cache used by offsetGet() */
-	private $key;
-
-	/** @var mixed  last query cache used by offsetGet()  */
-	private $data;
 
 
 	public function __construct(IStorage $storage, $namespace = NULL)
@@ -123,7 +117,6 @@ class Cache extends Nette\Object implements \ArrayAccess
 	 */
 	public function save($key, $data, array $dependencies = NULL)
 	{
-		$this->key = $this->data = NULL;
 		$key = $this->generateKey($key);
 
 		if ($data instanceof Nette\Callback || $data instanceof \Closure) {
@@ -196,7 +189,6 @@ class Cache extends Nette\Object implements \ArrayAccess
 	 */
 	public function clean(array $conditions = NULL)
 	{
-		$this->key = $this->data = NULL;
 		$this->storage->clean((array) $conditions);
 	}
 
@@ -265,65 +257,6 @@ class Cache extends Nette\Object implements \ArrayAccess
 	protected function generateKey($key)
 	{
 		return $this->namespace . md5(is_scalar($key) ? $key : serialize($key));
-	}
-
-
-	/********************* interface ArrayAccess ****************d*g**/
-
-
-	/**
-	 * @deprecated
-	 */
-	public function offsetSet($key, $data)
-	{
-		trigger_error('Using [] is deprecated; use Cache::save(key, data) instead.', E_USER_DEPRECATED);
-		$this->save($key, $data);
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function offsetGet($key)
-	{
-		trigger_error('Using [] is deprecated; use Cache::load(key) instead.', E_USER_DEPRECATED);
-		$key = is_scalar($key) ? (string) $key : serialize($key);
-		if ($this->key !== $key) {
-			$this->key = $key;
-			$this->data = $this->load($key);
-		}
-		return $this->data;
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function offsetExists($key)
-	{
-		trigger_error('Using [] is deprecated; use Cache::load(key) !== NULL instead.', E_USER_DEPRECATED);
-		$this->key = $this->data = NULL;
-		return $this->offsetGet($key) !== NULL;
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function offsetUnset($key)
-	{
-		trigger_error('Using [] is deprecated; use Cache::remove(key) instead.', E_USER_DEPRECATED);
-		$this->save($key, NULL);
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function release()
-	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		$this->key = $this->data = NULL;
 	}
 
 
