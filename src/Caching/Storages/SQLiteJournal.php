@@ -14,7 +14,7 @@ use Nette,
 /**
  * SQLite based journal.
  */
-class SqliteJournal extends Nette\Object implements IJournal
+class SQLiteJournal extends Nette\Object implements IJournal
 {
 	/** @var \PDO */
 	private $pdo;

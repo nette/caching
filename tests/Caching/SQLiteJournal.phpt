@@ -4,7 +4,7 @@
  * Test: Nette\Caching\Storages\SQLiteJournal basic test.
  */
 
-use Nette\Caching\Storages\SqliteJournal;
+use Nette\Caching\Storages\SQLiteJournal;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -21,7 +21,7 @@ class SQLiteJournalTest extends IJournalTestCase
 
 	public function createJournal()
 	{
-		return new SqliteJournal;
+		return new SQLiteJournal;
 	}
 
 }
