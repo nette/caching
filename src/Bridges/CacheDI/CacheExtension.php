@@ -33,7 +33,7 @@ class CacheExtension extends Nette\DI\CompilerExtension
 
 		$container->addDefinition($this->prefix('journal'))
 			->setClass('Nette\Caching\Storages\IJournal')
-			->setFactory('Nette\Caching\Storages\FileJournal', array($this->tempDir));
+			->setFactory('Nette\Caching\Storages\SQLiteJournal', array($this->tempDir . '/cache/journal.s3db'));
 
 		$container->addDefinition($this->prefix('storage'))
 			->setClass('Nette\Caching\IStorage')

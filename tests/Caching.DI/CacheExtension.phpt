@@ -22,7 +22,7 @@ test(function() {
 	$container->initialize();
 
 	$journal = $container->getService('cache.journal');
-	Assert::type('Nette\Caching\Storages\FileJournal', $journal);
+	Assert::type('Nette\Caching\Storages\SQLiteJournal', $journal);
 
 	$storage = $container->getService('cache.storage');
 	Assert::type('Nette\Caching\Storages\FileStorage', $storage);
