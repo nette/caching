@@ -29,7 +29,7 @@ Assert::equal('value', $data['data']);
 
 
 // load twice with closure fallback, pass dependencies
-$dependencies = array(Cache::TAGS => 'tag');
+$dependencies = [Cache::TAGS => 'tag'];
 $storage = new TestStorage();
 $cache = new Cache($storage, 'ns');
 

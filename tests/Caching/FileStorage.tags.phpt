@@ -18,25 +18,25 @@ $cache = new Cache($storage);
 
 
 // Writing cache...
-$cache->save('key1', 'value1', array(
-	Cache::TAGS => array('one', 'two'),
-));
+$cache->save('key1', 'value1', [
+	Cache::TAGS => ['one', 'two'],
+]);
 
-$cache->save('key2', 'value2', array(
-	Cache::TAGS => array('one', 'three'),
-));
+$cache->save('key2', 'value2', [
+	Cache::TAGS => ['one', 'three'],
+]);
 
-$cache->save('key3', 'value3', array(
-	Cache::TAGS => array('two', 'three'),
-));
+$cache->save('key3', 'value3', [
+	Cache::TAGS => ['two', 'three'],
+]);
 
 $cache->save('key4', 'value4');
 
 
 // Cleaning by tags...
-$cache->clean(array(
+$cache->clean([
 	Cache::TAGS => 'one',
-));
+]);
 
 Assert::null( $cache->load('key1') );
 Assert::null( $cache->load('key2') );

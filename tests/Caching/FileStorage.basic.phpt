@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 // key and data with special chars
-$key = array(1, TRUE);
+$key = [1, TRUE];
 $value = range("\x00", "\xFF");
 
 $cache = new Cache(new FileStorage(TEMP_DIR));

@@ -19,5 +19,5 @@ Assert::exception(function() {
 
 Assert::exception(function() {
 	$storage = new FileStorage(TEMP_DIR);
-	$storage->write('a', 'b', array(Cache::TAGS => 'c'));
+	$storage->write('a', 'b', [Cache::TAGS => 'c']);
 }, 'Nette\InvalidStateException', 'CacheJournal has not been provided.');

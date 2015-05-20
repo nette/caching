@@ -40,7 +40,7 @@ Assert::false( $called );
 
 
 $called = FALSE;
-$callback = array(new Test, 'mockMethod');
+$callback = [new Test, 'mockMethod'];
 Assert::same( 55, call_user_func($cache->wrap($callback), 5, 50) );
 Assert::true( $called );
 

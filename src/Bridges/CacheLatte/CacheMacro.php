@@ -39,7 +39,7 @@ class CacheMacro extends Nette\Object implements Latte\IMacro
 	public function finalize()
 	{
 		if ($this->used) {
-			return array('Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);');
+			return ['Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);'];
 		}
 	}
 
@@ -97,7 +97,7 @@ class CacheMacro extends Nette\Object implements Latte\IMacro
 			if (array_key_exists('if', $args) && !$args['if']) {
 				return $parents[] = new \stdClass;
 			}
-			$key = array_merge(array($key), array_intersect_key($args, range(0, count($args))));
+			$key = array_merge([$key], array_intersect_key($args, range(0, count($args))));
 		}
 		if ($parents) {
 			end($parents)->dependencies[Nette\Caching\Cache::ITEMS][] = $key;
@@ -111,10 +111,10 @@ class CacheMacro extends Nette\Object implements Latte\IMacro
 			if (isset($args['expire'])) {
 				$args['expiration'] = $args['expire']; // back compatibility
 			}
-			$helper->dependencies = array(
+			$helper->dependencies = [
 				Nette\Caching\Cache::TAGS => isset($args['tags']) ? $args['tags'] : NULL,
 				Nette\Caching\Cache::EXPIRATION => isset($args['expiration']) ? $args['expiration'] : '+ 7 days',
-			);
+			];
 			$parents[] = $helper;
 		}
 		return $helper;

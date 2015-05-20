@@ -29,7 +29,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 			throw new Nette\NotSupportedException("SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.");
 		}
 
-		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, array(\PDO::ATTR_PERSISTENT => TRUE));
+		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, [\PDO::ATTR_PERSISTENT => TRUE]);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
@@ -61,7 +61,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 		$this->pdo->exec('BEGIN');
 
 		if (!empty($dependencies[Cache::TAGS])) {
-			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute(array($key));
+			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute([$key]);
 
 			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
 				$arr[] = $key;
@@ -73,7 +73,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 
 		if (!empty($dependencies[Cache::PRIORITY])) {
 			$this->pdo->prepare('REPLACE INTO priorities (key, priority) VALUES (?, ?)')
-				->execute(array($key, (int) $dependencies[Cache::PRIORITY]));
+				->execute([$key, (int) $dependencies[Cache::PRIORITY]]);
 		}
 
 		$this->pdo->exec('COMMIT');
@@ -100,7 +100,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 			return NULL;
 		}
 
-		$unions = $args = array();
+		$unions = $args = [];
 		if (!empty($conditions[Cache::TAGS])) {
 			$tags = (array) $conditions[Cache::TAGS];
 			$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
@@ -113,14 +113,14 @@ class SQLiteJournal extends Nette\Object implements IJournal
 		}
 
 		if (empty($unions)) {
-			return array();
+			return [];
 		}
 
 		$stmt = $this->pdo->prepare(implode(' UNION ', $unions));
 		$stmt->execute($args);
 		$keys = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 		if (empty($keys)) {
-			return array();
+			return [];
 		}
 
 		$in = '(?' . str_repeat(', ?', count($keys) - 1) . ')';

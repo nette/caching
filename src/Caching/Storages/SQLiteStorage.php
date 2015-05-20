@@ -24,7 +24,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 
 	public function __construct($path = ':memory:')
 	{
-		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, array(\PDO::ATTR_PERSISTENT => TRUE));
+		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, [\PDO::ATTR_PERSISTENT => TRUE]);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
@@ -54,10 +54,10 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	public function read($key)
 	{
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
-		$stmt->execute(array($key, time()));
+		$stmt->execute([$key, time()]);
 		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
 			if ($row['slide'] !== NULL) {
-				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute(array(time(), $key));
+				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
 			}
 			return unserialize($row['data']);
 		}
@@ -88,7 +88,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 
 		$this->pdo->exec('BEGIN TRANSACTION');
 		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')
-			->execute(array($key, serialize($data), $expire, $slide));
+			->execute([$key, serialize($data), $expire, $slide]);
 
 		if (!empty($dependencies[Cache::TAGS])) {
 			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
@@ -110,7 +110,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 	public function remove($key)
 	{
 		$this->pdo->prepare('DELETE FROM cache WHERE key=?')
-			->execute(array($key));
+			->execute([$key]);
 	}
 
 
@@ -126,7 +126,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 
 		} else {
 			$sql = 'DELETE FROM cache WHERE expire < ?';
-			$args = array(time());
+			$args = [time()];
 
 			if (!empty($conditions[Cache::TAGS])) {
 				$tags = (array) $conditions[Cache::TAGS];

@@ -19,10 +19,10 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
 	Cache::SLIDING => TRUE,
-));
+]);
 
 
 for ($i = 0; $i < 5; $i++) {

@@ -19,9 +19,9 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 
 
 // Writing cache...
-$cache->save($key, $value, array(
-	Cache::ITEMS => array('dependent'),
-));
+$cache->save($key, $value, [
+	Cache::ITEMS => ['dependent'],
+]);
 
 Assert::truthy( $cache->load($key) );
 
@@ -33,9 +33,9 @@ Assert::null( $cache->load($key) );
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::ITEMS => 'dependent',
-));
+]);
 
 Assert::truthy( $cache->load($key) );
 
@@ -48,9 +48,9 @@ Assert::null( $cache->load($key) );
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::ITEMS => 'dependent',
-));
+]);
 
 Assert::truthy( $cache->load($key) );
 

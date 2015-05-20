@@ -22,8 +22,8 @@ define('ANY_CONST', 10);
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::CONSTS => 'ANY_CONST',
-));
+]);
 
 Assert::truthy( $cache->load($key) );

@@ -16,7 +16,7 @@ require __DIR__ . '/Cache.inc';
 // save value with dependencies
 $storage = new testStorage();
 $cache = new Cache($storage, 'ns');
-$dependencies = array(Cache::TAGS => 'tag');
+$dependencies = [Cache::TAGS => 'tag'];
 
 $cache->save('key', 'value', $dependencies);
 
@@ -35,13 +35,13 @@ $cache->save('key', function() {
 
 $res = $cache->load('key');
 Assert::equal('value', $res['data']);
-Assert::equal(array(), $res['dependencies']);
+Assert::equal([], $res['dependencies']);
 
 
 // save callback return value with dependencies
 $storage = new testStorage();
 $cache = new Cache($storage, 'ns');
-$dependencies = array(Cache::TAGS => 'tag');
+$dependencies = [Cache::TAGS => 'tag'];
 
 $cache->save('key', function() {
 	return 'value';

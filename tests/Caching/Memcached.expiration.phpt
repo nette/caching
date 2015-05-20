@@ -24,9 +24,9 @@ $cache = new Cache(new MemcachedStorage('localhost'));
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
-));
+]);
 
 
 // Sleeping 1 second

@@ -31,9 +31,9 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 $mock = new Mock;
 
 $called = FALSE;
-Assert::same( 55, $cache->call(array($mock, 'mockFunction'), 5, 50) );
+Assert::same( 55, $cache->call([$mock, 'mockFunction'], 5, 50) );
 Assert::true( $called );
 
 $called = FALSE;
-Assert::same( 55, $cache->call(array($mock, 'mockFunction'), 5, 50) );
+Assert::same( 55, $cache->call([$mock, 'mockFunction'], 5, 50) );
 Assert::false( $called );

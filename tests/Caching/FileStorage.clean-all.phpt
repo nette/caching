@@ -21,14 +21,14 @@ $cacheA->save('test2', 'Grudl');
 $cacheB->save('test1', 'divaD');
 $cacheB->save('test2', 'ldurG');
 
-Assert::same( 'David Grudl divaD ldurG', implode(' ',array(
+Assert::same( 'David Grudl divaD ldurG', implode(' ',[
 	$cacheA->load('test1'),
 	$cacheA->load('test2'),
 	$cacheB->load('test1'),
 	$cacheB->load('test2'),
-)));
+]));
 
-$storage->clean(array(Cache::ALL => TRUE));
+$storage->clean([Cache::ALL => TRUE]);
 
 Assert::null( $cacheA->load('test1') );
 Assert::null( $cacheA->load('test2') );

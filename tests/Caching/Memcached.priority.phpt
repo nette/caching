@@ -23,25 +23,25 @@ $cache = new Cache($storage);
 
 
 // Writing cache...
-$cache->save('nette-priority-key1', 'value1', array(
+$cache->save('nette-priority-key1', 'value1', [
 	Cache::PRIORITY => 100,
-));
+]);
 
-$cache->save('nette-priority-key2', 'value2', array(
+$cache->save('nette-priority-key2', 'value2', [
 	Cache::PRIORITY => 200,
-));
+]);
 
-$cache->save('nette-priority-key3', 'value3', array(
+$cache->save('nette-priority-key3', 'value3', [
 	Cache::PRIORITY => 300,
-));
+]);
 
 $cache->save('nette-priority-key4', 'value4');
 
 
 // Cleaning by priority...
-$cache->clean(array(
+$cache->clean([
 	Cache::PRIORITY => '200',
-));
+]);
 
 Assert::null( $cache->load('nette-priority-key1') );
 Assert::null( $cache->load('nette-priority-key2') );

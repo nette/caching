@@ -74,7 +74,7 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 		$this->journal = $journal;
 
 		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
-			$this->clean(array());
+			$this->clean([]);
 		}
 	}
 
@@ -164,9 +164,9 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 	 */
 	public function write($key, $data, array $dp)
 	{
-		$meta = array(
+		$meta = [
 			self::META_TIME => microtime(),
-		);
+		];
 
 		if (isset($dp[Cache::EXPIRATION])) {
 			if (empty($dp[Cache::SLIDING])) {

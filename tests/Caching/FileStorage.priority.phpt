@@ -18,25 +18,25 @@ $cache = new Cache($storage);
 
 
 // Writing cache...
-$cache->save('key1', 'value1', array(
+$cache->save('key1', 'value1', [
 	Cache::PRIORITY => 100,
-));
+]);
 
-$cache->save('key2', 'value2', array(
+$cache->save('key2', 'value2', [
 	Cache::PRIORITY => 200,
-));
+]);
 
-$cache->save('key3', 'value3', array(
+$cache->save('key3', 'value3', [
 	Cache::PRIORITY => 300,
-));
+]);
 
 $cache->save('key4', 'value4');
 
 
 // Cleaning by priority...
-$cache->clean(array(
+$cache->clean([
 	Cache::PRIORITY => '200',
-));
+]);
 
 Assert::null( $cache->load('key1') );
 Assert::null( $cache->load('key2') );

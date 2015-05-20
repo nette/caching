@@ -13,32 +13,32 @@ use Nette\Bridges\CacheLatte\CacheMacro,
 require __DIR__ . '/../bootstrap.php';
 
 test(function() {
-	$parents = array();
-	$dp = array(Cache::TAGS => array('rum', 'cola'));
+	$parents = [];
+	$dp = [Cache::TAGS => ['rum', 'cola']];
 	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, $dp);
 	Assert::type('Nette\Caching\OutputHelper', $outputHelper);
-	Assert::same($dp + array(Cache::EXPIRATION => '+ 7 days'), $outputHelper->dependencies);
+	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
 });
 
 test(function() {
-	$parents = array();
-	$dp = array(Cache::TAGS => array('rum', 'cola'));
+	$parents = [];
+	$dp = [Cache::TAGS => ['rum', 'cola']];
 	$dpFallback = function() use ($dp) {
 		return $dp;
 	};
-	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, array('dependencies' => $dpFallback));
-	Assert::same($dp + array(Cache::EXPIRATION => '+ 7 days'), $outputHelper->dependencies);
+	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, ['dependencies' => $dpFallback]);
+	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
 });
 
 test(function() {
-	$parents = array();
-	$dp = array(
-		Cache::TAGS => array('rum', 'cola'),
+	$parents = [];
+	$dp = [
+		Cache::TAGS => ['rum', 'cola'],
 		Cache::EXPIRATION => '+ 1 days'
-	);
+	];
 	$dpFallback = function() use ($dp) {
 		return $dp;
 	};
-	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, array('dependencies' => $dpFallback));
+	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, ['dependencies' => $dpFallback]);
 	Assert::same($dp, $outputHelper->dependencies);
 });

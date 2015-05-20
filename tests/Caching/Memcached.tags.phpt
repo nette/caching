@@ -23,25 +23,25 @@ $cache = new Cache($storage);
 
 
 // Writing cache...
-$cache->save('nette-tags-key1', 'value1', array(
-	Cache::TAGS => array('one', 'two'),
-));
+$cache->save('nette-tags-key1', 'value1', [
+	Cache::TAGS => ['one', 'two'],
+]);
 
-$cache->save('nette-tags-key2', 'value2', array(
-	Cache::TAGS => array('one', 'three'),
-));
+$cache->save('nette-tags-key2', 'value2', [
+	Cache::TAGS => ['one', 'three'],
+]);
 
-$cache->save('nette-tags-key3', 'value3', array(
-	Cache::TAGS => array('two', 'three'),
-));
+$cache->save('nette-tags-key3', 'value3', [
+	Cache::TAGS => ['two', 'three'],
+]);
 
 $cache->save('nette-tags-key4', 'value4');
 
 
 // Cleaning by tags...
-$cache->clean(array(
+$cache->clean([
 	Cache::TAGS => 'one',
-));
+]);
 
 Assert::null( $cache->load('nette-tags-key1') );
 Assert::null( $cache->load('nette-tags-key2') );

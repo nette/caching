@@ -22,12 +22,12 @@ $dependentFile = TEMP_DIR . '/spec.file';
 @unlink($dependentFile);
 
 // Writing cache...
-$cache->save($key, $value, array(
-	Cache::FILES => array(
+$cache->save($key, $value, [
+	Cache::FILES => [
 		__FILE__,
 		$dependentFile,
-	),
-));
+	],
+]);
 
 Assert::truthy( $cache->load($key) );
 
@@ -39,9 +39,9 @@ Assert::null( $cache->load($key) );
 
 
 // Writing cache...
-$cache->save($key, $value, array(
+$cache->save($key, $value, [
 	Cache::FILES => $dependentFile,
-));
+]);
 
 Assert::truthy( $cache->load($key) );
 

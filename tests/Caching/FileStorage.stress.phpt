@@ -36,15 +36,15 @@ $storage = new FileStorage(TEMP_DIR);
 
 // clear playground
 for ($i=0; $i<=COUNT_FILES; $i++) {
-	$storage->write($i, randomStr(), array());
+	$storage->write($i, randomStr(), []);
 }
 
 
 // test loop
-$hits = array('ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0);
+$hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0];
 for ($counter=0; $counter<1000; $counter++) {
 	// write
-	$ok = $storage->write(rand(0, COUNT_FILES), randomStr(), array());
+	$ok = $storage->write(rand(0, COUNT_FILES), randomStr(), []);
 	if ($ok === FALSE) $hits['cantwrite']++;
 
 	// remove
@@ -61,13 +61,13 @@ for ($counter=0; $counter<1000; $counter++) {
 }
 
 
-Assert::same( array(
+Assert::same( [
 	'ok' => 1000,
 	'notfound' => 0,
 	'error' => 0,
 	'cantwrite' => 0,
 	'cantdelete' => 0,
-), $hits );
+], $hits );
 
 // expected results are:
 //    [ok] => 1000       // should be 1000. If unlink() is used, sum [ok] + [notfound] should be 1000
