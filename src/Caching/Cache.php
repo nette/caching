@@ -79,7 +79,7 @@ class Cache extends Nette\Object implements \ArrayAccess
 	/**
 	 * Returns new nested cache object.
 	 * @param  string
-	 * @return Cache
+	 * @return self
 	 */
 	public function derive($namespace)
 	{
