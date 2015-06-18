@@ -4,7 +4,7 @@ use Nette\Caching\IStorage;
 
 class TestStorage implements IStorage
 {
-	private $data = array();
+	private $data = [];
 
 	public function read($key)
 	{
@@ -13,10 +13,10 @@ class TestStorage implements IStorage
 
 	public function write($key, $data, array $dependencies)
 	{
-		$this->data[$key] = array(
+		$this->data[$key] = [
 			'data' => $data,
 			'dependencies' => $dependencies,
-		);
+		];
 	}
 
 	public function lock($key) {}

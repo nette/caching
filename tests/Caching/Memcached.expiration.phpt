@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\MemcachedStorage expiration test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage,
-	Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Storages\MemcachedStorage;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -31,9 +31,9 @@ $cache->save($key, $value, [
 
 // Sleeping 1 second
 sleep(1);
-Assert::truthy( $cache->load($key) );
+Assert::truthy($cache->load($key));
 
 
 // Sleeping 3 seconds
 sleep(3);
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));

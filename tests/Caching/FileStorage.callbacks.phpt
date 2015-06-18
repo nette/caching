@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\FileStorage callbacks dependency.
  */
 
-use Nette\Caching\Cache,
-	Nette\Caching\Storages\FileStorage,
-	Tester\Assert;
+use Nette\Caching\Cache;
+use Nette\Caching\Storages\FileStorage;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -29,7 +29,7 @@ $cache->save($key, $value, [
 	Cache::CALLBACKS => [['dependency', 1]],
 ]);
 
-Assert::truthy( $cache->load($key) );
+Assert::truthy($cache->load($key));
 
 
 // Writing cache...
@@ -37,4 +37,4 @@ $cache->save($key, $value, [
 	Cache::CALLBACKS => [['dependency', 0]],
 ]);
 
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));

@@ -5,8 +5,8 @@
  * @multiple   5
  */
 
-use Nette\Caching\Storages\FileStorage,
-	Tester\Assert;
+use Nette\Caching\Storages\FileStorage;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -35,17 +35,19 @@ $storage = new FileStorage(TEMP_DIR);
 
 
 // clear playground
-for ($i=0; $i<=COUNT_FILES; $i++) {
+for ($i = 0; $i <= COUNT_FILES; $i++) {
 	$storage->write($i, randomStr(), []);
 }
 
 
 // test loop
 $hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0];
-for ($counter=0; $counter<1000; $counter++) {
+for ($counter = 0; $counter < 1000; $counter++) {
 	// write
 	$ok = $storage->write(rand(0, COUNT_FILES), randomStr(), []);
-	if ($ok === FALSE) $hits['cantwrite']++;
+	if ($ok === FALSE) {
+		$hits['cantwrite']++;
+	}
 
 	// remove
 	//$ok = $storage->remove(rand(0, COUNT_FILES));
@@ -55,19 +57,23 @@ for ($counter=0; $counter<1000; $counter++) {
 	$res = $storage->read(rand(0, COUNT_FILES));
 
 	// compare
-	if ($res === NULL) $hits['notfound']++;
-	elseif (checkStr($res)) $hits['ok']++;
-	else $hits['error']++;
+	if ($res === NULL) {
+		$hits['notfound']++;
+	} elseif (checkStr($res)) {
+		$hits['ok']++;
+	} else {
+		$hits['error']++;
+	}
 }
 
 
-Assert::same( [
+Assert::same([
 	'ok' => 1000,
 	'notfound' => 0,
 	'error' => 0,
 	'cantwrite' => 0,
 	'cantdelete' => 0,
-], $hits );
+], $hits);
 
 // expected results are:
 //    [ok] => 1000       // should be 1000. If unlink() is used, sum [ok] + [notfound] should be 1000

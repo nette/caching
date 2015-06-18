@@ -7,8 +7,8 @@
 
 namespace Nette\Caching\Storages;
 
-use Nette,
-	Nette\Caching\Cache;
+use Nette;
+use Nette\Caching\Cache;
 
 
 /**
@@ -26,7 +26,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 	public function __construct($path = ':memory:')
 	{
 		if (!extension_loaded('pdo_sqlite')) {
-			throw new Nette\NotSupportedException("SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.");
+			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
 		}
 
 		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, [\PDO::ATTR_PERSISTENT => TRUE]);

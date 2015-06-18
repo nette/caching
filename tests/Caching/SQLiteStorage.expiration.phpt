@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\SQLiteStorage expiration test.
  */
 
-use Nette\Caching\Cache,
-	Nette\Caching\Storages\SQLiteStorage,
-	Tester\Assert;
+use Nette\Caching\Cache;
+use Nette\Caching\Storages\SQLiteStorage;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -32,10 +32,10 @@ $cache->save($key, $value, [
 // Sleeping 1 second
 sleep(1);
 clearstatcache();
-Assert::truthy( $cache->load($key) );
+Assert::truthy($cache->load($key));
 
 
 // Sleeping 3 seconds
 sleep(3);
 clearstatcache();
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));

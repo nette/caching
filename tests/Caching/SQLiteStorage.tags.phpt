@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\SQLiteStorage tags dependency test.
  */
 
-use Nette\Caching\Storages\SQLiteStorage,
-	Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Storages\SQLiteStorage;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -41,7 +41,7 @@ $cache->clean([
 	Cache::TAGS => ['one', 'xx'],
 ]);
 
-Assert::null( $cache->load('key1') );
-Assert::null( $cache->load('key2') );
-Assert::truthy( $cache->load('key3') );
-Assert::truthy( $cache->load('key4') );
+Assert::null($cache->load('key1'));
+Assert::null($cache->load('key2'));
+Assert::truthy($cache->load('key3'));
+Assert::truthy($cache->load('key4'));

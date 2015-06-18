@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\FileStorage clean with Cache::ALL
  */
 
-use Nette\Caching\Storages\FileStorage,
-	Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Storages\FileStorage;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -14,14 +14,14 @@ require __DIR__ . '/../bootstrap.php';
 
 $storage = new FileStorage(TEMP_DIR);
 $cacheA = new Cache($storage);
-$cacheB = new Cache($storage,'B');
+$cacheB = new Cache($storage, 'B');
 
 $cacheA->save('test1', 'David');
 $cacheA->save('test2', 'Grudl');
 $cacheB->save('test1', 'divaD');
 $cacheB->save('test2', 'ldurG');
 
-Assert::same( 'David Grudl divaD ldurG', implode(' ',[
+Assert::same('David Grudl divaD ldurG', implode(' ', [
 	$cacheA->load('test1'),
 	$cacheA->load('test2'),
 	$cacheB->load('test1'),
@@ -30,7 +30,7 @@ Assert::same( 'David Grudl divaD ldurG', implode(' ',[
 
 $storage->clean([Cache::ALL => TRUE]);
 
-Assert::null( $cacheA->load('test1') );
-Assert::null( $cacheA->load('test2') );
-Assert::null( $cacheB->load('test1') );
-Assert::null( $cacheB->load('test2') );
+Assert::null($cacheA->load('test1'));
+Assert::null($cacheA->load('test2'));
+Assert::null($cacheB->load('test1'));
+Assert::null($cacheB->load('test2'));

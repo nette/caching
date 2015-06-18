@@ -7,8 +7,8 @@
 
 namespace Nette\Bridges\CacheLatte;
 
-use Nette,
-	Latte;
+use Nette;
+use Latte;
 
 
 /**

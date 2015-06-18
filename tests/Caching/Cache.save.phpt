@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Cache save().
  */
 
-use Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -29,7 +29,7 @@ Assert::equal($dependencies, $res['dependencies']);
 $storage = new testStorage();
 $cache = new Cache($storage, 'ns');
 
-$cache->save('key', function() {
+$cache->save('key', function () {
 	return 'value';
 });
 
@@ -43,7 +43,7 @@ $storage = new testStorage();
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::TAGS => 'tag'];
 
-$cache->save('key', function() {
+$cache->save('key', function () {
 	return 'value';
 }, $dependencies);
 

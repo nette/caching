@@ -4,10 +4,10 @@
  * Test: Nette\Caching\Storages\MemcachedStorage priority test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage,
-	Nette\Caching\Storages\FileJournal,
-	Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Storages\MemcachedStorage;
+use Nette\Caching\Storages\FileJournal;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -43,7 +43,7 @@ $cache->clean([
 	Cache::PRIORITY => '200',
 ]);
 
-Assert::null( $cache->load('nette-priority-key1') );
-Assert::null( $cache->load('nette-priority-key2') );
-Assert::truthy( $cache->load('nette-priority-key3') );
-Assert::truthy( $cache->load('nette-priority-key4') );
+Assert::null($cache->load('nette-priority-key1'));
+Assert::null($cache->load('nette-priority-key2'));
+Assert::truthy($cache->load('nette-priority-key3'));
+Assert::truthy($cache->load('nette-priority-key4'));

@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\SQLiteStorage basic usage.
  */
 
-use Nette\Caching\Cache,
-	Nette\Caching\Storages\SQLiteStorage,
-	Tester\Assert;
+use Nette\Caching\Cache;
+use Nette\Caching\Storages\SQLiteStorage;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -23,29 +23,29 @@ $value = range("\x00", "\xFF");
 
 $cache = new Cache(new SQLiteStorage);
 
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));
 
 
 // Writing cache...
 $cache->save($key, $value);
 
-Assert::same( $cache->load($key), $value );
+Assert::same($cache->load($key), $value);
 
 
 // Removing from cache using remove()...
 $cache->remove($key);
 
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));
 
 
 // Removing from cache using set NULL...
 $cache->save($key, $value);
 $cache->save($key, NULL);
 
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));
 
 
 // Writing cache...
 $cache->save($key, $value);
 
-Assert::same( $cache->load($key), $value );
+Assert::same($cache->load($key), $value);
