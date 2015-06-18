@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\MemcachedStorage sliding expiration test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage,
-	Nette\Caching\Cache,
-	Tester\Assert;
+use Nette\Caching\Storages\MemcachedStorage;
+use Nette\Caching\Cache;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -34,11 +34,11 @@ for ($i = 0; $i < 5; $i++) {
 	// Sleeping 1 second
 	sleep(1);
 
-	Assert::truthy( $cache->load($key) );
+	Assert::truthy($cache->load($key));
 
 }
 
 // Sleeping few seconds...
 sleep(5);
 
-Assert::null( $cache->load($key) );
+Assert::null($cache->load($key));
