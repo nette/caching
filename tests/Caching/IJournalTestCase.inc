@@ -4,9 +4,9 @@
  * Test: Common tests for all IJournal implementations.
  */
 
-use	Nette\Caching\Cache,
-	Nette\Caching\Storages\IJournal,
-	Tester\Assert;
+use	Nette\Caching\Cache;
+use Nette\Caching\Storages\IJournal;
+use Tester\Assert;
 
 
 abstract class IJournalTestCase extends Tester\TestCase

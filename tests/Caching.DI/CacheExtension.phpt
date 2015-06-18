@@ -4,15 +4,15 @@
  * Test: CacheExtension.
  */
 
-use Nette\DI,
-	Nette\Bridges\CacheDI\CacheExtension,
-	Tester\Assert;
+use Nette\DI;
+use Nette\Bridges\CacheDI\CacheExtension;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function() {
+test(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('cache', new CacheExtension(TEMP_DIR));
 

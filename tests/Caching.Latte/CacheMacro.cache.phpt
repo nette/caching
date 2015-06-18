@@ -4,8 +4,8 @@
  * Test: {cache ...}
  */
 
-use Nette\Bridges\CacheLatte\CacheMacro,
-	Tester\Assert;
+use Nette\Bridges\CacheLatte\CacheMacro;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
