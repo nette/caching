@@ -3,6 +3,8 @@ Nette Caching
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/caching.svg)](https://packagist.org/packages/nette/caching)
 [![Build Status](https://travis-ci.org/nette/caching.svg?branch=master)](https://travis-ci.org/nette/caching)
+[![Latest Stable Version](https://poser.pugx.org/nette/caching/v/stable)](https://github.com/nette/caching/releases)
+[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/caching/blob/master/license.md)
 
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
