@@ -14,8 +14,6 @@ use Nette\Utils\Callback;
 /**
  * Implements the cache for a application.
  *
- * @author     David Grudl
- *
  * @property-read IStorage $storage
  * @property-read string $namespace
  */

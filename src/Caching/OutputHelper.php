@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Output caching helper.
- *
- * @author     David Grudl
  */
 class OutputHelper extends Nette\Object
 {

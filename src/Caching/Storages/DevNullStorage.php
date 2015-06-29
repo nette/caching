@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Cache dummy storage.
- *
- * @author     David Grudl
  */
 class DevNullStorage extends Nette\Object implements Nette\Caching\IStorage
 {

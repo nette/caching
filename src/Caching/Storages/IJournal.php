@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Cache journal provider.
- *
- * @author     Jan Smitka
  */
 interface IJournal
 {
