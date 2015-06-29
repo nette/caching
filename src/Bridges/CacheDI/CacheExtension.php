@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Cache extension for Nette DI.
- *
- * @author     David Grudl
  */
 class CacheExtension extends Nette\DI\CompilerExtension
 {

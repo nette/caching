@@ -13,8 +13,6 @@ use Nette\Caching\Cache;
 
 /**
  * Cache file storage.
- *
- * @author     David Grudl
  */
 class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 {

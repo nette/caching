@@ -13,8 +13,6 @@ use Nette\Caching\Cache;
 
 /**
  * Btree+ based file journal.
- *
- * @author     Jakub Onderka
  */
 class FileJournal extends Nette\Object implements IJournal
 {

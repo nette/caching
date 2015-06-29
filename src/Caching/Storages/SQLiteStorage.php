@@ -13,8 +13,6 @@ use Nette\Caching\Cache;
 
 /**
  * SQLite storage.
- *
- * @author     David Grudl
  */
 class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 {

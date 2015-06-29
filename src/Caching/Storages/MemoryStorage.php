@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Memory cache storage.
- *
- * @author     David Grudl
  */
 class MemoryStorage extends Nette\Object implements Nette\Caching\IStorage
 {

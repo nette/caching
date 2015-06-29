@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Cache storage.
- *
- * @author     David Grudl
  */
 interface IStorage
 {
