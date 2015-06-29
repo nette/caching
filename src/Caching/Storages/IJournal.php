@@ -7,8 +7,6 @@
 
 namespace Nette\Caching\Storages;
 
-use Nette;
-
 
 /**
  * Cache journal provider.
