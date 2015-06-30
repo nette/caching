@@ -326,12 +326,10 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 		if ($head && strlen($head) === self::META_HEADER_LEN) {
 			$size = (int) substr($head, -6);
 			$meta = stream_get_contents($handle, $size, self::META_HEADER_LEN);
-			$meta = @unserialize($meta); // intentionally @
-			if (is_array($meta)) {
-				$meta[self::FILE] = $file;
-				$meta[self::HANDLE] = $handle;
-				return $meta;
-			}
+			$meta = unserialize($meta);
+			$meta[self::FILE] = $file;
+			$meta[self::HANDLE] = $handle;
+			return $meta;
 		}
 
 		flock($handle, LOCK_UN);
@@ -354,7 +352,7 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 		if (empty($meta[self::META_SERIALIZED])) {
 			return $data;
 		} else {
-			return @unserialize($data); // intentionally @
+			return unserialize($data);
 		}
 	}
 
