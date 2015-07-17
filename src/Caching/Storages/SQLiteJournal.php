@@ -117,14 +117,18 @@ class SQLiteJournal extends Nette\Object implements IJournal
 		}
 
 		$unionSql = implode(' UNION ', $unions);
+
+		$this->pdo->exec('BEGIN IMMEDIATE');
+
 		$stmt = $this->pdo->prepare($unionSql);
 		$stmt->execute($args);
 		$keys = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+
 		if (empty($keys)) {
+			$this->pdo->exec('COMMIT');
 			return [];
 		}
 
-		$this->pdo->exec('BEGIN');
 		$this->pdo->prepare("DELETE FROM tags WHERE key IN ($unionSql)")->execute($args);
 		$this->pdo->prepare("DELETE FROM priorities WHERE key IN ($unionSql)")->execute($args);
 		$this->pdo->exec('COMMIT');
