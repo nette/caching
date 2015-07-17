@@ -21,7 +21,8 @@ class SQLiteJournalTest extends IJournalTestCase
 
 	public function createJournal()
 	{
-		return new SQLiteJournal;
+		static $id = 0;
+		return new SQLiteJournal(TEMP_DIR . '/sqlitejournal_' . ++$id . '.sqlite');
 	}
 
 }
