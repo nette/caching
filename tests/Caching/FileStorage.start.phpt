@@ -17,7 +17,7 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 
 ob_start();
 $block = $cache->start('key');
-Assert::type('Nette\Caching\OutputHelper', $block);
+Assert::type(Nette\Caching\OutputHelper::class, $block);
 echo 'Hello';
 $block->end();
 Assert::same('Hello', ob_get_clean());

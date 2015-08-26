@@ -22,10 +22,10 @@ test(function () {
 	$container->initialize();
 
 	$journal = $container->getService('cache.journal');
-	Assert::type('Nette\Caching\Storages\SQLiteJournal', $journal);
+	Assert::type(Nette\Caching\Storages\SQLiteJournal::class, $journal);
 
 	$storage = $container->getService('cache.storage');
-	Assert::type('Nette\Caching\Storages\FileStorage', $storage);
+	Assert::type(Nette\Caching\Storages\FileStorage::class, $storage);
 
 	// aliases
 	Assert::same($journal, $container->getService('nette.cacheJournal'));

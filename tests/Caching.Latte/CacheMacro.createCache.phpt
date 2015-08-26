@@ -16,7 +16,7 @@ test(function () {
 	$parents = [];
 	$dp = [Cache::TAGS => ['rum', 'cola']];
 	$outputHelper = CacheMacro::createCache(new DevNullStorage(), 'test', $parents, $dp);
-	Assert::type('Nette\Caching\OutputHelper', $outputHelper);
+	Assert::type(Nette\Caching\OutputHelper::class, $outputHelper);
 	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
 });
 
