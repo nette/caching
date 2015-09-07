@@ -20,7 +20,7 @@ if (!extension_loaded('pdo_sqlite')) {
 $key = 'nette';
 $value = 'rulez';
 
-$cache = new Cache(new SQLiteStorage);
+$cache = new Cache(new SQLiteStorage(':memory:'));
 
 
 // Writing cache...

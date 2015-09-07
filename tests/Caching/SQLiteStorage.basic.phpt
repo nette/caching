@@ -21,7 +21,7 @@ if (!extension_loaded('pdo_sqlite')) {
 $key = [1, TRUE];
 $value = range("\x00", "\xFF");
 
-$cache = new Cache(new SQLiteStorage);
+$cache = new Cache(new SQLiteStorage(':memory:'));
 
 Assert::null($cache->load($key));
 

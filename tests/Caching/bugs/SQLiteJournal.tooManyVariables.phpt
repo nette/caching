@@ -17,7 +17,7 @@ if (!extension_loaded('pdo_sqlite')) {
 }
 
 
-$journal = new SQLiteJournal;
+$journal = new SQLiteJournal(':memory:');
 
 // Writing cache...
 $keys = [];
