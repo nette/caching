@@ -5,7 +5,7 @@
  */
 
 use Nette\Caching\Storages\MemcachedStorage;
-use Nette\Caching\Storages\FileJournal;
+use Nette\Caching\Storages\SQLiteJournal;
 use Nette\Caching\Cache;
 use Tester\Assert;
 
@@ -18,7 +18,7 @@ if (!MemcachedStorage::isAvailable()) {
 }
 
 
-$storage = new MemcachedStorage('localhost', 11211, '', new FileJournal(TEMP_DIR));
+$storage = new MemcachedStorage('localhost', 11211, '', new SQLiteJournal(TEMP_DIR . '/journal.s3db'));
 $cache = new Cache($storage);
 
 

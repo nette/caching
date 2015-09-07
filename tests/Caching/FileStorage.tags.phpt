@@ -5,7 +5,7 @@
  */
 
 use Nette\Caching\Storages\FileStorage;
-use Nette\Caching\Storages\FileJournal;
+use Nette\Caching\Storages\SQLiteJournal;
 use Nette\Caching\Cache;
 use Tester\Assert;
 
@@ -13,7 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$storage = new FileStorage(TEMP_DIR, new FileJournal(TEMP_DIR));
+$storage = new FileStorage(TEMP_DIR, new SQLiteJournal(TEMP_DIR . '/journal.s3db'));
 $cache = new Cache($storage);
 
 
