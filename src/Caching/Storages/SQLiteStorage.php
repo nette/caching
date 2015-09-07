@@ -22,7 +22,7 @@ class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
 
 	public function __construct($path = ':memory:')
 	{
-		$this->pdo = new \PDO('sqlite:' . $path, NULL, NULL, [\PDO::ATTR_PERSISTENT => TRUE]);
+		$this->pdo = new \PDO('sqlite:' . $path);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
