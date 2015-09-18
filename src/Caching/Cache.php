@@ -218,15 +218,14 @@ class Cache extends Nette\Object
 	 */
 	public function wrap($function, array $dependencies = NULL)
 	{
-		$cache = $this;
-		return function () use ($cache, $function, $dependencies) {
+		return function () use ($function, $dependencies) {
 			$key = [$function, func_get_args()];
 			if (is_array($function) && is_object($function[0])) {
 				$key[0][0] = get_class($function[0]);
 			}
-			$data = $cache->load($key);
+			$data = $this->load($key);
 			if ($data === NULL) {
-				$data = $cache->save($key, Callback::invokeArgs($function, $key[1]), $dependencies);
+				$data = $this->save($key, Callback::invokeArgs($function, $key[1]), $dependencies);
 			}
 			return $data;
 		};
