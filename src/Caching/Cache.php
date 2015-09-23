@@ -13,9 +13,6 @@ use Nette\Utils\Callback;
 
 /**
  * Implements the cache for a application.
- *
- * @property-read IStorage $storage
- * @property-read string $namespace
  */
 class Cache extends Nette\Object
 {
