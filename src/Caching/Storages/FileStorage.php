@@ -143,7 +143,7 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 	{
 		$cacheFile = $this->getCacheFile($key);
 		if ($this->useDirs && !is_dir($dir = dirname($cacheFile))) {
-			@mkdir($dir); // @ - directory may already exist
+			@mkdir($dir, 0777, true); // @ - directory may already exist
 		}
 		$handle = fopen($cacheFile, 'c+b');
 		if ($handle) {
@@ -365,8 +365,11 @@ class FileStorage extends Nette\Object implements Nette\Caching\IStorage
 	protected function getCacheFile($key)
 	{
 		$file = urlencode($key);
-		if ($this->useDirs && $a = strrpos($file, '%00')) { // %00 = urlencode(Nette\Caching\Cache::NAMESPACE_SEPARATOR)
-			$file = substr_replace($file, '/_', $a, 3);
+		if ($this->useDirs) {
+			$a = 0;
+			while ($a = strrpos($file, '%00', -$a)) { // %00 = urlencode(Nette\Caching\Cache::NAMESPACE_SEPARATOR)
+				$file = substr_replace($file, '/_', $a, 3);
+			}
 		}
 		return $this->dir . '/_' . $file;
 	}
