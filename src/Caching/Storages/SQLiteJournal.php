@@ -32,7 +32,8 @@ class SQLiteJournal extends Nette\Object implements IJournal
 		$this->pdo = new \PDO('sqlite:' . $path);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
-			PRAGMA foreign_keys = ON;
+			PRAGMA foreign_keys = OFF;
+			PRAGMA journal_mode = WAL;
 			CREATE TABLE IF NOT EXISTS tags (
 				key BLOB NOT NULL,
 				tag BLOB NOT NULL
@@ -41,7 +42,6 @@ class SQLiteJournal extends Nette\Object implements IJournal
 				key BLOB NOT NULL,
 				priority INT NOT NULL
 			);
-			CREATE INDEX IF NOT EXISTS idx_tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags(tag);
 			CREATE UNIQUE INDEX IF NOT EXISTS idx_tags_key_tag ON tags(key, tag);
 			CREATE UNIQUE INDEX IF NOT EXISTS idx_priorities_key ON priorities(key);
