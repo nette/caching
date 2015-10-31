@@ -44,7 +44,7 @@ class SQLiteJournal extends Nette\Object implements IJournal
 			CREATE INDEX IF NOT EXISTS idx_tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS idx_tags_tag ON tags(tag);
 			CREATE UNIQUE INDEX IF NOT EXISTS idx_tags_key_tag ON tags(key, tag);
-			CREATE INDEX IF NOT EXISTS idx_priorities_key ON priorities(key);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_priorities_key ON priorities(key);
 			CREATE INDEX IF NOT EXISTS idx_priorities_priority ON priorities(priority);
 		');
 	}
