@@ -4,7 +4,7 @@
  * Test: Common tests for all IJournal implementations.
  */
 
-use	Nette\Caching\Cache;
+use Nette\Caching\Cache;
 use Nette\Caching\Storages\IJournal;
 use Tester\Assert;
 
@@ -242,12 +242,15 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedDifferentPriorities()
 	{
 		$this->journal->write('ok_test_bb', [
-			Cache::PRIORITY => 15
+			Cache::PRIORITY => 10
 		]);
 
 		$this->journal->write('ok_test_bb', [
 			Cache::PRIORITY => 20
 		]);
+
+		Assert::same([
+		], $this->journal->clean([Cache::PRIORITY => 15]));
 
 		Assert::same([
 			'ok_test_bb',
