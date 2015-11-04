@@ -4,7 +4,7 @@
  * Test: Common tests for all IJournal implementations.
  */
 
-use	Nette\Caching\Cache;
+use Nette\Caching\Cache;
 use Nette\Caching\Storages\IJournal;
 use Tester\Assert;
 
