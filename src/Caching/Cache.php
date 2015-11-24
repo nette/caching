@@ -123,6 +123,9 @@ class Cache extends Nette\Object
 			$this->storage->lock($key);
 			try {
 				$data = call_user_func_array($data, [& $dependencies]);
+			} catch (\Throwable $e) {
+				$this->storage->remove($key);
+				throw $e;
 			} catch (\Exception $e) {
 				$this->storage->remove($key);
 				throw $e;
