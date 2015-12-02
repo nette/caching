@@ -10,7 +10,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-require __DIR__ . '/Cache.inc';
+require __DIR__ . '/Cache.php';
 
 
 // load twice with fallback

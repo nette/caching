@@ -8,7 +8,7 @@ use Nette\Caching\Storages\FileJournal;
 
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/IJournalTestCase.inc';
+require __DIR__ . '/IJournalTestCase.php';
 
 
 class FileJournalTest extends IJournalTestCase
