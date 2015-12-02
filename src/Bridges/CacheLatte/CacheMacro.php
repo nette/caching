@@ -49,7 +49,7 @@ class CacheMacro extends Nette\Object implements Latte\IMacro
 	public function nodeOpened(Latte\MacroNode $node)
 	{
 		if ($node->modifiers) {
-			throw new Latte\CompileException('Modifiers are not allowed here.');
+			throw new Latte\CompileException("Modifiers are not allowed in {{$node->name}}");
 		}
 		$this->used = TRUE;
 		$node->isEmpty = FALSE;
