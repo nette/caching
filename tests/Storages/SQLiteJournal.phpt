@@ -8,7 +8,7 @@ use Nette\Caching\Storages\SQLiteJournal;
 
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/IJournalTestCase.inc';
+require __DIR__ . '/IJournalTestCase.php';
 
 
 if (!extension_loaded('pdo_sqlite')) {
