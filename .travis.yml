@@ -16,6 +16,9 @@ script:
     - vendor/bin/tester tests -s -p php -c tests/php-unix.ini
     - php temp/code-checker/src/code-checker.php --short-arrays
 
+install:
+    - echo -e "yes\nno" | pecl install apcu-beta
+
 after_failure:
     # Print *.actual content
     - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
