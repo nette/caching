@@ -17,25 +17,27 @@ if (!MemcachedStorage::isAvailable()) {
 	Tester\Environment::skip('Requires PHP extension Memcache.');
 }
 
+Tester\Environment::lock('memcached-priority', TEMP_DIR);
 
-$storage = new MemcachedStorage('localhost', 11211, '', new SQLiteJournal(TEMP_DIR . '/journal.s3db'));
+
+$storage = new MemcachedStorage('localhost', 11211, '', new SQLiteJournal(TEMP_DIR . '/journal-memcache.s3db'));
 $cache = new Cache($storage);
 
 
 // Writing cache...
-$cache->save('nette-priority-key1', 'value1', [
+$cache->save('nette-memcache-priority-key1', 'value1', [
 	Cache::PRIORITY => 100,
 ]);
 
-$cache->save('nette-priority-key2', 'value2', [
+$cache->save('nette-memcache-priority-key2', 'value2', [
 	Cache::PRIORITY => 200,
 ]);
 
-$cache->save('nette-priority-key3', 'value3', [
+$cache->save('nette-memcache-priority-key3', 'value3', [
 	Cache::PRIORITY => 300,
 ]);
 
-$cache->save('nette-priority-key4', 'value4');
+$cache->save('nette-memcache-priority-key4', 'value4');
 
 
 // Cleaning by priority...
@@ -43,7 +45,7 @@ $cache->clean([
 	Cache::PRIORITY => '200',
 ]);
 
-Assert::null($cache->load('nette-priority-key1'));
-Assert::null($cache->load('nette-priority-key2'));
-Assert::truthy($cache->load('nette-priority-key3'));
-Assert::truthy($cache->load('nette-priority-key4'));
+Assert::null($cache->load('nette-memcache-priority-key1'));
+Assert::null($cache->load('nette-memcache-priority-key2'));
+Assert::truthy($cache->load('nette-memcache-priority-key3'));
+Assert::truthy($cache->load('nette-memcache-priority-key4'));
