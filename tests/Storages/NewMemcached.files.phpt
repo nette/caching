@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\MemcachedStorage files dependency test.
+ * Test: Nette\Caching\Storages\NewMemcachedStorage files dependency test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage;
+use Nette\Caching\Storages\NewMemcachedStorage;
 use Nette\Caching\Cache;
 use Tester\Assert;
 
@@ -12,20 +12,20 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!MemcachedStorage::isAvailable()) {
-	Tester\Environment::skip('Requires PHP extension Memcache.');
+if (!NewMemcachedStorage::isAvailable()) {
+	Tester\Environment::skip('Requires PHP extension Memcached.');
 }
 
 Tester\Environment::lock('memcached-files', TEMP_DIR);
 
 
-$key = 'nette-memcache-files-key';
+$key = 'nette-memcached-files-key';
 $value = 'rulez';
 
-$cache = new Cache(new MemcachedStorage('localhost'));
+$cache = new Cache(new NewMemcachedStorage('localhost'));
 
 
-$dependentFile = TEMP_DIR . '/spec-memcache.file';
+$dependentFile = TEMP_DIR . '/spec-memcached.file';
 @unlink($dependentFile);
 
 // Writing cache...
