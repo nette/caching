@@ -16,6 +16,9 @@ use Nette\Caching\Cache;
  */
 class SQLiteJournal extends Nette\Object implements IJournal
 {
+	/** @string */
+	private $path;
+
 	/** @var \PDO */
 	private $pdo;
 
@@ -28,8 +31,13 @@ class SQLiteJournal extends Nette\Object implements IJournal
 		if (!extension_loaded('pdo_sqlite')) {
 			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
 		}
+		$this->path = $path;
+	}
 
-		$this->pdo = new \PDO('sqlite:' . $path);
+
+	private function open()
+	{
+		$this->pdo = new \PDO('sqlite:' . $this->path);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = OFF;
@@ -58,6 +66,9 @@ class SQLiteJournal extends Nette\Object implements IJournal
 	 */
 	public function write($key, array $dependencies)
 	{
+		if (!$this->pdo) {
+			$this->open();
+		}
 		$this->pdo->exec('BEGIN');
 
 		if (!empty($dependencies[Cache::TAGS])) {
@@ -89,6 +100,9 @@ class SQLiteJournal extends Nette\Object implements IJournal
 	 */
 	public function clean(array $conditions)
 	{
+		if (!$this->pdo) {
+			$this->open();
+		}
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->exec('
 				BEGIN;
