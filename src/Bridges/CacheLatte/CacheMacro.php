@@ -14,8 +14,10 @@ use Latte;
 /**
  * Macro {cache} ... {/cache}
  */
-class CacheMacro extends Nette\Object implements Latte\IMacro
+class CacheMacro implements Latte\IMacro
 {
+	use Nette\SmartObject;
+
 	/** @var bool */
 	private $used;
 

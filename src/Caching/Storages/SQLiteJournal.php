@@ -14,8 +14,10 @@ use Nette\Caching\Cache;
 /**
  * SQLite based journal.
  */
-class SQLiteJournal extends Nette\Object implements IJournal
+class SQLiteJournal implements IJournal
 {
+	use Nette\SmartObject;
+
 	/** @string */
 	private $path;
 

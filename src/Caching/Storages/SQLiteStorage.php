@@ -14,8 +14,10 @@ use Nette\Caching\Cache;
 /**
  * SQLite storage.
  */
-class SQLiteStorage extends Nette\Object implements Nette\Caching\IStorage
+class SQLiteStorage implements Nette\Caching\IStorage
 {
+	use Nette\SmartObject;
+
 	/** @var \PDO */
 	private $pdo;
 

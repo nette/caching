@@ -13,8 +13,9 @@ use Nette;
 /**
  * Cache dummy storage.
  */
-class DevNullStorage extends Nette\Object implements Nette\Caching\IStorage
+class DevNullStorage implements Nette\Caching\IStorage
 {
+	use Nette\SmartObject;
 
 	/**
 	 * Read from cache.

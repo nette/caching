@@ -13,8 +13,10 @@ use Nette;
 /**
  * Memory cache storage.
  */
-class MemoryStorage extends Nette\Object implements Nette\Caching\IStorage
+class MemoryStorage implements Nette\Caching\IStorage
 {
+	use Nette\SmartObject;
+
 	/** @var array */
 	private $data = [];
 

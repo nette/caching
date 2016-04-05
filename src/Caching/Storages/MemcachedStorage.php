@@ -14,8 +14,10 @@ use Nette\Caching\Cache;
 /**
  * Memcached storage.
  */
-class MemcachedStorage extends Nette\Object implements Nette\Caching\IStorage
+class MemcachedStorage implements Nette\Caching\IStorage
 {
+	use Nette\SmartObject;
+
 	/** @internal cache structure */
 	const META_CALLBACKS = 'callbacks',
 		META_DATA = 'data',

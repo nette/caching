@@ -14,8 +14,10 @@ use Nette\Caching\Cache;
 /**
  * Cache file storage.
  */
-class FileStorage extends Nette\Object implements Nette\Caching\IStorage
+class FileStorage implements Nette\Caching\IStorage
 {
+	use Nette\SmartObject;
+
 	/**
 	 * Atomic thread safe logic:
 	 *

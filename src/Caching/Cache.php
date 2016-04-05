@@ -14,8 +14,10 @@ use Nette\Utils\Callback;
 /**
  * Implements the cache for a application.
  */
-class Cache extends Nette\Object
+class Cache
 {
+	use Nette\SmartObject;
+
 	/** dependency */
 	const PRIORITY = 'priority',
 		EXPIRATION = 'expire',
