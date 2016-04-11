@@ -217,19 +217,18 @@ class FileStorage implements Nette\Caching\IStorage
 		$head = serialize($meta) . '?>';
 		$head = '<?php //netteCache[01]' . str_pad((string) strlen($head), 6, '0', STR_PAD_LEFT) . $head;
 		$headLen = strlen($head);
-		$dataLen = strlen($data);
 
 		do {
-			if (fwrite($handle, str_repeat("\x00", $headLen), $headLen) !== $headLen) {
+			if (fwrite($handle, str_repeat("\x00", $headLen)) !== $headLen) {
 				break;
 			}
 
-			if (fwrite($handle, $data, $dataLen) !== $dataLen) {
+			if (fwrite($handle, $data) !== strlen($data)) {
 				break;
 			}
 
 			fseek($handle, 0);
-			if (fwrite($handle, $head, $headLen) !== $headLen) {
+			if (fwrite($handle, $head) !== $headLen) {
 				break;
 			}
 
