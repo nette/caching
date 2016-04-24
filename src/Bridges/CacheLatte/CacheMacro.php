@@ -39,7 +39,7 @@ class CacheMacro implements Latte\IMacro
 	public function finalize()
 	{
 		if ($this->used) {
-			return ['Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);'];
+			return ['Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $_g);'];
 		}
 	}
 

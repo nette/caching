@@ -1,20 +1,26 @@
 <?php
-// source: %a%
+// source: %A%
+
+class Template%a% extends Latte\Template
+{
+
+	function render()
+	{
 %A%
 // prolog Nette\Bridges\CacheLatte\CacheMacro
-Nette\Bridges\CacheLatte\CacheMacro::initRuntime($template, $_g);
+Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $_g);
 
-//
 // main template
-//
 ?>
 Noncached content
 
-<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, '%[a-z0-9]+%', $_g->caches, [$id, 'tags' => 'mytag'])) { ?>
+<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, '%[\w]+%', $_g->caches, [$id, 'tags' => 'mytag'])) { ?>
 
-<h1><?php echo Latte\Runtime\Filters::escapeHtml($template->upper($title), ENT_NOQUOTES) ?></h1>
+<h1><?php echo LFilters::escapeHtmlText(call_user_func($this->filters->upper, $title)) ?></h1>
 
-<?php $_b->templates['%[a-z0-9]+%']->renderChildTemplate('include.cache.latte', ['localvar' => 11] + $template->getParameters()) ?>
+<?php $this->createChild('include.cache.latte', ['localvar' => 11] + $this->params, "include")->render() ?>
 
 <?php $_l->tmp = array_pop($_g->caches); if (!$_l->tmp instanceof stdClass) $_l->tmp->end(); }
-%A%
+	}
+
+}
