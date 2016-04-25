@@ -137,13 +137,13 @@ class Cache
 		if ($data === NULL) {
 			$this->storage->remove($key);
 		} else {
-			$this->storage->write($key, $data, $this->completeDependencies($dependencies, $data));
+			$this->storage->write($key, $data, $this->completeDependencies($dependencies));
 			return $data;
 		}
 	}
 
 
-	private function completeDependencies($dp, $data)
+	private function completeDependencies($dp)
 	{
 		// convert expire into relative amount of seconds
 		if (isset($dp[self::EXPIRATION])) {
