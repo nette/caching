@@ -110,18 +110,16 @@ class Cache
 				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in a bulkLoad method.');
 			}
 		}
-		$keys = array_combine(array_map([$this, 'generateKey'], $keys), $keys);
+		$storageKeys = array_map([$this, 'generateKey'], $keys);
 		$storage = $this->getStorage();
 		if ($storage instanceof IBulkReadStorage) {
-			$cacheData = $storage->bulkRead(array_keys($keys));
+			$cacheData = $storage->bulkRead($storageKeys);
 		} else {
-			$cacheData = [];
-			foreach ($keys as $storageKey => $key) {
-				$cacheData[$storageKey] = $this->load($key);
-			}
+			$cacheData = array_combine($storageKeys, array_map([$storage, 'read'], $storageKeys));
 		}
 		$result = [];
-		foreach ($keys as $storageKey => $key) {
+		foreach ($keys as $i => $key) {
+			$storageKey = $storageKeys[$i];
 			if (isset($cacheData[$storageKey])) {
 				$result[$key] = $cacheData[$storageKey];
 			} elseif ($fallback) {
