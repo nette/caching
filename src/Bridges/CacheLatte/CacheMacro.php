@@ -81,10 +81,13 @@ class CacheMacro implements Latte\IMacro
 	 */
 	public static function initRuntime(Latte\Template $template, $global)
 	{
-		if (!empty($global->caches) && $template->getEngine()->getLoader() instanceof Latte\Loaders\FileLoader) {
-			end($global->caches)->dependencies[Nette\Caching\Cache::FILES][] = $template->getName();
+		if (!empty($global->caches)) {
+			$file = (new \ReflectionClass($template))->getFileName();
+			if (@is_file($file)) { // @ - may trigger error
+				end($global->caches)->dependencies[Cache::FILES][] = $file;
 			}
 		}
+	}
 
 
 	/**
