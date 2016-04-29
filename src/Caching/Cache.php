@@ -114,11 +114,21 @@ class Cache
 			}
 		}
 		$storageKeys = array_map([$this, 'generateKey'], $keys);
-		if ($this->storage instanceof IBulkReadStorage) {
-			$cacheData = $this->storage->bulkRead($storageKeys);
-		} else {
-			$cacheData = array_combine($storageKeys, array_map([$this->storage, 'read'], $storageKeys));
+		if (!$this->storage instanceof IBulkReadStorage) {
+			$result = array_combine($keys, array_map([$this->storage, 'read'], $storageKeys));
+			if ($fallback !== NULL) {
+				foreach ($result as $key => $value) {
+					if ($value === NULL) {
+						$result[$key] = $this->save($key, function (& $dependencies) use ($key, $fallback) {
+							return call_user_func_array($fallback, [$key, & $dependencies]);
+						});
+					}
+				}
+			}
+			return $result;
 		}
+
+		$cacheData = $this->storage->bulkRead($storageKeys);
 		$result = [];
 		foreach ($keys as $i => $key) {
 			$storageKey = $storageKeys[$i];
