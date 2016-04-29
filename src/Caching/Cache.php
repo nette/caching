@@ -98,6 +98,45 @@ class Cache
 
 
 	/**
+	 * Reads multiple items from the cache
+	 * @param array
+	 * @param callable
+	 * @return array
+	 */
+	public function bulkLoad(array $keys, $fallback = NULL)
+	{
+		foreach ($keys as $key) {
+			if (!is_scalar($key)) {
+				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in a bulkLoad method.');
+			}
+		}
+		$keys = array_combine(array_map([$this, 'generateKey'], $keys), $keys);
+		$storage = $this->getStorage();
+		if ($storage instanceof IBulkReadStorage) {
+			$cacheData = $storage->bulkRead(array_keys($keys));
+		} else {
+			$cacheData = [];
+			foreach ($keys as $storageKey => $key) {
+				$cacheData[$storageKey] = $this->load($key);
+			}
+		}
+		$result = [];
+		foreach ($keys as $storageKey => $key) {
+			if (isset($cacheData[$storageKey])) {
+				$result[$key] = $cacheData[$storageKey];
+			} elseif ($fallback) {
+				$result[$key] = $this->save($key, function (& $dependencies) use ($key, $fallback) {
+					return call_user_func_array($fallback, [$key, & $dependencies]);
+				});
+			} else {
+				$result[$key] = NULL;
+			}
+		}
+		return $result;
+	}
+
+
+	/**
 	 * Writes item into the cache.
 	 * Dependencies are:
 	 * - Cache::PRIORITY => (int) priority

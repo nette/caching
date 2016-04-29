@@ -1,5 +1,6 @@
 <?php
 
+use Nette\Caching\IBulkReadStorage;
 use Nette\Caching\IStorage;
 
 class TestStorage implements IStorage
@@ -24,4 +25,21 @@ class TestStorage implements IStorage
 	public function remove($key) {}
 
 	public function clean(array $conditions) {}
+}
+
+class BulkReadTestStorage extends TestStorage implements IBulkReadStorage
+{
+	function bulkRead(array $keys)
+	{
+		$result = [];
+		foreach ($keys as $key) {
+			$data = $this->read($key);
+			if ($data !== NULL) {
+				$result[$key] = $data;
+			}
+		}
+
+		return $result;
+	}
+
 }

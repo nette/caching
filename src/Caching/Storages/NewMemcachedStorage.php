@@ -14,7 +14,7 @@ use Nette\Caching\Cache;
 /**
  * Memcached storage using memcached extension.
  */
-class NewMemcachedStorage implements Nette\Caching\IStorage
+class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 {
 	use Nette\SmartObject;
 
@@ -83,30 +83,46 @@ class NewMemcachedStorage implements Nette\Caching\IStorage
 	 */
 	public function read($key)
 	{
-		$key = urlencode($this->prefix . $key);
-		$meta = $this->memcached->get($key);
-		if (!$meta) {
-			return NULL;
+		$result = $this->bulkRead([$key]);
+		return isset($result[$key]) ? $result[$key] : NULL;
+	}
+
+
+	/**
+	 * Read from cache.
+	 * @param  string key
+	 * @return array key => value pairs, missing items are omitted
+	 */
+	public function bulkRead(array $keys)
+	{
+		$keys = array_combine(array_map(function ($key) {
+			return urlencode($this->prefix . $key);
+		}, $keys), $keys);
+		$metas = $this->memcached->getMulti(array_keys($keys));
+		$result = [];
+		foreach ($metas as $key => $meta) {
+
+			// meta structure:
+			// array(
+			//     data => stored data
+			//     delta => relative (sliding) expiration
+			//     callbacks => array of callbacks (function, args)
+			// )
+
+			// verify dependencies
+			if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
+				$this->memcached->delete($key, 0);
+
+				return NULL;
+			}
+
+			if (!empty($meta[self::META_DELTA])) {
+				$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
+			}
+			$result[$keys[$key]] = $meta[self::META_DATA];
 		}
 
-		// meta structure:
-		// array(
-		//     data => stored data
-		//     delta => relative (sliding) expiration
-		//     callbacks => array of callbacks (function, args)
-		// )
-
-		// verify dependencies
-		if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
-			$this->memcached->delete($key, 0);
-			return NULL;
-		}
-
-		if (!empty($meta[self::META_DELTA])) {
-			$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
-		}
-
-		return $meta[self::META_DATA];
+		return $result;
 	}
 
 

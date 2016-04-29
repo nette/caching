@@ -14,7 +14,7 @@ use Nette\Caching\Cache;
 /**
  * SQLite storage.
  */
-class SQLiteStorage implements Nette\Caching\IStorage
+class SQLiteStorage implements Nette\Caching\IBulkReadStorage
 {
 	use Nette\SmartObject;
 
@@ -53,14 +53,28 @@ class SQLiteStorage implements Nette\Caching\IStorage
 	 */
 	public function read($key)
 	{
-		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
-		$stmt->execute([$key, time()]);
-		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+		$result = $this->bulkRead([$key]);
+		return isset($result[$key]) ? $result[$key] : NULL;
+	}
+
+
+	/**
+	 * Read from cache.
+	 * @param  string key
+	 * @return array key => value pairs, missing items are omitted
+	 */
+	public function bulkRead(array $keys)
+	{
+		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
+		$stmt->execute(array_merge($keys, [time()]));
+		$result = [];
+		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
 			if ($row['slide'] !== NULL) {
-				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
+				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $row['key']]);
 			}
-			return unserialize($row['data']);
+			$result[$row['key']] = unserialize($row['data']);
 		}
+		return $result;
 	}
 
 
