@@ -98,6 +98,55 @@ class Cache
 
 
 	/**
+	 * Reads multiple items from the cache.
+	 * @param  array
+	 * @param  callable
+	 * @return array
+	 */
+	public function bulkLoad(array $keys, $fallback = NULL)
+	{
+		if (count($keys) === 0) {
+			return [];
+		}
+		foreach ($keys as $key) {
+			if (!is_scalar($key)) {
+				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in bulkLoad()');
+			}
+		}
+		$storageKeys = array_map([$this, 'generateKey'], $keys);
+		if (!$this->storage instanceof IBulkReader) {
+			$result = array_combine($keys, array_map([$this->storage, 'read'], $storageKeys));
+			if ($fallback !== NULL) {
+				foreach ($result as $key => $value) {
+					if ($value === NULL) {
+						$result[$key] = $this->save($key, function (& $dependencies) use ($key, $fallback) {
+							return call_user_func_array($fallback, [$key, & $dependencies]);
+						});
+					}
+				}
+			}
+			return $result;
+		}
+
+		$cacheData = $this->storage->bulkRead($storageKeys);
+		$result = [];
+		foreach ($keys as $i => $key) {
+			$storageKey = $storageKeys[$i];
+			if (isset($cacheData[$storageKey])) {
+				$result[$key] = $cacheData[$storageKey];
+			} elseif ($fallback) {
+				$result[$key] = $this->save($key, function (& $dependencies) use ($key, $fallback) {
+					return call_user_func_array($fallback, [$key, & $dependencies]);
+				});
+			} else {
+				$result[$key] = NULL;
+			}
+		}
+		return $result;
+	}
+
+
+	/**
 	 * Writes item into the cache.
 	 * Dependencies are:
 	 * - Cache::PRIORITY => (int) priority
