@@ -105,17 +105,19 @@ class Cache
 	 */
 	public function bulkLoad(array $keys, $fallback = NULL)
 	{
+		if (count($keys) === 0) {
+			return [];
+		}
 		foreach ($keys as $key) {
 			if (!is_scalar($key)) {
 				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in a bulkLoad method.');
 			}
 		}
 		$storageKeys = array_map([$this, 'generateKey'], $keys);
-		$storage = $this->getStorage();
-		if ($storage instanceof IBulkReadStorage) {
-			$cacheData = $storage->bulkRead($storageKeys);
+		if ($this->storage instanceof IBulkReadStorage) {
+			$cacheData = $this->storage->bulkRead($storageKeys);
 		} else {
-			$cacheData = array_combine($storageKeys, array_map([$storage, 'read'], $storageKeys));
+			$cacheData = array_combine($storageKeys, array_map([$this->storage, 'read'], $storageKeys));
 		}
 		$result = [];
 		foreach ($keys as $i => $key) {
