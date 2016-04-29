@@ -83,8 +83,30 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 	 */
 	public function read($key)
 	{
-		$result = $this->bulkRead([$key]);
-		return isset($result[$key]) ? $result[$key] : NULL;
+		$key = urlencode($this->prefix . $key);
+		$meta = $this->memcached->get($key);
+		if (!$meta) {
+			return NULL;
+		}
+		// meta structure:
+		// array(
+		//     data => stored data
+		//     delta => relative (sliding) expiration
+		//     callbacks => array of callbacks (function, args)
+		// )
+
+		// verify dependencies
+		if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
+			$this->memcached->delete($key, 0);
+			return NULL;
+		}
+
+		if (!empty($meta[self::META_DELTA])) {
+			$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
+		}
+
+
+		return $meta[self::META_DATA];
 	}
 
 
@@ -100,29 +122,34 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 		}, $keys), $keys);
 		$metas = $this->memcached->getMulti(array_keys($keys));
 		$result = [];
+		$deleteKeys = [];
 		foreach ($metas as $key => $meta) {
-
-			// meta structure:
-			// array(
-			//     data => stored data
-			//     delta => relative (sliding) expiration
-			//     callbacks => array of callbacks (function, args)
-			// )
-
-			// verify dependencies
 			if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
-				$this->memcached->delete($key, 0);
-
-				return NULL;
+				$deleteKeys[] = $key;
+			} else {
+				$result[$keys[$key]] = $meta[self::META_DATA];
 			}
 
 			if (!empty($meta[self::META_DELTA])) {
 				$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
 			}
-			$result[$keys[$key]] = $meta[self::META_DATA];
+		}
+		if (!empty($deleteKeys)) {
+			$this->memcached->deleteMulti($keys, 0);
 		}
 
 		return $result;
+	}
+
+
+	/**
+	 * @param string
+	 * @param array
+	 * @return bool
+	 */
+	private function verifyMeta($key, $meta)
+	{
+
 	}
 
 

@@ -53,8 +53,14 @@ class SQLiteStorage implements Nette\Caching\IBulkReadStorage
 	 */
 	public function read($key)
 	{
-		$result = $this->bulkRead([$key]);
-		return isset($result[$key]) ? $result[$key] : NULL;
+		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
+		$stmt->execute([$key, time()]);
+		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			if ($row['slide'] !== NULL) {
+				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
+			}
+			return unserialize($row['data']);
+		}
 	}
 
 
@@ -68,11 +74,16 @@ class SQLiteStorage implements Nette\Caching\IBulkReadStorage
 		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute(array_merge($keys, [time()]));
 		$result = [];
+		$updateSlide = [];
 		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
 			if ($row['slide'] !== NULL) {
-				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $row['key']]);
+				$updateSlide[] = $row['key'];
 			}
 			$result[$row['key']] = unserialize($row['data']);
+		}
+		if (!empty($updateSlide)) {
+			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
+			$stmt->execute(array_merge([time()], $updateSlide));
 		}
 		return $result;
 	}
