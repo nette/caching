@@ -143,17 +143,6 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 
 
 	/**
-	 * @param string
-	 * @param array
-	 * @return bool
-	 */
-	private function verifyMeta($key, $meta)
-	{
-
-	}
-
-
-	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
 	 * @param  string key
 	 * @return void
