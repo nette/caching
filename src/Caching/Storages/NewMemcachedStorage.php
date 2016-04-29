@@ -117,25 +117,26 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 	 */
 	public function bulkRead(array $keys)
 	{
-		$keys = array_combine(array_map(function ($key) {
+		$prefixedKeys = array_map(function ($key) {
 			return urlencode($this->prefix . $key);
-		}, $keys), $keys);
-		$metas = $this->memcached->getMulti(array_keys($keys));
+		}, $keys);
+		$keys = array_combine($prefixedKeys, $keys);
+		$metas = $this->memcached->getMulti($prefixedKeys);
 		$result = [];
 		$deleteKeys = [];
-		foreach ($metas as $key => $meta) {
+		foreach ($metas as $prefixedKey => $meta) {
 			if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
-				$deleteKeys[] = $key;
+				$deleteKeys[] = $prefixedKey;
 			} else {
-				$result[$keys[$key]] = $meta[self::META_DATA];
+				$result[$keys[$prefixedKey]] = $meta[self::META_DATA];
 			}
 
 			if (!empty($meta[self::META_DELTA])) {
-				$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
+				$this->memcached->replace($prefixedKey, $meta, $meta[self::META_DELTA] + time());
 			}
 		}
 		if (!empty($deleteKeys)) {
-			$this->memcached->deleteMulti($keys, 0);
+			$this->memcached->deleteMulti($deleteKeys, 0);
 		}
 
 		return $result;
