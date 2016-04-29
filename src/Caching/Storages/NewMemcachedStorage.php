@@ -88,6 +88,7 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 		if (!$meta) {
 			return NULL;
 		}
+
 		// meta structure:
 		// array(
 		//     data => stored data
@@ -104,7 +105,6 @@ class NewMemcachedStorage implements Nette\Caching\IBulkReadStorage
 		if (!empty($meta[self::META_DELTA])) {
 			$this->memcached->replace($key, $meta, $meta[self::META_DELTA] + time());
 		}
-
 
 		return $meta[self::META_DATA];
 	}
