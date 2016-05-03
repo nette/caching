@@ -7,17 +7,21 @@ class Template%a% extends Latte\Template
 	function render()
 	{
 %A%
-// prolog Nette\Bridges\CacheLatte\CacheMacro
-Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $this->global);
+		// prolog Nette\Bridges\CacheLatte\CacheMacro
+		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $this->global);
 
-// main template
-?>
-<p>Included file (<?php echo LFilters::escapeHtmlText($localvar) ?>)</p>
+		// main template
+		?><p>Included file (<?php echo LFilters::escapeHtmlText($localvar) ?>)</p>
 
-<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, '%[\w]+%', $this->global->caches)) { ?>
-	<?php echo LFilters::escapeHtmlText(call_user_func($this->filters->lower, $title)) ?>
+<?php
+		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, '%[\w]+%', $this->global->caches)) {
+			?>	<?php echo LFilters::escapeHtmlText(call_user_func($this->filters->lower, $title)) ?>
 
-<?php $_tmp = array_pop($this->global->caches); if (!$_tmp instanceof stdClass) $_tmp->end(); }
+<?php
+			$_tmp = array_pop($this->global->caches);
+			if (!$_tmp instanceof stdClass) $_tmp->end();
+		}
+
 	}
 
 }
