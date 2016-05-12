@@ -14,8 +14,8 @@ require __DIR__ . '/../bootstrap.php';
 $latte = new Latte\Engine;
 $latte->setTempDirectory(TEMP_DIR);
 $latte->addMacro('cache', new CacheMacro($latte->getCompiler()));
+$latte->addProvider('cacheStorage', new Nette\Caching\Storages\DevNullStorage);
 
-$params['netteCacheStorage'] = new Nette\Caching\Storages\DevNullStorage;
 $params['title'] = 'Hello';
 $params['id'] = 456;
 

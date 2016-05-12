@@ -16,9 +16,9 @@ test(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('cache', new CacheExtension(TEMP_DIR));
 
-	eval($compiler->compile([], 'Container1'));
+	eval($compiler->compile());
 
-	$container = new Container1;
+	$container = new Container;
 	$container->initialize();
 
 	$journal = $container->getService('cache.journal');

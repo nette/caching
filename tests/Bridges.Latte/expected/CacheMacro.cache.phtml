@@ -8,21 +8,21 @@ class Template%a% extends Latte\Template
 	{
 %A%
 		// prolog Nette\Bridges\CacheLatte\CacheMacro
-		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $this->global);
+		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this);
 
 %A%
 Noncached content
 
 %A%
-		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, '%[\w]+%', $this->global->caches, [$id, 'tags' => 'mytag'])) {
+		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, '%[\w]+%', $this->global->cacheStack, [$id, 'tags' => 'mytag'])) {
 			?>
 
 <h1><?php echo %a% ?></h1>
 
-<?php $this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include", 'html')->render() ?>
+<?php $this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html') ?>
 
 <?php
-			$_tmp = array_pop($this->global->caches);
+			$_tmp = array_pop($this->global->cacheStack);
 			if (!$_tmp instanceof stdClass) $_tmp->end();
 		}
 

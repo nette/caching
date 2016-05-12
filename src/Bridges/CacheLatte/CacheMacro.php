@@ -40,7 +40,7 @@ class CacheMacro implements Latte\IMacro
 	public function finalize()
 	{
 		if ($this->used) {
-			return ['Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this, $this->global);'];
+			return ['Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this);'];
 		}
 	}
 
@@ -57,7 +57,7 @@ class CacheMacro implements Latte\IMacro
 		$this->used = TRUE;
 		$node->isEmpty = FALSE;
 		$node->openingCode = Latte\PhpWriter::using($node)
-			->write('<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($netteCacheStorage, %var, $this->global->caches, %node.array?)) { ?>',
+			->write('<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
 				Nette\Utils\Random::generate()
 			);
 	}
@@ -69,7 +69,7 @@ class CacheMacro implements Latte\IMacro
 	 */
 	public function nodeClosed(Latte\MacroNode $node)
 	{
-		$node->closingCode = '<?php $_tmp = array_pop($this->global->caches); if (!$_tmp instanceof stdClass) $_tmp->end(); } ?>';
+		$node->closingCode = '<?php $_tmp = array_pop($this->global->cacheStack); if (!$_tmp instanceof stdClass) $_tmp->end(); } ?>';
 	}
 
 
@@ -79,12 +79,12 @@ class CacheMacro implements Latte\IMacro
 	/**
 	 * @return void
 	 */
-	public static function initRuntime(Latte\Template $template, $global)
+	public static function initRuntime(Latte\Template $template)
 	{
-		if (!empty($global->caches)) {
+		if (!empty($template->global->cacheStack)) {
 			$file = (new \ReflectionClass($template))->getFileName();
 			if (@is_file($file)) { // @ - may trigger error
-				end($global->caches)->dependencies[Cache::FILES][] = $file;
+				end($template->global->cacheStack)->dependencies[Cache::FILES][] = $file;
 			}
 		}
 	}
