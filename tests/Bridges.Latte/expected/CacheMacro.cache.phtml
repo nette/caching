@@ -15,11 +15,14 @@ Noncached content
 
 %A%
 		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, '%[\w]+%', $this->global->cacheStack, [$id, 'tags' => 'mytag'])) {
-			?>
+?>
 
 <h1><?php echo %a% ?></h1>
 
-<?php $this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html') ?>
+<?php
+			/* line 7 */
+			$this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html');
+?>
 
 <?php
 			$_tmp = array_pop($this->global->cacheStack);

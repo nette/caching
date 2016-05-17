@@ -52,10 +52,10 @@ class CacheMacro implements Latte\IMacro
 	public function nodeOpened(Latte\MacroNode $node)
 	{
 		if ($node->modifiers) {
-			throw new Latte\CompileException("Modifiers are not allowed in {{$node->name}}");
+			throw new Latte\CompileException('Modifiers are not allowed in ' . $node->getNotation());
 		}
 		$this->used = TRUE;
-		$node->isEmpty = FALSE;
+		$node->empty = FALSE;
 		$node->openingCode = Latte\PhpWriter::using($node)
 			->write('<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
 				Nette\Utils\Random::generate()
