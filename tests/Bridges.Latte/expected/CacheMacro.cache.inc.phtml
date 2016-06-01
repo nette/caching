@@ -1,15 +1,11 @@
 <?php
 // source: %A%
 
-class Template%a% extends Latte\Template
+class Template%a% extends Latte\Runtime\Template
 {
 
-	function render()
+	function main()
 	{
-%A%
-		// prolog Nette\Bridges\CacheLatte\CacheMacro
-		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this);
-
 %A%
 		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, '%[\w]+%', $this->global->cacheStack)) {
 			?>	<?php echo %a% ?>
@@ -18,7 +14,15 @@ class Template%a% extends Latte\Template
 			$_tmp = array_pop($this->global->cacheStack);
 			if (!$_tmp instanceof stdClass) $_tmp->end();
 		}
+%A%
+	}
 
+
+	function prepare()
+	{
+%A%
+		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this);
+%A%
 	}
 
 }
