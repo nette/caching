@@ -79,7 +79,7 @@ class CacheMacro implements Latte\IMacro
 	/**
 	 * @return void
 	 */
-	public static function initRuntime(Latte\Template $template)
+	public static function initRuntime(Latte\Runtime\Template $template)
 	{
 		if (!empty($template->global->cacheStack)) {
 			$file = (new \ReflectionClass($template))->getFileName();
