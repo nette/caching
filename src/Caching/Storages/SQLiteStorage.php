@@ -14,7 +14,7 @@ use Nette\Caching\Cache;
 /**
  * SQLite storage.
  */
-class SQLiteStorage implements Nette\Caching\IStorage
+class SQLiteStorage implements Nette\Caching\IBulkReadStorage
 {
 	use Nette\SmartObject;
 
@@ -61,6 +61,31 @@ class SQLiteStorage implements Nette\Caching\IStorage
 			}
 			return unserialize($row['data']);
 		}
+	}
+
+
+	/**
+	 * Read from cache.
+	 * @param  string key
+	 * @return array key => value pairs, missing items are omitted
+	 */
+	public function bulkRead(array $keys)
+	{
+		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
+		$stmt->execute(array_merge($keys, [time()]));
+		$result = [];
+		$updateSlide = [];
+		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+			if ($row['slide'] !== NULL) {
+				$updateSlide[] = $row['key'];
+			}
+			$result[$row['key']] = unserialize($row['data']);
+		}
+		if (!empty($updateSlide)) {
+			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
+			$stmt->execute(array_merge([time()], $updateSlide));
+		}
+		return $result;
 	}
 
 

@@ -44,3 +44,26 @@ for ($i = 0; $i < 5; $i++) {
 sleep(5);
 
 Assert::null($cache->load($key));
+
+
+// Bulk
+
+// Writing cache...
+$cache->save($key, $value, [
+	Cache::EXPIRATION => time() + 3,
+	Cache::SLIDING => TRUE,
+]);
+
+
+for ($i = 0; $i < 5; $i++) {
+	// Sleeping 1 second
+	sleep(1);
+
+	Assert::truthy($cache->bulkLoad([$key])[$key]);
+
+}
+
+// Sleeping few seconds...
+sleep(5);
+
+Assert::null($cache->load([$key])[$key]);
