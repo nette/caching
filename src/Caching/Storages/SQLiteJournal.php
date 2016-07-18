@@ -28,15 +28,16 @@ class SQLiteJournal extends Nette\Object implements IJournal
 	 */
 	public function __construct($path = ':memory:')
 	{
-		if (!extension_loaded('pdo_sqlite')) {
-			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
-		}
 		$this->path = $path;
 	}
 
 
 	private function open()
 	{
+		if (!extension_loaded('pdo_sqlite')) {
+			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
+		}
+
 		$this->pdo = new \PDO('sqlite:' . $this->path);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
