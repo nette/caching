@@ -24,6 +24,9 @@
 		"latte/latte": "~2.4",
 		"tracy/tracy": "^2.4"
 	},
+	"suggest": {
+		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal"
+	},
 	"conflict": {
 		"nette/nette": "<2.2"
 	},
