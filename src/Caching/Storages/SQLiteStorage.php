@@ -24,6 +24,10 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	public function __construct($path)
 	{
+		if ($path !== ':memory:' && !is_file($path)) {
+			touch($path); // ensures ordinary file permissions
+		}
+
 		$this->pdo = new \PDO('sqlite:' . $path);
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
