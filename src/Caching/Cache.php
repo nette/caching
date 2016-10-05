@@ -199,6 +199,11 @@ class Cache
 			$dp[self::EXPIRATION] = Nette\Utils\DateTime::from($dp[self::EXPIRATION])->format('U') - time();
 		}
 
+		// make array list from TAGS
+		if (isset($dp[self::TAGS])) {
+			$dp[self::TAGS] = array_values((array) $dp[self::TAGS]);
+		}
+
 		// convert FILES into CALLBACKS
 		if (isset($dp[self::FILES])) {
 			foreach (array_unique((array) $dp[self::FILES]) as $item) {
@@ -248,7 +253,11 @@ class Cache
 	 */
 	public function clean(array $conditions = NULL)
 	{
-		$this->storage->clean((array) $conditions);
+		$conditionItems = (array) $conditions;
+		if (isset($conditionItems[self::TAGS])) {
+			$conditionItems[self::TAGS] = array_values((array) $conditionItems[self::TAGS]);
+		}
+		$this->storage->clean($conditionItems);
 	}
 
 
