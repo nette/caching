@@ -270,7 +270,7 @@ abstract class IJournalTestCase extends Tester\TestCase
 
 		Assert::null($this->journal->clean([Cache::ALL => TRUE]));
 		Assert::same([
-		], $this->journal->clean([Cache::TAGS => 'test:all']));
+		], $this->journal->clean([Cache::TAGS => ['test:all']]));
 	}
 
 
