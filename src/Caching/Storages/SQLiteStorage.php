@@ -114,7 +114,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			->execute([$key, serialize($data), $expire, $slide]);
 
 		if (!empty($dependencies[Cache::TAGS])) {
-			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
+			foreach ($dependencies[Cache::TAGS] as $tag) {
 				$arr[] = $key;
 				$arr[] = $tag;
 			}
@@ -148,7 +148,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			$args = [time()];
 
 			if (!empty($conditions[Cache::TAGS])) {
-				$tags = (array) $conditions[Cache::TAGS];
+				$tags = $conditions[Cache::TAGS];
 				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
 				$args = array_merge($args, $tags);
 			}

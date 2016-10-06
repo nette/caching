@@ -172,7 +172,7 @@ class FileStorage implements Nette\Caching\IStorage
 		}
 
 		if (isset($dp[Cache::ITEMS])) {
-			foreach ((array) $dp[Cache::ITEMS] as $item) {
+			foreach ($dp[Cache::ITEMS] as $item) {
 				$depFile = $this->getCacheFile($item);
 				$m = $this->readMetaAndLock($depFile, LOCK_SH);
 				$meta[self::META_ITEMS][$depFile] = $m[self::META_TIME]; // may be NULL

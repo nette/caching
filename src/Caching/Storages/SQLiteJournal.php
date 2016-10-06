@@ -77,7 +77,7 @@ class SQLiteJournal implements IJournal
 		if (!empty($dependencies[Cache::TAGS])) {
 			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute([$key]);
 
-			foreach ((array) $dependencies[Cache::TAGS] as $tag) {
+			foreach ($dependencies[Cache::TAGS] as $tag) {
 				$arr[] = $key;
 				$arr[] = $tag;
 			}
@@ -116,7 +116,7 @@ class SQLiteJournal implements IJournal
 
 		$unions = $args = [];
 		if (!empty($conditions[Cache::TAGS])) {
-			$tags = (array) $conditions[Cache::TAGS];
+			$tags = $conditions[Cache::TAGS];
 			$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
 			$args = $tags;
 		}
