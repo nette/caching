@@ -70,7 +70,7 @@ class Cache
 	/**
 	 * Returns new nested cache object.
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function derive($namespace)
 	{
