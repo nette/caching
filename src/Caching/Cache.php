@@ -186,7 +186,12 @@ class Cache
 		if ($data === NULL) {
 			$this->storage->remove($key);
 		} else {
-			$this->storage->write($key, $data, $this->completeDependencies($dependencies));
+			$dependencies = $this->completeDependencies($dependencies);
+			if (isset($dependencies[Cache::EXPIRATION]) && $dependencies[Cache::EXPIRATION] <= 0) {
+				$this->storage->remove($key);
+			} else {
+				$this->storage->write($key, $data, $dependencies);
+			}
 			return $data;
 		}
 	}
