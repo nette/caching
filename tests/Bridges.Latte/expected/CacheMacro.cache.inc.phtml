@@ -11,8 +11,7 @@ class Template%a% extends Latte\Runtime\Template
 			?>	<?php echo %a% ?>
 
 <?php
-			$_tmp = array_pop($this->global->cacheStack);
-			if (!$_tmp instanceof stdClass) $_tmp->end();
+			Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack);
 		}
 %A%
 	}
