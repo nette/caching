@@ -22,7 +22,7 @@ Assert::null($cache->load($key));
 
 
 // Writing cache using Closure...
-$res = $cache->load($key, function (& $dp) use ($value) {
+$res = $cache->load($key, function (&$dp) use ($value) {
 	$dp = [
 		Cache::EXPIRATION => time() + 2,
 	];

@@ -33,7 +33,7 @@ $dependencies = [Cache::TAGS => ['tag']];
 $storage = new TestStorage();
 $cache = new Cache($storage, 'ns');
 
-$value = $cache->load('key', function (& $deps) use ($dependencies) {
+$value = $cache->load('key', function (&$deps) use ($dependencies) {
 	$deps = $dependencies;
 	return 'value';
 });
@@ -47,7 +47,7 @@ Assert::equal($dependencies, $data['dependencies']);
 
 
 // load twice with fallback, pass dependencies
-function fallback(& $deps) {
+function fallback(&$deps) {
 	global $dependencies;
 	$deps = $dependencies;
 	return 'value';

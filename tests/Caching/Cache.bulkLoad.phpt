@@ -47,7 +47,7 @@ test(function () {
 	$storage = new BulkReadTestStorage;
 	$cache = new Cache($storage, 'ns');
 	$dependencies = [Cache::TAGS => ['tag']];
-	$cache->bulkLoad([1], function ($key, & $deps) use ($dependencies) {
+	$cache->bulkLoad([1], function ($key, &$deps) use ($dependencies) {
 		$deps = $dependencies;
 		return $key;
 	});

@@ -98,7 +98,7 @@ class CacheMacro implements Latte\IMacro
 	 * @param  array
 	 * @return Nette\Caching\OutputHelper
 	 */
-	public static function createCache(Nette\Caching\IStorage $cacheStorage, $key, & $parents, array $args = NULL)
+	public static function createCache(Nette\Caching\IStorage $cacheStorage, $key, &$parents, array $args = NULL)
 	{
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
