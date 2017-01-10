@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\SQLiteStorage and bulk read.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\SQLiteStorage;
 use Tester\Assert;

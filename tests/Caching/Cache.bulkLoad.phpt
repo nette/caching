@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Cache load().
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Tester\Assert;
 

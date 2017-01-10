@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\FileStorage sliding expiration test.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;

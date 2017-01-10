@@ -5,6 +5,8 @@
  * @multiple   5
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 

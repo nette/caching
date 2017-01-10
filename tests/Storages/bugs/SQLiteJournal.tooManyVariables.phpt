@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\SQLiteStorage tags dependency test.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\SQLiteJournal;
 use Tester\Assert;

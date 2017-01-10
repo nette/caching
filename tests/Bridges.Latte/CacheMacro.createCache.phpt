@@ -4,6 +4,8 @@
  * Test: Nette\Bridges\CacheLatte\CacheMacro createCache()
  */
 
+declare(strict_types=1);
+
 use Nette\Bridges\CacheLatte\CacheMacro;
 use Tester\Assert;
 use Nette\Caching\Storages\DevNullStorage;

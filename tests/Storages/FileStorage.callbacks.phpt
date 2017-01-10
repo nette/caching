@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\FileStorage callbacks dependency.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;

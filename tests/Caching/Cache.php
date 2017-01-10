@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Nette\Caching\IBulkReader;
 use Nette\Caching\IStorage;
 

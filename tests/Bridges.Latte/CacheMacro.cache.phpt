@@ -4,6 +4,8 @@
  * Test: {cache ...}
  */
 
+declare(strict_types=1);
+
 use Nette\Bridges\CacheLatte\CacheMacro;
 use Tester\Assert;
 

@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\SQLiteJournal database file permissions.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Storages\SQLiteJournal;
 use Tester\Assert;
 

@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\FileStorage priority test.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Storages\FileStorage;
 use Nette\Caching\Storages\SQLiteJournal;
 use Nette\Caching\Cache;

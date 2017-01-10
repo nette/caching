@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\NewMemcachedStorage expiration test.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Storages\NewMemcachedStorage;
 use Nette\Caching\Cache;
 use Tester\Assert;

@@ -4,6 +4,8 @@
  * Test: Nette\Caching\Storages\DevNullStorage test.
  */
 
+declare(strict_types=1);
+
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\DevNullStorage;
 use Tester\Assert;
