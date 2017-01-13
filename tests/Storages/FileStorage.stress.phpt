@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage sliding expiration test.
+ * Test: Nette\Caching\Storages\FileStorage atomicity test.
  * @multiple   5
  */
 
@@ -36,7 +36,7 @@ $storage = new FileStorage(TEMP_DIR);
 
 // clear playground
 for ($i = 0; $i <= COUNT_FILES; $i++) {
-	$storage->write($i, randomStr(), []);
+	$storage->write((string) $i, randomStr(), []);
 }
 
 
@@ -44,17 +44,17 @@ for ($i = 0; $i <= COUNT_FILES; $i++) {
 $hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0];
 for ($counter = 0; $counter < 1000; $counter++) {
 	// write
-	$ok = $storage->write(rand(0, COUNT_FILES), randomStr(), []);
+	$ok = $storage->write((string) rand(0, COUNT_FILES), randomStr(), []);
 	if ($ok === FALSE) {
 		$hits['cantwrite']++;
 	}
 
 	// remove
-	//$ok = $storage->remove(rand(0, COUNT_FILES));
+	//$ok = $storage->remove((string) rand(0, COUNT_FILES));
 	//if (!$ok) $hits['cantdelete']++;
 
 	// read
-	$res = $storage->read(rand(0, COUNT_FILES));
+	$res = $storage->read((string) rand(0, COUNT_FILES));
 
 	// compare
 	if ($res === NULL) {

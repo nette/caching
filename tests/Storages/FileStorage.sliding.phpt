@@ -25,7 +25,7 @@ $cache->save($key, $value, [
 ]);
 
 
-for ($i = 0; $i < 5; $i++) {
+for ($i = '0'; $i < '5'; $i++) {
 	// Sleeping 1 second
 	sleep(1);
 	clearstatcache();

@@ -95,8 +95,6 @@ class SQLiteJournal implements IJournal
 		}
 
 		$this->pdo->exec('COMMIT');
-
-		return TRUE;
 	}
 
 

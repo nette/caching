@@ -211,7 +211,7 @@ class Cache
 		// convert FILES into CALLBACKS
 		if (isset($dp[self::FILES])) {
 			foreach (array_unique((array) $dp[self::FILES]) as $item) {
-				$dp[self::CALLBACKS][] = [[__CLASS__, 'checkFile'], $item, @filemtime($item)]; // @ - stat may fail
+				$dp[self::CALLBACKS][] = [[__CLASS__, 'checkFile'], $item, @filemtime($item) ?: NULL]; // @ - stat may fail
 			}
 			unset($dp[self::FILES]);
 		}
@@ -325,7 +325,7 @@ class Cache
 	 */
 	protected function generateKey($key)
 	{
-		return $this->namespace . md5(is_scalar($key) ? $key : serialize($key));
+		return $this->namespace . md5(is_scalar($key) ? (string) $key : serialize($key));
 	}
 
 
