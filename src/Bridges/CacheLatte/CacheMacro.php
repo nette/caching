@@ -131,13 +131,13 @@ class CacheMacro implements Latte\IMacro
 		$helper = array_pop($parents);
 		if ($helper instanceof Nette\Caching\OutputHelper) {
 			if (isset($args['dependencies'])) {
-				$args += call_user_func($args['dependencies']);
+				$args += $args['dependencies']();
 			}
 			if (isset($args['expire'])) {
 				$args['expiration'] = $args['expire']; // back compatibility
 			}
-			$helper->dependencies[Cache::TAGS] = isset($args['tags']) ? $args['tags'] : NULL;
-			$helper->dependencies[Cache::EXPIRATION] = isset($args['expiration']) ? $args['expiration'] : '+ 7 days';
+			$helper->dependencies[Cache::TAGS] = $args['tags'] ?? NULL;
+			$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
 			$helper->end();
 		}
 	}

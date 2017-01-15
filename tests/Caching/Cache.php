@@ -11,7 +11,7 @@ class TestStorage implements IStorage
 
 	public function read($key)
 	{
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+		return $this->data[$key] ?? NULL;
 	}
 
 	public function write($key, $data, array $dependencies)

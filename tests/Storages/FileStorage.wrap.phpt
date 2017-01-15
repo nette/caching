@@ -33,19 +33,19 @@ class Test
 $cache = new Cache(new FileStorage(TEMP_DIR));
 
 $called = FALSE;
-Assert::same(55, call_user_func($cache->wrap('mockFunction'), 5, 50));
+Assert::same(55, $cache->wrap('mockFunction')(5, 50));
 Assert::true($called);
 
 $called = FALSE;
-Assert::same(55, call_user_func($cache->wrap('mockFunction'), 5, 50));
+Assert::same(55, $cache->wrap('mockFunction')(5, 50));
 Assert::false($called);
 
 
 $called = FALSE;
 $callback = [new Test, 'mockMethod'];
-Assert::same(55, call_user_func($cache->wrap($callback), 5, 50));
+Assert::same(55, $cache->wrap($callback)(5, 50));
 Assert::true($called);
 
 $called = FALSE;
-Assert::same(55, call_user_func($cache->wrap($callback), 5, 50));
+Assert::same(55, $cache->wrap($callback)(5, 50));
 Assert::false($called);

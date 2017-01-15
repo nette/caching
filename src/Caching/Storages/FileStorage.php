@@ -32,7 +32,8 @@ class FileStorage implements Nette\Caching\IStorage
 	 */
 
 	/** @internal cache file structure */
-	const META_HEADER_LEN = 28, // 22b signature + 6b meta-struct size + serialized meta-struct + data
+	private const
+		META_HEADER_LEN = 28, // 22b signature + 6b meta-struct size + serialized meta-struct + data
 	// meta structure: array of
 		META_TIME = 'time', // timestamp
 		META_SERIALIZED = 'serialized', // is content serialized?
@@ -42,7 +43,8 @@ class FileStorage implements Nette\Caching\IStorage
 		META_CALLBACKS = 'callbacks'; // array of callbacks (function, args)
 
 	/** additional cache structure */
-	const FILE = 'file',
+	private const
+		FILE = 'file',
 		HANDLE = 'handle';
 
 

@@ -92,7 +92,7 @@ class Cache
 		$data = $this->storage->read($this->generateKey($key));
 		if ($data === NULL && $fallback) {
 			return $this->save($key, function (&$dependencies) use ($fallback) {
-				return call_user_func_array($fallback, [&$dependencies]);
+				return $fallback(...[&$dependencies]);
 			});
 		}
 		return $data;
@@ -122,7 +122,7 @@ class Cache
 				foreach ($result as $key => $value) {
 					if ($value === NULL) {
 						$result[$key] = $this->save($key, function (&$dependencies) use ($key, $fallback) {
-							return call_user_func_array($fallback, [$key, &$dependencies]);
+							return $fallback(...[$key, &$dependencies]);
 						});
 					}
 				}
@@ -138,7 +138,7 @@ class Cache
 				$result[$key] = $cacheData[$storageKey];
 			} elseif ($fallback) {
 				$result[$key] = $this->save($key, function (&$dependencies) use ($key, $fallback) {
-					return call_user_func_array($fallback, [$key, &$dependencies]);
+					return $fallback(...[$key, &$dependencies]);
 				});
 			} else {
 				$result[$key] = NULL;
@@ -171,7 +171,7 @@ class Cache
 		if ($data instanceof \Closure) {
 			$this->storage->lock($key);
 			try {
-				$data = call_user_func_array($data, [&$dependencies]);
+				$data = $data(...[&$dependencies]);
 			} catch (\Throwable $e) {
 				$this->storage->remove($key);
 				throw $e;
@@ -336,7 +336,7 @@ class Cache
 	public static function checkCallbacks($callbacks)
 	{
 		foreach ($callbacks as $callback) {
-			if (!call_user_func_array(array_shift($callback), $callback)) {
+			if (!array_shift($callback)(...$callback)) {
 				return FALSE;
 			}
 		}
