@@ -166,17 +166,11 @@ class Cache
 	{
 		$key = $this->generateKey($key);
 
-		if ($data instanceof Nette\Callback || $data instanceof \Closure) {
-			if ($data instanceof Nette\Callback) {
-				trigger_error('Nette\Callback is deprecated, use closure or Nette\Utils\Callback::toClosure().', E_USER_DEPRECATED);
-			}
+		if ($data instanceof \Closure) {
 			$this->storage->lock($key);
 			try {
 				$data = call_user_func_array($data, [&$dependencies]);
 			} catch (\Throwable $e) {
-				$this->storage->remove($key);
-				throw $e;
-			} catch (\Exception $e) {
 				$this->storage->remove($key);
 				throw $e;
 			}
