@@ -54,7 +54,7 @@ class CacheExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function checkTempDir($dir)
+	private function checkTempDir($dir): bool
 	{
 		@mkdir($dir); // @ - directory may exists
 

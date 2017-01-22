@@ -18,38 +18,28 @@ interface IStorage
 
 	/**
 	 * Read from cache.
-	 * @param  string
 	 * @return mixed
 	 */
-	function read($key);
+	function read(string $key);
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param  string
-	 * @return void
 	 */
-	function lock($key);
+	function lock(string $key): void;
 
 	/**
 	 * Writes item into the cache.
-	 * @param  string
-	 * @param  mixed
-	 * @return void
 	 */
-	function write($key, $data, array $dependencies);
+	function write(string $key, $data, array $dependencies): void;
 
 	/**
 	 * Removes item from the cache.
-	 * @param  string
-	 * @return void
 	 */
-	function remove($key);
+	function remove(string $key): void;
 
 	/**
 	 * Removes items from the cache by conditions.
-	 * @param  array  conditions
-	 * @return void
 	 */
-	function clean(array $conditions);
+	function clean(array $conditions): void;
 
 }

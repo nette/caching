@@ -25,10 +25,9 @@ class MemoryStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Read from cache.
-	 * @param  string
 	 * @return mixed
 	 */
-	public function read($key)
+	public function read(string $key)
 	{
 		return $this->data[$key] ?? NULL;
 	}
@@ -36,21 +35,16 @@ class MemoryStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param  string
-	 * @return void
 	 */
-	public function lock($key)
+	public function lock(string $key): void
 	{
 	}
 
 
 	/**
 	 * Writes item into the cache.
-	 * @param  string
-	 * @param  mixed
-	 * @return void
 	 */
-	public function write($key, $data, array $dependencies)
+	public function write(string $key, $data, array $dependencies): void
 	{
 		$this->data[$key] = $data;
 	}
@@ -58,10 +52,8 @@ class MemoryStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Removes item from the cache.
-	 * @param  string
-	 * @return void
 	 */
-	public function remove($key)
+	public function remove(string $key): void
 	{
 		unset($this->data[$key]);
 	}
@@ -69,10 +61,8 @@ class MemoryStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Removes items from the cache by conditions & garbage collector.
-	 * @param  array  conditions
-	 * @return void
 	 */
-	public function clean(array $conditions)
+	public function clean(array $conditions): void
 	{
 		if (!empty($conditions[Nette\Caching\Cache::ALL])) {
 			$this->data = [];

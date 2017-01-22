@@ -54,10 +54,9 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Read from cache.
-	 * @param  string
 	 * @return mixed
 	 */
-	public function read($key)
+	public function read(string $key)
 	{
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute([$key, time()]);
@@ -72,10 +71,9 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Reads from cache in bulk.
-	 * @param  string
 	 * @return array key => value pairs, missing items are omitted
 	 */
-	public function bulkRead(array $keys)
+	public function bulkRead(array $keys): array
 	{
 		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute(array_merge($keys, [time()]));
@@ -97,21 +95,16 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param  string
-	 * @return void
 	 */
-	public function lock($key)
+	public function lock(string $key): void
 	{
 	}
 
 
 	/**
 	 * Writes item into the cache.
-	 * @param  string
-	 * @param  mixed
-	 * @return void
 	 */
-	public function write($key, $data, array $dependencies)
+	public function write(string $key, $data, array $dependencies): void
 	{
 		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : NULL;
 		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : NULL;
@@ -134,10 +127,8 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Removes item from the cache.
-	 * @param  string
-	 * @return void
 	 */
-	public function remove($key)
+	public function remove(string $key): void
 	{
 		$this->pdo->prepare('DELETE FROM cache WHERE key=?')
 			->execute([$key]);
@@ -146,10 +137,8 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Removes items from the cache by conditions & garbage collector.
-	 * @param  array  conditions
-	 * @return void
 	 */
-	public function clean(array $conditions)
+	public function clean(array $conditions): void
 	{
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
