@@ -27,16 +27,13 @@ class SQLiteJournal implements IJournal
 	private $pdo;
 
 
-	/**
-	 * @param  string
-	 */
-	public function __construct($path)
+	public function __construct(string $path)
 	{
 		$this->path = $path;
 	}
 
 
-	private function open()
+	private function open(): void
 	{
 		if (!extension_loaded('pdo_sqlite')) {
 			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
@@ -69,11 +66,8 @@ class SQLiteJournal implements IJournal
 
 	/**
 	 * Writes entry information into the journal.
-	 * @param  string
-	 * @param  array
-	 * @return void
 	 */
-	public function write($key, array $dependencies)
+	public function write(string $key, array $dependencies): void
 	{
 		if (!$this->pdo) {
 			$this->open();
@@ -102,10 +96,9 @@ class SQLiteJournal implements IJournal
 
 	/**
 	 * Cleans entries from journal.
-	 * @param  array
 	 * @return array|NULL  removed items or NULL when performing a full cleanup
 	 */
-	public function clean(array $conditions)
+	public function clean(array $conditions): ?array
 	{
 		if (!$this->pdo) {
 			$this->open();

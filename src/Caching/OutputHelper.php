@@ -39,9 +39,8 @@ class OutputHelper
 
 	/**
 	 * Stops and saves the cache.
-	 * @return void
 	 */
-	public function end(array $dependencies = NULL)
+	public function end(array $dependencies = NULL): void
 	{
 		if ($this->cache === NULL) {
 			throw new Nette\InvalidStateException('Output cache has already been saved.');

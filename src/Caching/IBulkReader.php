@@ -18,9 +18,8 @@ interface IBulkReader
 
 	/**
 	 * Reads from cache in bulk.
-	 * @param  string
 	 * @return array key => value pairs, missing items are omitted
 	 */
-	function bulkRead(array $keys);
+	function bulkRead(array $keys): array;
 
 }
