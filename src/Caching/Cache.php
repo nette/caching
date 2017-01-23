@@ -81,9 +81,9 @@ class Cache
 
 	/**
 	 * Reads the specified item from the cache or generate it.
-	 * @param  mixed key
+	 * @param  mixed
 	 * @param  callable
-	 * @return mixed|NULL
+	 * @return mixed
 	 */
 	public function load($key, $fallback = NULL)
 	{
@@ -157,9 +157,8 @@ class Cache
 	 * - Cache::ITEMS => (array|string) cache items
 	 * - Cache::CONSTS => (array|string) cache items
 	 *
-	 * @param  mixed  key
-	 * @param  mixed  value
-	 * @param  array  dependencies
+	 * @param  mixed
+	 * @param  mixed
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -239,7 +238,7 @@ class Cache
 
 	/**
 	 * Removes item from the cache.
-	 * @param  mixed  key
+	 * @param  mixed
 	 * @return void
 	 */
 	public function remove($key)
@@ -286,7 +285,6 @@ class Cache
 	/**
 	 * Caches results of function/method calls.
 	 * @param  mixed
-	 * @param  array  dependencies
 	 * @return \Closure
 	 */
 	public function wrap($function, array $dependencies = NULL)
@@ -307,7 +305,7 @@ class Cache
 
 	/**
 	 * Starts the output cache.
-	 * @param  mixed  key
+	 * @param  mixed
 	 * @return OutputHelper|NULL
 	 */
 	public function start($key)
@@ -322,8 +320,7 @@ class Cache
 
 	/**
 	 * Generates internal cache key.
-	 *
-	 * @param  string
+	 * @param  mixed
 	 * @return string
 	 */
 	protected function generateKey($key)
@@ -366,7 +363,7 @@ class Cache
 	/**
 	 * Checks FILES dependency.
 	 * @param  string
-	 * @param  int
+	 * @param  int|NULL
 	 * @return bool
 	 */
 	private static function checkFile($file, $time)

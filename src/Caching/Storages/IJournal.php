@@ -26,7 +26,7 @@ interface IJournal
 	/**
 	 * Cleans entries from journal.
 	 * @param  array
-	 * @return array of removed items or NULL when performing a full cleanup
+	 * @return array|NULL of removed items or NULL when performing a full cleanup
 	 */
 	function clean(array $conditions);
 

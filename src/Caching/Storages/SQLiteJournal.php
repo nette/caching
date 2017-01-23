@@ -69,7 +69,7 @@ class SQLiteJournal implements IJournal
 	 * Writes entry information into the journal.
 	 * @param  string
 	 * @param  array
-	 * @return bool
+	 * @return void
 	 */
 	public function write($key, array $dependencies)
 	{
