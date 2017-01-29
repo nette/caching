@@ -50,3 +50,17 @@ $cache->save('key', function () {
 $res = $cache->load('key');
 Assert::equal('value', $res['data']);
 Assert::equal($dependencies, $res['dependencies']);
+
+
+// do not save already expired data
+$storage = new testStorage();
+$cache = new Cache($storage, 'ns');
+$dependencies = [Cache::EXPIRATION => new DateTime];
+
+$res = $cache->save('key', function () {
+	return 'value';
+}, $dependencies);
+Assert::equal('value', $res);
+
+$res = $cache->load('key');
+Assert::null($res);
