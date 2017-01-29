@@ -51,14 +51,11 @@ class FileStorage implements Nette\Caching\IStorage
 	/** @var float  probability that the clean() routine is started */
 	public static $gcProbability = 0.001;
 
-	/** @var bool */
+	/** @deprecated */
 	public static $useDirectories = TRUE;
 
 	/** @var string */
 	private $dir;
-
-	/** @var bool */
-	private $useDirs;
 
 	/** @var IJournal */
 	private $journal;
@@ -74,7 +71,6 @@ class FileStorage implements Nette\Caching\IStorage
 		}
 
 		$this->dir = $dir;
-		$this->useDirs = (bool) static::$useDirectories;
 		$this->journal = $journal;
 
 		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
@@ -143,7 +139,7 @@ class FileStorage implements Nette\Caching\IStorage
 	public function lock(string $key): void
 	{
 		$cacheFile = $this->getCacheFile($key);
-		if ($this->useDirs && !is_dir($dir = dirname($cacheFile))) {
+		if (!is_dir($dir = dirname($cacheFile))) {
 			@mkdir($dir); // @ - directory may already exist
 		}
 		$handle = fopen($cacheFile, 'c+b');
@@ -353,7 +349,7 @@ class FileStorage implements Nette\Caching\IStorage
 	protected function getCacheFile(string $key): string
 	{
 		$file = urlencode($key);
-		if ($this->useDirs && $a = strrpos($file, '%00')) { // %00 = urlencode(Nette\Caching\Cache::NAMESPACE_SEPARATOR)
+		if ($a = strrpos($file, '%00')) { // %00 = urlencode(Nette\Caching\Cache::NAMESPACE_SEPARATOR)
 			$file = substr_replace($file, '/_', $a, 3);
 		}
 		return $this->dir . '/_' . $file;
