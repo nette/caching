@@ -69,7 +69,8 @@ class CacheMacro implements Latte\IMacro
 	 */
 	public function nodeClosed(Latte\MacroNode $node)
 	{
-		$node->closingCode = '<?php $_tmp = array_pop($this->global->cacheStack); if (!$_tmp instanceof stdClass) $_tmp->end(); } ?>';
+		$node->closingCode = Latte\PhpWriter::using($node)
+			->write('<?php Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?); } ?>');
 	}
 
 
@@ -112,19 +113,31 @@ class CacheMacro implements Latte\IMacro
 
 		$cache = new Cache($cacheStorage, 'Nette.Templating.Cache');
 		if ($helper = $cache->start($key)) {
+			$parents[] = $helper;
+		}
+		return $helper;
+	}
+
+
+	/**
+	 * Ends the output cache.
+	 * @param  Nette\Caching\OutputHelper[]
+	 * @return void
+	 */
+	public static function endCache(&$parents, array $args = NULL)
+	{
+		$helper = array_pop($parents);
+		if ($helper instanceof Nette\Caching\OutputHelper) {
 			if (isset($args['dependencies'])) {
 				$args += call_user_func($args['dependencies']);
 			}
 			if (isset($args['expire'])) {
 				$args['expiration'] = $args['expire']; // back compatibility
 			}
-			$helper->dependencies = [
-				$cache::TAGS => isset($args['tags']) ? $args['tags'] : NULL,
-				$cache::EXPIRATION => isset($args['expiration']) ? $args['expiration'] : '+ 7 days',
-			];
-			$parents[] = $helper;
+			$helper->dependencies[Cache::TAGS] = isset($args['tags']) ? $args['tags'] : NULL;
+			$helper->dependencies[Cache::EXPIRATION] = isset($args['expiration']) ? $args['expiration'] : '+ 7 days';
+			$helper->end();
 		}
-		return $helper;
 	}
 
 }
