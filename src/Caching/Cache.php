@@ -21,7 +21,8 @@ class Cache
 	use Nette\SmartObject;
 
 	/** dependency */
-	const PRIORITY = 'priority',
+	public const
+		PRIORITY = 'priority',
 		EXPIRATION = 'expire',
 		EXPIRE = 'expire',
 		SLIDING = 'sliding',
@@ -33,7 +34,7 @@ class Cache
 		ALL = 'all';
 
 	/** @internal */
-	const NAMESPACE_SEPARATOR = "\x00";
+	public const NAMESPACE_SEPARATOR = "\x00";
 
 	/** @var IStorage */
 	private $storage;
