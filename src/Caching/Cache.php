@@ -347,5 +347,4 @@ class Cache
 	{
 		return @filemtime($file) == $time; // @ - stat may fail
 	}
-
 }

@@ -49,11 +49,13 @@ Assert::equal($dependencies, $data['dependencies']);
 
 
 // load twice with fallback, pass dependencies
-function fallback(&$deps) {
+function fallback(&$deps)
+{
 	global $dependencies;
 	$deps = $dependencies;
 	return 'value';
 }
+
 
 $value = $cache->load('key2', 'fallback');
 Assert::equal('value', $value);

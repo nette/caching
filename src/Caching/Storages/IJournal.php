@@ -21,11 +21,9 @@ interface IJournal
 	 */
 	function write(string $key, array $dependencies): void;
 
-
 	/**
 	 * Cleans entries from journal.
 	 * @return array|NULL of removed items or NULL when performing a full cleanup
 	 */
 	function clean(array $conditions): ?array;
-
 }

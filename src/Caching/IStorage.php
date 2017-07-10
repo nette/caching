@@ -41,5 +41,4 @@ interface IStorage
 	 * Removes items from the cache by conditions.
 	 */
 	function clean(array $conditions): void;
-
 }

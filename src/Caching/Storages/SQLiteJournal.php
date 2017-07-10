@@ -149,5 +149,4 @@ class SQLiteJournal implements IJournal
 
 		return $keys;
 	}
-
 }

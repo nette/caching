@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use Nette\Caching\IBulkReader;
@@ -9,10 +8,12 @@ class TestStorage implements IStorage
 {
 	private $data = [];
 
+
 	public function read(string $key)
 	{
 		return $this->data[$key] ?? NULL;
 	}
+
 
 	public function write(string $key, $data, array $dependencies): void
 	{
@@ -22,11 +23,20 @@ class TestStorage implements IStorage
 		];
 	}
 
-	public function lock(string $key): void {}
 
-	public function remove(string $key): void {}
+	public function lock(string $key): void
+	{
+	}
 
-	public function clean(array $conditions): void {}
+
+	public function remove(string $key): void
+	{
+	}
+
+
+	public function clean(array $conditions): void
+	{
+	}
 }
 
 class BulkReadTestStorage extends TestStorage implements IBulkReader
@@ -43,5 +53,4 @@ class BulkReadTestStorage extends TestStorage implements IBulkReader
 
 		return $result;
 	}
-
 }

@@ -33,7 +33,6 @@ for ($i = '0'; $i < '5'; $i++) {
 	clearstatcache();
 
 	Assert::truthy($cache->load($key));
-
 }
 
 // Sleeping few seconds...

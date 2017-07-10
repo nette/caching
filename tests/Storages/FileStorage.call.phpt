@@ -22,6 +22,7 @@ class Mock
 		return $x + $y;
 	}
 
+
 	function __sleep()
 	{
 		throw new Exception;

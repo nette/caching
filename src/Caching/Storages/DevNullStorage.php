@@ -58,5 +58,4 @@ class DevNullStorage implements Nette\Caching\IStorage
 	public function clean(array $conditions): void
 	{
 	}
-
 }

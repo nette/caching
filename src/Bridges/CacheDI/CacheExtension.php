@@ -46,5 +46,4 @@ class CacheExtension extends Nette\DI\CompilerExtension
 			$builder->addAlias('cacheStorage', $this->prefix('storage'));
 		}
 	}
-
 }

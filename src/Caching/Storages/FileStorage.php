@@ -381,5 +381,4 @@ class FileStorage implements Nette\Caching\IStorage
 			@unlink($file); // @ - file may not already exist
 		}
 	}
-
 }
