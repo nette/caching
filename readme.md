@@ -9,6 +9,14 @@ Nette Caching
 
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
+Install it using Composer:
+
+```
+composer require nette/caching
+```
+
+The last stable release requires PHP version 5.6 or newer (is compatible with PHP 7.0 and 7.1). The dev-master version requires PHP 7.1.
+
 Nette offers a very intuitive API for cache manipulation. After all, you wouldn't expect anything else, right? ;-)
 Before we show you the first example, we need to think about place where to store data physically. We can use a database, //Memcached// server,
 or the most available storage - hard drive:
