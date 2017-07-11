@@ -70,5 +70,4 @@ class CacheExtension extends Nette\DI\CompilerExtension
 		rmdir("$dir/$uniq");
 		return $isWritable;
 	}
-
 }

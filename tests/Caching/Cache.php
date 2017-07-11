@@ -7,10 +7,12 @@ class TestStorage implements IStorage
 {
 	private $data = [];
 
+
 	public function read($key)
 	{
 		return isset($this->data[$key]) ? $this->data[$key] : NULL;
 	}
+
 
 	public function write($key, $data, array $dependencies)
 	{
@@ -20,11 +22,20 @@ class TestStorage implements IStorage
 		];
 	}
 
-	public function lock($key) {}
 
-	public function remove($key) {}
+	public function lock($key)
+	{
+	}
 
-	public function clean(array $conditions) {}
+
+	public function remove($key)
+	{
+	}
+
+
+	public function clean(array $conditions)
+	{
+	}
 }
 
 class BulkReadTestStorage extends TestStorage implements IBulkReader
@@ -41,5 +52,4 @@ class BulkReadTestStorage extends TestStorage implements IBulkReader
 
 		return $result;
 	}
-
 }

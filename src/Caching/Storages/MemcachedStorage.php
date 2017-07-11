@@ -187,5 +187,4 @@ class MemcachedStorage implements Nette\Caching\IStorage
 			}
 		}
 	}
-
 }

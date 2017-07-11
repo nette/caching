@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Storages\FileStorage & namespace test.
  */
 
-use Nette\Caching\Storages\FileStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
 

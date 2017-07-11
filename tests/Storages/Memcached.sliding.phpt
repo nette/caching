@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Storages\MemcachedStorage sliding expiration test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
 
@@ -37,7 +37,6 @@ for ($i = 0; $i < 5; $i++) {
 	sleep(1);
 
 	Assert::truthy($cache->load($key));
-
 }
 
 // Sleeping few seconds...

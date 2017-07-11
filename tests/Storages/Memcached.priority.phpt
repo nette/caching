@@ -4,9 +4,9 @@
  * Test: Nette\Caching\Storages\MemcachedStorage priority test.
  */
 
+use Nette\Caching\Cache;
 use Nette\Caching\Storages\MemcachedStorage;
 use Nette\Caching\Storages\SQLiteJournal;
-use Nette\Caching\Cache;
 use Tester\Assert;
 
 

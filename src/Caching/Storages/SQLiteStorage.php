@@ -165,5 +165,4 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			$this->pdo->prepare($sql)->execute($args);
 		}
 	}
-
 }

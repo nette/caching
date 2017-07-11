@@ -49,5 +49,4 @@ interface IStorage
 	 * @return void
 	 */
 	function clean(array $conditions);
-
 }

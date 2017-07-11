@@ -7,9 +7,9 @@
 
 namespace Nette\Bridges\CacheLatte;
 
+use Latte;
 use Nette;
 use Nette\Caching\Cache;
-use Latte;
 
 
 /**
@@ -139,5 +139,4 @@ class CacheMacro implements Latte\IMacro
 			$helper->end();
 		}
 	}
-
 }

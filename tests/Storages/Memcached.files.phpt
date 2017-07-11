@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Storages\MemcachedStorage files dependency test.
  */
 
-use Nette\Caching\Storages\MemcachedStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
 

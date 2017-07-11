@@ -18,13 +18,11 @@ if (!extension_loaded('pdo_sqlite')) {
 
 class SQLiteJournalTest extends IJournalTestCase
 {
-
 	public function createJournal()
 	{
 		static $id = 0;
 		return new SQLiteJournal(TEMP_DIR . '/sqlitejournal_' . ++$id . '.sqlite');
 	}
-
 }
 
 $test = new SQLiteJournalTest;

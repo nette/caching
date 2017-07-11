@@ -47,5 +47,4 @@ class OutputHelper
 		$this->cache->save($this->key, ob_get_flush(), (array) $dependencies + (array) $this->dependencies);
 		$this->cache = NULL;
 	}
-
 }

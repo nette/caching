@@ -76,5 +76,4 @@ class MemoryStorage implements Nette\Caching\IStorage
 			$this->data = [];
 		}
 	}
-
 }

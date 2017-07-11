@@ -20,5 +20,4 @@ interface IBulkReader
 	 * @return array key => value pairs, missing items are omitted
 	 */
 	function bulkRead(array $keys);
-
 }

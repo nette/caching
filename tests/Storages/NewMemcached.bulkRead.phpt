@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Storages\NewMemcachedStorage and bulkRead
  */
 
-use Nette\Caching\Storages\NewMemcachedStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\NewMemcachedStorage;
 use Tester\Assert;
 
 

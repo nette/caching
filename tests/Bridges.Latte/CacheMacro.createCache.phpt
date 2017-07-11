@@ -5,9 +5,9 @@
  */
 
 use Nette\Bridges\CacheLatte\CacheMacro;
-use Tester\Assert;
-use Nette\Caching\Storages\DevNullStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\DevNullStorage;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';

@@ -220,5 +220,4 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 			}
 		}
 	}
-
 }

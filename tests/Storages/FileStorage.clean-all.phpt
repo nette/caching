@@ -4,8 +4,8 @@
  * Test: Nette\Caching\Storages\FileStorage clean with Cache::ALL
  */
 
-use Nette\Caching\Storages\FileStorage;
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
 

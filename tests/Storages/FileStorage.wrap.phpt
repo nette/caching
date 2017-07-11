@@ -18,6 +18,7 @@ function mockFunction($x, $y)
 	return $x + $y;
 }
 
+
 class Test
 {
 	function mockMethod($x, $y)

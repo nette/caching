@@ -4,8 +4,8 @@
  * Test: CacheExtension.
  */
 
-use Nette\DI;
 use Nette\Bridges\CacheDI\CacheExtension;
+use Nette\DI;
 use Tester\Assert;
 
 

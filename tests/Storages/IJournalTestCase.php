@@ -286,5 +286,4 @@ abstract class IJournalTestCase extends Tester\TestCase
 			'b',
 		], $res);
 	}
-
 }
