@@ -41,7 +41,7 @@ class TestStorage implements IStorage
 
 class BulkReadTestStorage extends TestStorage implements IBulkReader
 {
-	function bulkRead(array $keys): array
+	public function bulkRead(array $keys): array
 	{
 		$result = [];
 		foreach ($keys as $key) {

@@ -176,7 +176,7 @@ class Cache
 			$this->storage->remove($key);
 		} else {
 			$dependencies = $this->completeDependencies($dependencies);
-			if (isset($dependencies[Cache::EXPIRATION]) && $dependencies[Cache::EXPIRATION] <= 0) {
+			if (isset($dependencies[self::EXPIRATION]) && $dependencies[self::EXPIRATION] <= 0) {
 				$this->storage->remove($key);
 			} else {
 				$this->storage->write($key, $data, $dependencies);
