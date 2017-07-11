@@ -28,7 +28,7 @@ $cache = new Cache(new MemcachedStorage('localhost'));
 // Writing cache...
 $cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => TRUE,
+	Cache::SLIDING => true,
 ]);
 
 

@@ -56,6 +56,6 @@ Assert::truthy($cache->load($key));
 
 
 // Deleting dependent cached item
-$cache->save('dependent', NULL);
+$cache->save('dependent', null);
 
 Assert::null($cache->load($key));

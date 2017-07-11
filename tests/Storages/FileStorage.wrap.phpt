@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 function mockFunction($x, $y)
 {
-	$GLOBALS['called'] = TRUE;
+	$GLOBALS['called'] = true;
 	return $x + $y;
 }
 
@@ -23,7 +23,7 @@ class Test
 {
 	function mockMethod($x, $y)
 	{
-		$GLOBALS['called'] = TRUE;
+		$GLOBALS['called'] = true;
 		return $x + $y;
 	}
 }
@@ -31,20 +31,20 @@ class Test
 
 $cache = new Cache(new FileStorage(TEMP_DIR));
 
-$called = FALSE;
+$called = false;
 Assert::same(55, call_user_func($cache->wrap('mockFunction'), 5, 50));
 Assert::true($called);
 
-$called = FALSE;
+$called = false;
 Assert::same(55, call_user_func($cache->wrap('mockFunction'), 5, 50));
 Assert::false($called);
 
 
-$called = FALSE;
+$called = false;
 $callback = [new Test, 'mockMethod'];
 Assert::same(55, call_user_func($cache->wrap($callback), 5, 50));
 Assert::true($called);
 
-$called = FALSE;
+$called = false;
 Assert::same(55, call_user_func($cache->wrap($callback), 5, 50));
 Assert::false($called);

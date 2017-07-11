@@ -48,7 +48,7 @@ class FileStorage implements Nette\Caching\IStorage
 	public static $gcProbability = 0.001;
 
 	/** @var bool */
-	public static $useDirectories = TRUE;
+	public static $useDirectories = true;
 
 	/** @var string */
 	private $dir;
@@ -63,7 +63,7 @@ class FileStorage implements Nette\Caching\IStorage
 	private $locks;
 
 
-	public function __construct($dir, IJournal $journal = NULL)
+	public function __construct($dir, IJournal $journal = null)
 	{
 		if (!is_dir($dir)) {
 			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found.");
@@ -91,7 +91,7 @@ class FileStorage implements Nette\Caching\IStorage
 			return $this->readData($meta); // calls fclose()
 
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -128,11 +128,11 @@ class FileStorage implements Nette\Caching\IStorage
 				}
 			}
 
-			return TRUE;
-		} while (FALSE);
+			return true;
+		} while (false);
 
 		$this->delete($meta[self::FILE], $meta[self::HANDLE]); // meta[handle] & meta[file] was added by readMetaAndLock()
-		return FALSE;
+		return false;
 	}
 
 
@@ -179,7 +179,7 @@ class FileStorage implements Nette\Caching\IStorage
 			foreach ((array) $dp[Cache::ITEMS] as $item) {
 				$depFile = $this->getCacheFile($item);
 				$m = $this->readMetaAndLock($depFile, LOCK_SH);
-				$meta[self::META_ITEMS][$depFile] = $m[self::META_TIME]; // may be NULL
+				$meta[self::META_ITEMS][$depFile] = $m[self::META_TIME]; // may be null
 				unset($m);
 			}
 		}
@@ -210,7 +210,7 @@ class FileStorage implements Nette\Caching\IStorage
 
 		if (!is_string($data)) {
 			$data = serialize($data);
-			$meta[self::META_SERIALIZED] = TRUE;
+			$meta[self::META_SERIALIZED] = true;
 		}
 
 		$head = serialize($meta) . '?>';
@@ -234,7 +234,7 @@ class FileStorage implements Nette\Caching\IStorage
 			flock($handle, LOCK_UN);
 			fclose($handle);
 			return;
-		} while (FALSE);
+		} while (false);
 
 		$this->delete($cacheFile, $handle);
 	}
@@ -311,13 +311,13 @@ class FileStorage implements Nette\Caching\IStorage
 	 * Reads cache data from disk.
 	 * @param  string  file path
 	 * @param  int     lock mode
-	 * @return array|NULL
+	 * @return array|null
 	 */
 	protected function readMetaAndLock($file, $lock)
 	{
 		$handle = @fopen($file, 'r+b'); // @ - file may not exist
 		if (!$handle) {
-			return NULL;
+			return null;
 		}
 
 		flock($handle, $lock);
@@ -334,7 +334,7 @@ class FileStorage implements Nette\Caching\IStorage
 
 		flock($handle, LOCK_UN);
 		fclose($handle);
-		return NULL;
+		return null;
 	}
 
 
@@ -378,7 +378,7 @@ class FileStorage implements Nette\Caching\IStorage
 	 * @param  resource
 	 * @return void
 	 */
-	private static function delete($file, $handle = NULL)
+	private static function delete($file, $handle = null)
 	{
 		if (@unlink($file)) { // @ - file may not already exist
 			if ($handle) {

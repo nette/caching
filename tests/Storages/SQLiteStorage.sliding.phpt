@@ -26,7 +26,7 @@ $cache = new Cache(new SQLiteStorage(':memory:'));
 // Writing cache...
 $cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => TRUE,
+	Cache::SLIDING => true,
 ]);
 
 
@@ -46,7 +46,7 @@ Assert::null($cache->load($key));
 // Writing cache...
 $cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => TRUE,
+	Cache::SLIDING => true,
 ]);
 
 

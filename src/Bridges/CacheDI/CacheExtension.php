@@ -47,7 +47,7 @@ class CacheExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		if (!$this->checkTempDir($this->tempDir . '/cache')) {
-			$class->getMethod('initialize')->addBody('Nette\Caching\Storages\FileStorage::$useDirectories = FALSE;');
+			$class->getMethod('initialize')->addBody('Nette\Caching\Storages\FileStorage::$useDirectories = false;');
 		}
 	}
 
@@ -57,13 +57,13 @@ class CacheExtension extends Nette\DI\CompilerExtension
 		@mkdir($dir); // @ - directory may exists
 
 		// checks whether directory is writable
-		$uniq = uniqid('_', TRUE);
+		$uniq = uniqid('_', true);
 		if (!@mkdir("$dir/$uniq")) { // @ - is escalated to exception
 			throw new Nette\InvalidStateException("Unable to write to directory '$dir'. Make this directory writable.");
 		}
 
 		// checks whether subdirectory is writable
-		$isWritable = @file_put_contents("$dir/$uniq/_", '') !== FALSE; // @ - error is expected
+		$isWritable = @file_put_contents("$dir/$uniq/_", '') !== false; // @ - error is expected
 		if ($isWritable) {
 			unlink("$dir/$uniq/_");
 		}

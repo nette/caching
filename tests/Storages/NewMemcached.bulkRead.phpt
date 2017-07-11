@@ -24,4 +24,4 @@ $cache = new Cache(new NewMemcachedStorage('localhost'));
 
 $cache->save('foo', 'bar');
 
-Assert::same(['foo' => 'bar', 'lorem' => NULL], $cache->bulkLoad(['foo', 'lorem']));
+Assert::same(['foo' => 'bar', 'lorem' => null], $cache->bulkLoad(['foo', 'lorem']));

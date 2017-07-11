@@ -18,13 +18,13 @@ set_time_limit(0);
 function randomStr()
 {
 	$s = str_repeat('LaTrine', rand(10, 2000));
-	return sha1($s, TRUE) . $s;
+	return sha1($s, true) . $s;
 }
 
 
 function checkStr($s)
 {
-	return substr($s, 0, 20) === sha1(substr($s, 20), TRUE);
+	return substr($s, 0, 20) === sha1(substr($s, 20), true);
 }
 
 
@@ -45,7 +45,7 @@ $hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete
 for ($counter = 0; $counter < 1000; $counter++) {
 	// write
 	$ok = $storage->write((string) rand(0, COUNT_FILES), randomStr(), []);
-	if ($ok === FALSE) {
+	if ($ok === false) {
 		$hits['cantwrite']++;
 	}
 
@@ -57,7 +57,7 @@ for ($counter = 0; $counter < 1000; $counter++) {
 	$res = $storage->read((string) rand(0, COUNT_FILES));
 
 	// compare
-	if ($res === NULL) {
+	if ($res === null) {
 		$hits['notfound']++;
 	} elseif (checkStr($res)) {
 		$hits['ok']++;

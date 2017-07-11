@@ -268,7 +268,7 @@ abstract class IJournalTestCase extends Tester\TestCase
 			Cache::PRIORITY => 5,
 		]);
 
-		Assert::null($this->journal->clean([Cache::ALL => TRUE]));
+		Assert::null($this->journal->clean([Cache::ALL => true]));
 		Assert::same([
 		], $this->journal->clean([Cache::TAGS => ['test:all']]));
 	}

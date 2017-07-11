@@ -16,7 +16,7 @@ class Mock
 {
 	function mockFunction($x, $y)
 	{
-		$GLOBALS['called'] = TRUE;
+		$GLOBALS['called'] = true;
 		return $x + $y;
 	}
 
@@ -31,10 +31,10 @@ class Mock
 $cache = new Cache(new FileStorage(TEMP_DIR));
 $mock = new Mock;
 
-$called = FALSE;
+$called = false;
 Assert::same(55, $cache->call([$mock, 'mockFunction'], 5, 50));
 Assert::true($called);
 
-$called = FALSE;
+$called = false;
 Assert::same(55, $cache->call([$mock, 'mockFunction'], 5, 50));
 Assert::false($called);

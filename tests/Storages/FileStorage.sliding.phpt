@@ -21,7 +21,7 @@ $cache = new Cache(new FileStorage(TEMP_DIR));
 // Writing cache...
 $cache->save($key, $value, [
 	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => TRUE,
+	Cache::SLIDING => true,
 ]);
 
 

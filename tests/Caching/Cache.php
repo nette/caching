@@ -10,7 +10,7 @@ class TestStorage implements IStorage
 
 	public function read($key)
 	{
-		return isset($this->data[$key]) ? $this->data[$key] : NULL;
+		return isset($this->data[$key]) ? $this->data[$key] : null;
 	}
 
 
@@ -45,7 +45,7 @@ class BulkReadTestStorage extends TestStorage implements IBulkReader
 		$result = [];
 		foreach ($keys as $key) {
 			$data = $this->read($key);
-			if ($data !== NULL) {
+			if ($data !== null) {
 				$result[$key] = $data;
 			}
 		}
