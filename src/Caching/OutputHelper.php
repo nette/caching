@@ -40,12 +40,12 @@ class OutputHelper
 	/**
 	 * Stops and saves the cache.
 	 */
-	public function end(array $dependencies = NULL): void
+	public function end(array $dependencies = null): void
 	{
-		if ($this->cache === NULL) {
+		if ($this->cache === null) {
 			throw new Nette\InvalidStateException('Output cache has already been saved.');
 		}
 		$this->cache->save($this->key, ob_get_flush(), (array) $dependencies + (array) $this->dependencies);
-		$this->cache = NULL;
+		$this->cache = null;
 	}
 }

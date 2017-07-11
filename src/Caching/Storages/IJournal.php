@@ -23,7 +23,7 @@ interface IJournal
 
 	/**
 	 * Cleans entries from journal.
-	 * @return array|NULL of removed items or NULL when performing a full cleanup
+	 * @return array|null of removed items or null when performing a full cleanup
 	 */
 	function clean(array $conditions): ?array;
 }

@@ -30,7 +30,7 @@ Assert::same('David Grudl divaD ldurG', implode(' ', [
 	$cacheB->load('test2'),
 ]));
 
-$storage->clean([Cache::ALL => TRUE]);
+$storage->clean([Cache::ALL => true]);
 
 Assert::null($cacheA->load('test1'));
 Assert::null($cacheA->load('test2'));

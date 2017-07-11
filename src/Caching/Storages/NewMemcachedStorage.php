@@ -45,7 +45,7 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 	}
 
 
-	public function __construct(string $host = 'localhost', int $port = 11211, string $prefix = '', IJournal $journal = NULL)
+	public function __construct(string $host = 'localhost', int $port = 11211, string $prefix = '', IJournal $journal = null)
 	{
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
@@ -62,7 +62,7 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 
 	public function addServer(string $host = 'localhost', int $port = 11211): void
 	{
-		if ($this->memcached->addServer($host, $port, 1) === FALSE) {
+		if ($this->memcached->addServer($host, $port, 1) === false) {
 			$error = error_get_last();
 			throw new Nette\InvalidStateException("Memcached::addServer(): $error[message].");
 		}
@@ -84,7 +84,7 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 		$key = urlencode($this->prefix . $key);
 		$meta = $this->memcached->get($key);
 		if (!$meta) {
-			return NULL;
+			return null;
 		}
 
 		// meta structure:
@@ -97,7 +97,7 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 		// verify dependencies
 		if (!empty($meta[self::META_CALLBACKS]) && !Cache::checkCallbacks($meta[self::META_CALLBACKS])) {
 			$this->memcached->delete($key, 0);
-			return NULL;
+			return null;
 		}
 
 		if (!empty($meta[self::META_DELTA])) {

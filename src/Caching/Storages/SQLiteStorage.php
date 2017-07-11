@@ -61,7 +61,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute([$key, time()]);
 		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-			if ($row['slide'] !== NULL) {
+			if ($row['slide'] !== null) {
 				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
 			}
 			return unserialize($row['data']);
@@ -80,7 +80,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 		$result = [];
 		$updateSlide = [];
 		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
-			if ($row['slide'] !== NULL) {
+			if ($row['slide'] !== null) {
 				$updateSlide[] = $row['key'];
 			}
 			$result[$row['key']] = unserialize($row['data']);
@@ -106,8 +106,8 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	 */
 	public function write(string $key, $data, array $dependencies): void
 	{
-		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : NULL;
-		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : NULL;
+		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : null;
+		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : null;
 
 		$this->pdo->exec('BEGIN TRANSACTION');
 		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')

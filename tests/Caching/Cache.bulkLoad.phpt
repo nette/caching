@@ -18,7 +18,7 @@ require __DIR__ . '/Cache.php';
 test(function () {
 	$storage = new TestStorage;
 	$cache = new Cache($storage, 'ns');
-	Assert::same([1 => NULL, 2 => NULL], $cache->bulkLoad([1, 2]), 'data');
+	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]), 'data');
 
 	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], function ($key) {
 		return $key;
@@ -33,7 +33,7 @@ test(function () {
 test(function () {
 	$storage = new BulkReadTestStorage;
 	$cache = new Cache($storage, 'ns');
-	Assert::same([1 => NULL, 2 => NULL], $cache->bulkLoad([1, 2]));
+	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]));
 
 	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], function ($key) {
 		return $key;

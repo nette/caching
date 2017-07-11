@@ -31,7 +31,7 @@ class CacheMacro implements Latte\IMacro
 	 */
 	public function initialize()
 	{
-		$this->used = FALSE;
+		$this->used = false;
 	}
 
 
@@ -56,8 +56,8 @@ class CacheMacro implements Latte\IMacro
 		if ($node->modifiers) {
 			throw new Latte\CompileException('Modifiers are not allowed in ' . $node->getNotation());
 		}
-		$this->used = TRUE;
-		$node->empty = FALSE;
+		$this->used = true;
+		$node->empty = false;
 		$node->openingCode = Latte\PhpWriter::using($node)
 			->write('<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
 				Nette\Utils\Random::generate()
@@ -94,7 +94,7 @@ class CacheMacro implements Latte\IMacro
 	 * Starts the output cache. Returns Nette\Caching\OutputHelper object if buffering was started.
 	 * @return Nette\Caching\OutputHelper|\stdClass
 	 */
-	public static function createCache(Nette\Caching\IStorage $cacheStorage, string $key, ?array &$parents, array $args = NULL)
+	public static function createCache(Nette\Caching\IStorage $cacheStorage, string $key, ?array &$parents, array $args = null)
 	{
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
@@ -118,7 +118,7 @@ class CacheMacro implements Latte\IMacro
 	 * Ends the output cache.
 	 * @param  Nette\Caching\OutputHelper[]
 	 */
-	public static function endCache(array &$parents, array $args = NULL): void
+	public static function endCache(array &$parents, array $args = null): void
 	{
 		$helper = array_pop($parents);
 		if ($helper instanceof Nette\Caching\OutputHelper) {
@@ -128,7 +128,7 @@ class CacheMacro implements Latte\IMacro
 			if (isset($args['expire'])) {
 				$args['expiration'] = $args['expire']; // back compatibility
 			}
-			$helper->dependencies[Cache::TAGS] = $args['tags'] ?? NULL;
+			$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
 			$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
 			$helper->end();
 		}

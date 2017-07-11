@@ -29,7 +29,7 @@ class MemoryStorage implements Nette\Caching\IStorage
 	 */
 	public function read(string $key)
 	{
-		return $this->data[$key] ?? NULL;
+		return $this->data[$key] ?? null;
 	}
 
 

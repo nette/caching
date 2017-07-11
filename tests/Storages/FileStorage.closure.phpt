@@ -33,9 +33,9 @@ Assert::same($res, $value);
 Assert::same($cache->load($key), $value);
 
 
-// Removing from cache using NULL callback...
+// Removing from cache using null callback...
 $cache->save($key, function () {
-	return NULL;
+	return null;
 });
 
 Assert::null($cache->load($key));

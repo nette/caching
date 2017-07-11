@@ -96,7 +96,7 @@ class SQLiteJournal implements IJournal
 
 	/**
 	 * Cleans entries from journal.
-	 * @return array|NULL  removed items or NULL when performing a full cleanup
+	 * @return array|null  removed items or null when performing a full cleanup
 	 */
 	public function clean(array $conditions): ?array
 	{
@@ -111,7 +111,7 @@ class SQLiteJournal implements IJournal
 				COMMIT;
 			');
 
-			return NULL;
+			return null;
 		}
 
 		$unions = $args = [];

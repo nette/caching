@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 // key and data with special chars
-$key = [1, TRUE];
+$key = [1, true];
 $value = range("\x00", "\xFF");
 
 $cache = new Cache(new FileStorage(TEMP_DIR));
@@ -35,9 +35,9 @@ $cache->remove($key);
 Assert::null($cache->load($key));
 
 
-// Removing from cache using set NULL...
+// Removing from cache using set null...
 $cache->save($key, $value);
-$cache->save($key, NULL);
+$cache->save($key, null);
 
 Assert::null($cache->load($key));
 

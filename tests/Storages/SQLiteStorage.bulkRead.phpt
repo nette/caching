@@ -22,4 +22,4 @@ if (!extension_loaded('pdo_sqlite')) {
 $cache = new Cache(new SQLiteStorage(':memory:'));
 $cache->save('foo', 'bar');
 
-Assert::same(['foo' => 'bar', 'lorem' => NULL], $cache->bulkLoad(['foo', 'lorem']));
+Assert::same(['foo' => 'bar', 'lorem' => null], $cache->bulkLoad(['foo', 'lorem']));
