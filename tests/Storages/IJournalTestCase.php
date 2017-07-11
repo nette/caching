@@ -162,7 +162,7 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testSpecialChars()
 	{
 		$this->journal->write('ok_test7ščřžýáíé', [
-			Cache::TAGS => ['čšřýýá', 'ýřžčýž']
+			Cache::TAGS => ['čšřýýá', 'ýřžčýž'],
 		]);
 
 		Assert::same([
@@ -174,10 +174,10 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedSameTags()
 	{
 		$this->journal->write('ok_test_a', [
-			Cache::TAGS => ['homepage']
+			Cache::TAGS => ['homepage'],
 		]);
 		$this->journal->write('ok_test_a', [
-			Cache::TAGS => ['homepage']
+			Cache::TAGS => ['homepage'],
 		]);
 		Assert::same([
 			'ok_test_a',
@@ -188,11 +188,11 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedSamePriority()
 	{
 		$this->journal->write('ok_test_b', [
-			Cache::PRIORITY => 12
+			Cache::PRIORITY => 12,
 		]);
 
 		$this->journal->write('ok_test_b', [
-			Cache::PRIORITY => 12
+			Cache::PRIORITY => 12,
 		]);
 
 		Assert::same([
@@ -204,11 +204,11 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedDifferentTags()
 	{
 		$this->journal->write('ok_test_ba', [
-			Cache::TAGS => ['homepage']
+			Cache::TAGS => ['homepage'],
 		]);
 
 		$this->journal->write('ok_test_ba', [
-			Cache::TAGS => ['homepage2']
+			Cache::TAGS => ['homepage2'],
 		]);
 
 		Assert::same([
@@ -223,11 +223,11 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedTwoDifferentTags()
 	{
 		$this->journal->write('ok_test_baa', [
-			Cache::TAGS => ['homepage', 'aąa']
+			Cache::TAGS => ['homepage', 'aąa'],
 		]);
 
 		$this->journal->write('ok_test_baa', [
-			Cache::TAGS => ['homepage2', 'aaa']
+			Cache::TAGS => ['homepage2', 'aaa'],
 		]);
 
 		Assert::same([
@@ -242,11 +242,11 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testDuplicatedDifferentPriorities()
 	{
 		$this->journal->write('ok_test_bb', [
-			Cache::PRIORITY => 10
+			Cache::PRIORITY => 10,
 		]);
 
 		$this->journal->write('ok_test_bb', [
-			Cache::PRIORITY => 20
+			Cache::PRIORITY => 20,
 		]);
 
 		Assert::same([
@@ -261,7 +261,7 @@ abstract class IJournalTestCase extends Tester\TestCase
 	final public function testCleanAll()
 	{
 		$this->journal->write('ok_test_all_tags', [
-			Cache::TAGS => ['test:all', 'test:all']
+			Cache::TAGS => ['test:all', 'test:all'],
 		]);
 
 		$this->journal->write('ok_test_all_priority', [

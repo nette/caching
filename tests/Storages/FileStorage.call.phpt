@@ -14,14 +14,14 @@ require __DIR__ . '/../bootstrap.php';
 
 class Mock
 {
-	function mockFunction($x, $y)
+	public function mockFunction($x, $y)
 	{
 		$GLOBALS['called'] = true;
 		return $x + $y;
 	}
 
 
-	function __sleep()
+	public function __sleep()
 	{
 		throw new Exception;
 	}

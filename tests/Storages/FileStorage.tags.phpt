@@ -55,8 +55,8 @@ $cache->clean([
 		0 => 'non-existent1',
 		1 => 'non-existent2',
 		3 => 'one',
-		5 => 'non-existent3'
-	]
+		5 => 'non-existent3',
+	],
 ]);
 
 Assert::null($cache->load('key1'));

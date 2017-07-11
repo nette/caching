@@ -21,7 +21,7 @@ function mockFunction($x, $y)
 
 class Test
 {
-	function mockMethod($x, $y)
+	public function mockMethod($x, $y)
 	{
 		$GLOBALS['called'] = true;
 		return $x + $y;
