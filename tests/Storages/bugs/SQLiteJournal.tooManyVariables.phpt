@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\Caching\Storages\SQLiteStorage tags dependency test.
+ * @phpExtension pdo_sqlite
  */
 
 declare(strict_types=1);
@@ -12,11 +13,6 @@ use Tester\Assert;
 
 
 require __DIR__ . '/../../bootstrap.php';
-
-
-if (!extension_loaded('pdo_sqlite')) {
-	Tester\Environment::skip('Requires PHP extension pdo_sqlite.');
-}
 
 
 $journal = new SQLiteJournal(':memory:');

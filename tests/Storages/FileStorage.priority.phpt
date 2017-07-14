@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\Caching\Storages\FileStorage priority test.
+ * @phpExtension pdo_sqlite
  */
 
 declare(strict_types=1);

@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\Caching\Storages\SQLiteJournal basic test.
+ * @phpExtension pdo_sqlite
  */
 
 declare(strict_types=1);
@@ -11,11 +12,6 @@ use Nette\Caching\Storages\SQLiteJournal;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/IJournalTestCase.php';
-
-
-if (!extension_loaded('pdo_sqlite')) {
-	Tester\Environment::skip('Requires PHP extension pdo_sqlite.');
-}
 
 
 class SQLiteJournalTest extends IJournalTestCase

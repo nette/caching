@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\Caching\Storages\SQLiteStorage database file permissions.
+ * @phpExtension pdo_sqlite
  */
 
 declare(strict_types=1);
@@ -13,9 +14,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!extension_loaded('pdo_sqlite')) {
-	Tester\Environment::skip('Requires PHP extension pdo_sqlite.');
-} elseif (defined('PHP_WINDOWS_VERSION_BUILD')) {
+if (defined('PHP_WINDOWS_VERSION_BUILD')) {
 	Tester\Environment::skip('UNIX test only.');
 }
 
