@@ -9,7 +9,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function count;
+use function count, strlen;
 
 
 /**
@@ -163,6 +163,12 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 				$tags = $conditions[Cache::Tags];
 				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
 				$args = [...$args, ...$tags];
+			}
+
+			// keys of the namespace itself, not of the nested ones; the range uses the primary key index
+			foreach ($conditions[Cache::Namespaces] ?? [] as $namespace) {
+				$sql .= " OR (key >= ? AND key < ? AND instr(substr(CAST(key AS BLOB), ?), x'00') = 0)";
+				$args = [...$args, $namespace . Cache::NamespaceSeparator, $namespace . "\x01", strlen($namespace) + 2];
 			}
 
 			$this->pdo->prepare($sql)->execute($args);

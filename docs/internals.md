@@ -138,11 +138,14 @@ easy traps:
   value and drops `$dependencies` entirely, so there is **no expiration, no tags,
   no invalidation** (only `clean(All)` empties it). It is a process-local map, fine
   for a single request, wrong for anything that must expire.
-- **`SQLiteStorage`** supports `Expire`/`Sliding` and `Tags` (its own `tags`
-  table, no journal) but **silently drops `Callbacks`** — so `Files`/`Constants`
-  dependencies do nothing there — and ignores `Priority` and `Items`. Expired
-  rows are removed by `clean([])`, run probabilistically by the constructor like
-  in `FileStorage`.
+- **`SQLiteStorage`** supports `Expire`/`Sliding`, `Tags` (its own `tags` table,
+  no journal) and cleaning by `Namespaces`, but **silently drops `Callbacks`** —
+  so `Files`/`Constants` dependencies do nothing there — and ignores `Priority`
+  and `Items`. A namespace is cleaned by the key range `namespace\x00` ..
+  `namespace\x01`, not by `LIKE`: `LIKE` cuts the pattern at the NUL byte of the
+  separator and treats `_` and `%` in a namespace as wildcards. Expired rows are
+  removed by `clean([])`, run probabilistically by the constructor like in
+  `FileStorage`.
 - **`MemcachedStorage`** honors `Expire`/`Sliding`/`Callbacks`, needs a `Journal`
   for `Tags`/`Priority` (`InvalidStateException` without one), throws
   `NotSupportedException` on `Items`, and its `clean(All)` calls `flush()` —
