@@ -261,6 +261,7 @@ class FileStorage implements Nette\Caching\IStorage
 	{
 		$all = !empty($conditions[Cache::ALL]);
 		$collector = empty($conditions);
+		$namespaces = isset($conditions[Cache::NAMESPACES]) ? $conditions[Cache::NAMESPACES] : null;
 
 		// cleaning using file iterator
 		if ($all || $collector) {
@@ -296,6 +297,17 @@ class FileStorage implements Nette\Caching\IStorage
 				$this->journal->clean($conditions);
 			}
 			return;
+
+		} elseif ($namespaces) {
+			foreach ($namespaces as $namespace) {
+				$dir = $this->dir . '/_' . urlencode($namespace);
+				if (is_dir($dir)) {
+					foreach (Nette\Utils\Finder::findFiles('_*')->in($dir) as $entry) {
+						$this->delete((string) $entry);
+					}
+					@rmdir($dir); // may already contain new files
+				}
+			}
 		}
 
 		// cleaning using journal

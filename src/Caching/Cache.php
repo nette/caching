@@ -28,6 +28,7 @@ class Cache
 		ITEMS = 'items',
 		CONSTS = 'consts',
 		CALLBACKS = 'callbacks',
+		NAMESPACES = 'namespaces',
 		ALL = 'all';
 
 	/** @internal */
@@ -206,6 +207,11 @@ class Cache
 		// make list from TAGS
 		if (isset($dp[self::TAGS])) {
 			$dp[self::TAGS] = array_values((array) $dp[self::TAGS]);
+		}
+
+		// make list from NAMESPACES
+		if (isset($dp[self::NAMESPACES])) {
+			$dp[self::NAMESPACES] = array_values((array) $dp[self::NAMESPACES]);
 		}
 
 		// convert FILES into CALLBACKS
