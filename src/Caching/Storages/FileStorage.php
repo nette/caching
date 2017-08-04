@@ -79,10 +79,11 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Read from cache.
-	 * @return mixed
-	 */
+    /**
+     * Read from cache.
+     * @param string $key
+     * @return mixed
+     */
 	public function read(string $key)
 	{
 		$meta = $this->readMetaAndLock($this->getCacheFile($key), LOCK_SH);
@@ -95,9 +96,11 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Verifies dependencies.
-	 */
+    /**
+     * Verifies dependencies.
+     * @param array $meta
+     * @return bool
+     */
 	private function verify(array $meta): bool
 	{
 		do {
@@ -133,9 +136,10 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 */
+    /**
+     * Prevents item reading and writing. Lock is released by write() or remove().
+     * @param string $key
+     */
 	public function lock(string $key): void
 	{
 		$cacheFile = $this->getCacheFile($key);
@@ -150,9 +154,12 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Writes item into the cache.
-	 */
+    /**
+     * Writes item into the cache.
+     * @param string $key
+     * @param $data
+     * @param array $dp
+     */
 	public function write(string $key, $data, array $dp): void
 	{
 		$meta = [
@@ -232,9 +239,10 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Removes item from the cache.
-	 */
+    /**
+     * Removes item from the cache.
+     * @param string $key
+     */
 	public function remove(string $key): void
 	{
 		unset($this->locks[$key]);
@@ -242,13 +250,15 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Removes items from the cache by conditions & garbage collector.
-	 */
+    /**
+     * Removes items from the cache by conditions & garbage collector.
+     * @param array $conditions
+     */
 	public function clean(array $conditions): void
 	{
 		$all = !empty($conditions[Cache::ALL]);
 		$collector = empty($conditions);
+        $namespaces = $conditions[Cache::NAMESPACE] ?? false;
 
 		// cleaning using file iterator
 		if ($all || $collector) {
@@ -284,6 +294,21 @@ class FileStorage implements Nette\Caching\IStorage
 				$this->journal->clean($conditions);
 			}
 			return;
+		} else if($namespaces) {
+            if (!is_array($namespaces)) {
+                $namespaces = [$namespaces];
+            }
+
+            foreach ($namespaces as $namespace) {
+                $dir = $this->dir . "/_$namespace";
+                if (is_dir($dir)) {
+                    $items = Nette\Utils\Finder::findFiles('')->from($dir);
+                    foreach ($items as $item) {
+                        $this->delete($item);
+                    }
+                    @rmdir($dir);
+                }
+		    }
 		}
 
 		// cleaning using journal
@@ -295,11 +320,12 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Reads cache data from disk.
-	 * @param  string  file path
-	 * @param  int     lock mode
-	 */
+    /**
+     * Reads cache data from disk.
+     * @param  string  $file path
+     * @param  int     $lock mode
+     * @return array|null
+     */
 	protected function readMetaAndLock(string $file, int $lock): ?array
 	{
 		$handle = @fopen($file, 'r+b'); // @ - file may not exist
@@ -325,10 +351,11 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Reads cache data from disk and closes cache file handle.
-	 * @return mixed
-	 */
+    /**
+     * Reads cache data from disk and closes cache file handle.
+     * @param array $meta
+     * @return mixed
+     */
 	protected function readData(array $meta)
 	{
 		$data = stream_get_contents($meta[self::HANDLE]);
@@ -343,9 +370,11 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Returns file name.
-	 */
+    /**
+     * Returns file name.
+     * @param string $key
+     * @return string
+     */
 	protected function getCacheFile(string $key): string
 	{
 		$file = urlencode($key);
@@ -356,10 +385,11 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Deletes and closes file.
-	 * @param  resource $handle
-	 */
+    /**
+     * Deletes and closes file.
+     * @param string $file
+     * @param  resource $handle
+     */
 	private static function delete(string $file, $handle = null): void
 	{
 		if (@unlink($file)) { // @ - file may not already exist
