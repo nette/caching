@@ -34,6 +34,8 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
+			PRAGMA case_sensitive_like = ON;
+
 			CREATE TABLE IF NOT EXISTS cache (
 				key BLOB NOT NULL PRIMARY KEY,
 				data BLOB NOT NULL,
@@ -145,19 +147,26 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	{
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
-
-		} else {
-			$sql = 'DELETE FROM cache WHERE expire < ?';
-			$args = [time()];
-
-			if (!empty($conditions[Cache::TAGS])) {
-				$tags = $conditions[Cache::TAGS];
-				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
-				$args = array_merge($args, $tags);
-			}
-
-			$this->pdo->prepare($sql)->execute($args);
+			return;
 		}
+
+		$sql = 'DELETE FROM cache WHERE expire < ?';
+		$args = [time()];
+
+		if (!empty($conditions[Cache::TAGS])) {
+			$tags = $conditions[Cache::TAGS];
+			$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
+			$args = array_merge($args, $tags);
+		}
+
+		if (!empty($conditions[Cache::NAMESPACES])) {
+			foreach ($conditions[Cache::NAMESPACES] as $namespace) {
+				$sql .= ' OR key LIKE ?';
+				$args[] = self::sanitize($namespace . Cache::NAMESPACE_SEPARATOR . '%');
+			}
+		}
+
+		$this->pdo->prepare($sql)->execute($args);
 	}
 
 
