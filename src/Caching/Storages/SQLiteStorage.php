@@ -165,6 +165,12 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 				$args = [...$args, ...$tags];
 			}
 
+			// keys of the namespace and of the nested ones; the range uses the primary key index
+			foreach ($conditions[Cache::Namespaces] ?? [] as $namespace) {
+				$sql .= ' OR (key >= ? AND key < ?)';
+				$args = [...$args, $namespace . Cache::NamespaceSeparator, $namespace . "\x01"];
+			}
+
 			$this->pdo->prepare($sql)->execute($args);
 		}
 	}
