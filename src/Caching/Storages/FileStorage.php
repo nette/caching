@@ -285,7 +285,7 @@ class FileStorage implements Nette\Caching\IStorage
 				$this->journal->clean($conditions);
 			}
 			return;
-		} else if($namespaces) {
+		} elseif ($namespaces) {
 			if (!is_array($namespaces)) {
 				$namespaces = [$namespaces];
 			}
@@ -295,7 +295,7 @@ class FileStorage implements Nette\Caching\IStorage
 				if (is_dir($dir)) {
 					$items = Nette\Utils\Finder::findFiles('')->from($dir);
 					foreach ($items as $item) {
-						$this->delete((string)$item);
+						$this->delete((string) $item);
 					}
 					@rmdir($dir);
 				}
