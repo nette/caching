@@ -295,7 +295,7 @@ class FileStorage implements Nette\Caching\IStorage
 				if (is_dir($dir)) {
 					$items = Nette\Utils\Finder::findFiles('')->from($dir);
 					foreach ($items as $item) {
-						$this->delete($item);
+						$this->delete((string)$item);
 					}
 					@rmdir($dir);
 				}
