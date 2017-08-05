@@ -82,8 +82,7 @@ class Cache
 
 	/**
 	 * Reads the specified item from the cache or generate it.
-	 * @param $key
-	 * @param callable|null $fallback
+	 * @param  mixed
 	 * @return mixed
 	 */
 	public function load($key, callable $fallback = null)
@@ -100,9 +99,6 @@ class Cache
 
 	/**
 	 * Reads multiple items from the cache.
-	 * @param array $keys
-	 * @param callable|null $fallback
-	 * @return array
 	 */
 	public function bulkLoad(array $keys, callable $fallback = null): array
 	{
@@ -158,11 +154,10 @@ class Cache
 	 * - Cache::ITEMS => (array|string) cache items
 	 * - Cache::CONSTS => (array|string) cache items
 	 *
-	 * @param $key
-	 * @param $data
-	 * @param array|null $dependencies
+	 * @param  mixed
+	 * @param  mixed
 	 * @return mixed value itself
-	 * @throws \Throwable
+	 * @throws Nette\InvalidArgumentException
 	 */
 	public function save($key, $data, array $dependencies = null)
 	{
@@ -248,7 +243,6 @@ class Cache
 	 * - Cache::PRIORITY => (int) priority
 	 * - Cache::TAGS => (array) tags
 	 * - Cache::ALL => true
-	 * @param array|null $conditions
 	 */
 	public function clean(array $conditions = null): void
 	{
@@ -279,10 +273,7 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
-	 * @param $function
-	 * @param array|null $dependencies
-	 * @return \Closure
-	 * @internal param $mixed
+	 * @param  mixed
 	 */
 	public function wrap($function, array $dependencies = null): \Closure
 	{
@@ -343,9 +334,6 @@ class Cache
 
 	/**
 	 * Checks CONSTS dependency.
-	 * @param string $const
-	 * @param $value
-	 * @return bool
 	 */
 	private static function checkConst(string $const, $value): bool
 	{
@@ -355,9 +343,6 @@ class Cache
 
 	/**
 	 * Checks FILES dependency.
-	 * @param string $file
-	 * @param int|null $time
-	 * @return bool
 	 */
 	private static function checkFile(string $file, ?int $time): bool
 	{

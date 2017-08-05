@@ -81,7 +81,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Read from cache.
-	 * @param string $key
 	 * @return mixed
 	 */
 	public function read(string $key)
@@ -98,8 +97,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Verifies dependencies.
-	 * @param array $meta
-	 * @return bool
 	 */
 	private function verify(array $meta): bool
 	{
@@ -138,7 +135,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param string $key
 	 */
 	public function lock(string $key): void
 	{
@@ -156,9 +152,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Writes item into the cache.
-	 * @param string $key
-	 * @param $data
-	 * @param array $dp
 	 */
 	public function write(string $key, $data, array $dp): void
 	{
@@ -241,7 +234,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Removes item from the cache.
-	 * @param string $key
 	 */
 	public function remove(string $key): void
 	{
@@ -252,7 +244,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Removes items from the cache by conditions & garbage collector.
-	 * @param array $conditions
 	 */
 	public function clean(array $conditions): void
 	{
@@ -322,9 +313,8 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk.
-	 * @param  string  $file path
-	 * @param  int     $lock mode
-	 * @return array|null
+	 * @param  string  file path
+	 * @param  int     lock mode
 	 */
 	protected function readMetaAndLock(string $file, int $lock): ?array
 	{
@@ -353,7 +343,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk and closes cache file handle.
-	 * @param array $meta
 	 * @return mixed
 	 */
 	protected function readData(array $meta)
@@ -372,8 +361,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Returns file name.
-	 * @param string $key
-	 * @return string
 	 */
 	protected function getCacheFile(string $key): string
 	{
@@ -387,7 +374,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Deletes and closes file.
-	 * @param string $file
 	 * @param  resource $handle
 	 */
 	private static function delete(string $file, $handle = null): void

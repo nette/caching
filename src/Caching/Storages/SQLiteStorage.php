@@ -54,7 +54,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Read from cache.
-	 * @param string $key
 	 * @return mixed
 	 */
 	public function read(string $key)
@@ -72,7 +71,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Reads from cache in bulk.
-	 * @param array $keys
 	 * @return array key => value pairs, missing items are omitted
 	 */
 	public function bulkRead(array $keys): array
@@ -97,7 +95,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param string $key
 	 */
 	public function lock(string $key): void
 	{
@@ -106,9 +103,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Writes item into the cache.
-	 * @param string $key
-	 * @param $data
-	 * @param array $dependencies
 	 */
 	public function write(string $key, $data, array $dependencies): void
 	{
@@ -133,7 +127,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Removes item from the cache.
-	 * @param string $key
 	 */
 	public function remove(string $key): void
 	{
@@ -144,7 +137,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	/**
 	 * Removes items from the cache by conditions & garbage collector.
-	 * @param array $conditions
 	 */
 	public function clean(array $conditions): void
 	{
