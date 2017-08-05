@@ -31,7 +31,7 @@ class Cache
 		ITEMS = 'items',
 		CONSTS = 'consts',
 		CALLBACKS = 'callbacks',
-        NAMESPACE = 'namespace',
+		NAMESPACE = 'namespace',
 		ALL = 'all';
 
 	/** @internal */
@@ -80,12 +80,12 @@ class Cache
 	}
 
 
-    /**
-     * Reads the specified item from the cache or generate it.
-     * @param $key
-     * @param callable|null $fallback
-     * @return mixed
-     */
+	/**
+	 * Reads the specified item from the cache or generate it.
+	 * @param $key
+	 * @param callable|null $fallback
+	 * @return mixed
+	 */
 	public function load($key, callable $fallback = null)
 	{
 		$data = $this->storage->read($this->generateKey($key));
@@ -98,12 +98,12 @@ class Cache
 	}
 
 
-    /**
-     * Reads multiple items from the cache.
-     * @param array $keys
-     * @param callable|null $fallback
-     * @return array
-     */
+	/**
+	 * Reads multiple items from the cache.
+	 * @param array $keys
+	 * @param callable|null $fallback
+	 * @return array
+	 */
 	public function bulkLoad(array $keys, callable $fallback = null): array
 	{
 		if (count($keys) === 0) {
@@ -147,23 +147,23 @@ class Cache
 	}
 
 
-    /**
-     * Writes item into the cache.
-     * Dependencies are:
-     * - Cache::PRIORITY => (int) priority
-     * - Cache::EXPIRATION => (timestamp) expiration
-     * - Cache::SLIDING => (bool) use sliding expiration?
-     * - Cache::TAGS => (array) tags
-     * - Cache::FILES => (array|string) file names
-     * - Cache::ITEMS => (array|string) cache items
-     * - Cache::CONSTS => (array|string) cache items
-     *
-     * @param $key
-     * @param $data
-     * @param array|null $dependencies
-     * @return mixed value itself
-     * @throws \Throwable
-     */
+	/**
+	 * Writes item into the cache.
+	 * Dependencies are:
+	 * - Cache::PRIORITY => (int) priority
+	 * - Cache::EXPIRATION => (timestamp) expiration
+	 * - Cache::SLIDING => (bool) use sliding expiration?
+	 * - Cache::TAGS => (array) tags
+	 * - Cache::FILES => (array|string) file names
+	 * - Cache::ITEMS => (array|string) cache items
+	 * - Cache::CONSTS => (array|string) cache items
+	 *
+	 * @param $key
+	 * @param $data
+	 * @param array|null $dependencies
+	 * @return mixed value itself
+	 * @throws \Throwable
+	 */
 	public function save($key, $data, array $dependencies = null)
 	{
 		$key = $this->generateKey($key);
@@ -242,14 +242,14 @@ class Cache
 	}
 
 
-    /**
-     * Removes items from the cache by conditions.
-     * Conditions are:
-     * - Cache::PRIORITY => (int) priority
-     * - Cache::TAGS => (array) tags
-     * - Cache::ALL => true
-     * @param array|null $conditions
-     */
+	/**
+	 * Removes items from the cache by conditions.
+	 * Conditions are:
+	 * - Cache::PRIORITY => (int) priority
+	 * - Cache::TAGS => (array) tags
+	 * - Cache::ALL => true
+	 * @param array|null $conditions
+	 */
 	public function clean(array $conditions = null): void
 	{
 		$conditions = (array) $conditions;
@@ -277,13 +277,13 @@ class Cache
 	}
 
 
-    /**
-     * Caches results of function/method calls.
-     * @param $function
-     * @param array|null $dependencies
-     * @return \Closure
-     * @internal param $mixed
-     */
+	/**
+	 * Caches results of function/method calls.
+	 * @param $function
+	 * @param array|null $dependencies
+	 * @return \Closure
+	 * @internal param $mixed
+	 */
 	public function wrap($function, array $dependencies = null): \Closure
 	{
 		return function () use ($function, $dependencies) {
@@ -341,24 +341,24 @@ class Cache
 	}
 
 
-    /**
-     * Checks CONSTS dependency.
-     * @param string $const
-     * @param $value
-     * @return bool
-     */
+	/**
+	 * Checks CONSTS dependency.
+	 * @param string $const
+	 * @param $value
+	 * @return bool
+	 */
 	private static function checkConst(string $const, $value): bool
 	{
 		return defined($const) && constant($const) === $value;
 	}
 
 
-    /**
-     * Checks FILES dependency.
-     * @param string $file
-     * @param int|null $time
-     * @return bool
-     */
+	/**
+	 * Checks FILES dependency.
+	 * @param string $file
+	 * @param int|null $time
+	 * @return bool
+	 */
 	private static function checkFile(string $file, ?int $time): bool
 	{
 		return @filemtime($file) == $time; // @ - stat may fail
