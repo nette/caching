@@ -14,7 +14,7 @@ require __DIR__ . '/Cache.php';
 
 
 // load twice with fallback
-$storage = new TestStorage();
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 
 $value = $cache->load('key', function () {
@@ -30,7 +30,7 @@ Assert::equal('value', $data['data']);
 
 // load twice with closure fallback, pass dependencies
 $dependencies = [Cache::TAGS => ['tag']];
-$storage = new TestStorage();
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 
 $value = $cache->load('key', function (&$deps) use ($dependencies) {
