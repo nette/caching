@@ -60,7 +60,7 @@ test(function () {
 
 test(function () {
 	Assert::exception(function () {
-		$cache = new Cache(new BulkReadTestStorage());
+		$cache = new Cache(new BulkReadTestStorage);
 		$cache->bulkLoad([[1]]);
 	}, Nette\InvalidArgumentException::class, 'Only scalar keys are allowed in bulkLoad()');
 });
