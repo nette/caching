@@ -249,7 +249,7 @@ class FileStorage implements Nette\Caching\IStorage
 	{
 		$all = !empty($conditions[Cache::ALL]);
 		$collector = empty($conditions);
-		$namespaces = $conditions[Cache::NAMESPACE] ?? false;
+		$namespaces = $conditions[Cache::NAMESPACES] ?? false;
 
 		// cleaning using file iterator
 		if ($all || $collector) {
