@@ -153,7 +153,7 @@ class FileStorage implements Nette\Caching\IStorage
 	/**
 	 * Writes item into the cache.
 	 */
-	public function write(string $key, $data, array $dp): void
+	public function write(string $key, $data, array $dp = []): void
 	{
 		$meta = [
 			self::META_TIME => microtime(),
@@ -291,13 +291,13 @@ class FileStorage implements Nette\Caching\IStorage
 			}
 
 			foreach ($namespaces as $namespace) {
-				$dir = $this->dir . "/_$namespace";
+				$dir = $this->dir . '/_' . urlencode($namespace);
 				if (is_dir($dir)) {
-					$items = Nette\Utils\Finder::findFiles('')->from($dir);
+					$items = Nette\Utils\Finder::findFiles('*')->from($dir);
 					foreach ($items as $item) {
 						$this->delete((string) $item);
 					}
-					@rmdir($dir);
+					@rmdir($dir); // may already contain new files
 				}
 			}
 		}

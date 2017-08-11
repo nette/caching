@@ -31,10 +31,9 @@ class Cache
 		ITEMS = 'items',
 		CONSTS = 'consts',
 		CALLBACKS = 'callbacks',
-		NAMESPACE = 'namespace',
+		NAMESPACES = 'namespaces',
 		ALL = 'all';
 
-	/** @internal */
 	public const NAMESPACE_SEPARATOR = "\x00";
 
 	/** @var IStorage */

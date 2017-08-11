@@ -153,15 +153,18 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			}
 
 			$this->pdo->prepare($sql)->execute($args);
-		} elseif (!empty($conditions[Cache::NAMESPACE])) {
-			if (is_array($conditions[Cache::NAMESPACE])) {
-				$namespaces = $conditions[Cache::NAMESPACE];
+		} elseif (!empty($conditions[Cache::NAMESPACES])) {
+			if (is_array($conditions[Cache::NAMESPACES])) {
+				$namespaces = $conditions[Cache::NAMESPACES];
 			} else {
-				$namespaces = [$conditions[Cache::NAMESPACE]];
+				$namespaces = [$conditions[Cache::NAMESPACES]];
 			}
 
+
 			foreach ($namespaces as $namespace) {
-				$this->pdo->prepare("DELETE FROM cache WHERE key LIKE %/_$namespace/%")->execute();
+				$this->pdo
+					->prepare('DELETE FROM cache WHERE key LIKE ?')
+					->execute([$namespace . Cache::NAMESPACE_SEPARATOR]);
 			}
 		}
 	}

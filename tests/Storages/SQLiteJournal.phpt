@@ -14,6 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/IJournalTestCase.php';
 
 
+/**
+ * @testCase
+ */
 class SQLiteJournalTest extends IJournalTestCase
 {
 	public function createJournal()

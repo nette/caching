@@ -1,22 +1,24 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage clean with Cache::NAMESPACE
+ * Test: Nette\Caching\Storages\SQLiteStorage clean with Cache::NAMESPACE
  */
+
 
 declare(strict_types=1);
 
-use Nette\Caching\Cache;
-use Nette\Caching\Storages\FileStorage;
+use Nette\Caching\{
+	Cache, Storages\SQLiteStorage
+};
 use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
-$storage = new FileStorage(TEMP_DIR);
+$storage = new SQLiteStorage(':memory:');
 
 /*
- * Create filestorage cache without namespace and some with namespaces
+ * Create SQLiteStorage cache without namespace and some with namespaces
  */
 $cacheA = new Cache($storage);
 $cacheB = new Cache($storage, 'B');
