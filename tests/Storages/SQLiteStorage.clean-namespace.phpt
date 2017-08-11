@@ -7,9 +7,8 @@
 
 declare(strict_types=1);
 
-use Nette\Caching\{
-	Cache, Storages\SQLiteStorage
-};
+use Nette\Caching\Cache;
+use Nette\Caching\Storages\SQLiteStorage;
 use Tester\Assert;
 
 
