@@ -44,22 +44,22 @@ $cacheD->save('test2', 'Wayne');
  */
 Assert::same('David Grudl', implode(' ', [
 	$cacheA->load('test1'),
-	$cacheA->load('test2')
+	$cacheA->load('test2'),
 ]));
 
 Assert::same('Barry Allen', implode(' ', [
 	$cacheB->load('test1'),
-	$cacheB->load('test2')
+	$cacheB->load('test2'),
 ]));
 
 Assert::same('Oliver Queen', implode(' ', [
 	$cacheC->load('test1'),
-	$cacheC->load('test2')
+	$cacheC->load('test2'),
 ]));
 
 Assert::same('Bruce Wayne', implode(' ', [
 	$cacheD->load('test1'),
-	$cacheD->load('test2')
+	$cacheD->load('test2'),
 ]));
 
 
@@ -70,7 +70,7 @@ $storage->clean([Cache::NAMESPACES => 'B']);
 
 Assert::same('David Grudl', implode(' ', [
 	$cacheA->load('test1'),
-	$cacheA->load('test2')
+	$cacheA->load('test2'),
 ]));
 
 // Only these should be null now
@@ -79,12 +79,12 @@ Assert::null($cacheB->load('test2'));
 
 Assert::same('Oliver Queen', implode(' ', [
 	$cacheC->load('test1'),
-	$cacheC->load('test2')
+	$cacheC->load('test2'),
 ]));
 
 Assert::same('Bruce Wayne', implode(' ', [
 	$cacheD->load('test1'),
-	$cacheD->load('test2')
+	$cacheD->load('test2'),
 ]));
 
 
@@ -95,7 +95,7 @@ $storage->clean([Cache::NAMESPACES => ['C', 'D']]);
 
 Assert::same('David Grudl', implode(' ', [
 	$cacheA->load('test1'),
-	$cacheA->load('test2')
+	$cacheA->load('test2'),
 ]));
 
 // All other should be null
@@ -107,6 +107,3 @@ Assert::null($cacheC->load('test2'));
 
 Assert::null($cacheD->load('test1'));
 Assert::null($cacheD->load('test2'));
-
-
-
