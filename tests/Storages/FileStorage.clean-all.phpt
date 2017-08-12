@@ -10,7 +10,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
