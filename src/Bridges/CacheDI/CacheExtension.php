@@ -29,7 +29,11 @@ class CacheExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		@mkdir($this->tempDir . '/cache'); // @ - directory may exists
+		$dir = $this->tempDir . '/cache';
+		Nette\Utils\FileSystem::createDir($dir);
+		if (!is_writable($dir)) {
+			throw new Nette\InvalidStateException("Make directory '$dir' writable.");
+		}
 
 		$builder = $this->getContainerBuilder();
 
