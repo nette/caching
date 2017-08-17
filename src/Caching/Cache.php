@@ -31,9 +31,9 @@ class Cache
 		ITEMS = 'items',
 		CONSTS = 'consts',
 		CALLBACKS = 'callbacks',
+		NAMESPACES = 'namespaces',
 		ALL = 'all';
 
-	/** @internal */
 	public const NAMESPACE_SEPARATOR = "\x00";
 
 	/** @var IStorage */
@@ -155,7 +155,7 @@ class Cache
 	 *
 	 * @param  mixed
 	 * @param  mixed
-	 * @return mixed  value itself
+	 * @return mixed value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
 	public function save($key, $data, array $dependencies = null)

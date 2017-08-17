@@ -142,8 +142,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	{
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
-
-		} else {
+		} elseif (!empty($conditions[Cache::TAGS])) {
 			$sql = 'DELETE FROM cache WHERE expire < ?';
 			$args = [time()];
 
@@ -154,6 +153,19 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			}
 
 			$this->pdo->prepare($sql)->execute($args);
+		} elseif (!empty($conditions[Cache::NAMESPACES])) {
+			if (is_array($conditions[Cache::NAMESPACES])) {
+				$namespaces = $conditions[Cache::NAMESPACES];
+			} else {
+				$namespaces = [$conditions[Cache::NAMESPACES]];
+			}
+
+
+			foreach ($namespaces as $namespace) {
+				$this->pdo
+					->prepare('DELETE FROM cache WHERE key LIKE ?')
+					->execute([$namespace . Cache::NAMESPACE_SEPARATOR]);
+			}
 		}
 	}
 }
