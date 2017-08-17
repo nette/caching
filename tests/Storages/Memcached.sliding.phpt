@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\NewMemcachedStorage sliding expiration test.
+ * Test: Nette\Caching\Storages\MemcachedStorage sliding expiration test.
  */
 
 declare(strict_types=1);
 
 use Nette\Caching\Cache;
-use Nette\Caching\Storages\NewMemcachedStorage;
+use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!NewMemcachedStorage::isAvailable()) {
+if (!MemcachedStorage::isAvailable()) {
 	Tester\Environment::skip('Requires PHP extension Memcached.');
 }
 
@@ -24,7 +24,7 @@ Tester\Environment::lock('memcached-sliding', TEMP_DIR);
 $key = 'nette-memcached-sliding-key';
 $value = 'rulez';
 
-$cache = new Cache(new NewMemcachedStorage('localhost'));
+$cache = new Cache(new MemcachedStorage('localhost'));
 
 
 // Writing cache...
