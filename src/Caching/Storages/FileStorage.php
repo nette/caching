@@ -31,9 +31,9 @@ class FileStorage implements Nette\Caching\IStorage
 	 * delete* = try unlink, if fails (on NTFS) { lock(EX), truncate, close, unlink } else close (on ext3)
 	 */
 
-	/** @internal cache file structure */
+	/** @internal cache file structure: meta-struct size + serialized meta-struct + data */
 	private const
-		META_HEADER_LEN = 28, // 22b signature + 6b meta-struct size + serialized meta-struct + data
+		META_HEADER_LEN = 6,
 	// meta structure: array of
 		META_TIME = 'time', // timestamp
 		META_SERIALIZED = 'serialized', // is content serialized?
@@ -205,8 +205,8 @@ class FileStorage implements Nette\Caching\IStorage
 			$meta[self::META_SERIALIZED] = true;
 		}
 
-		$head = serialize($meta) . '?>';
-		$head = '<?php //netteCache[01]' . str_pad((string) strlen($head), 6, '0', STR_PAD_LEFT) . $head;
+		$head = serialize($meta);
+		$head = str_pad((string) strlen($head), 6, '0', STR_PAD_LEFT) . $head;
 		$headLen = strlen($head);
 
 		do {
@@ -321,9 +321,8 @@ class FileStorage implements Nette\Caching\IStorage
 
 		flock($handle, $lock);
 
-		$head = stream_get_contents($handle, self::META_HEADER_LEN);
-		if ($head && strlen($head) === self::META_HEADER_LEN) {
-			$size = (int) substr($head, -6);
+		$size = (int) stream_get_contents($handle, self::META_HEADER_LEN);
+		if ($size) {
 			$meta = stream_get_contents($handle, $size, self::META_HEADER_LEN);
 			$meta = unserialize($meta);
 			$meta[self::FILE] = $file;
