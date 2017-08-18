@@ -58,6 +58,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	 */
 	public function read(string $key)
 	{
+		$key = self::sanitize($key);
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute([$key, time()]);
 		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -75,6 +76,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	 */
 	public function bulkRead(array $keys): array
 	{
+		$keys = array_map([self::class, 'sanitize'], $keys);
 		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute(array_merge($keys, [time()]));
 		$result = [];
@@ -83,7 +85,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 			if ($row['slide'] !== null) {
 				$updateSlide[] = $row['key'];
 			}
-			$result[$row['key']] = unserialize($row['data']);
+			$result[str_replace("\x01", Cache::NAMESPACE_SEPARATOR, $row['key'])] = unserialize($row['data']);
 		}
 		if (!empty($updateSlide)) {
 			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
@@ -106,6 +108,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	 */
 	public function write(string $key, $data, array $dependencies): void
 	{
+		$key = self::sanitize($key);
 		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : null;
 		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : null;
 
@@ -131,7 +134,7 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	public function remove(string $key): void
 	{
 		$this->pdo->prepare('DELETE FROM cache WHERE key=?')
-			->execute([$key]);
+			->execute([self::sanitize($key)]);
 	}
 
 
@@ -155,5 +158,11 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 			$this->pdo->prepare($sql)->execute($args);
 		}
+	}
+
+
+	private function sanitize($key)
+	{
+		return str_replace(Cache::NAMESPACE_SEPARATOR, "\x01", $key);
 	}
 }
