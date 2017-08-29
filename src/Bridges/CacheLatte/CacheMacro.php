@@ -17,7 +17,7 @@ use Nette\Caching\Cache;
 /**
  * Macro {cache} ... {/cache}
  */
-class CacheMacro implements Latte\IMacro
+final class CacheMacro implements Latte\IMacro
 {
 	use Nette\SmartObject;
 

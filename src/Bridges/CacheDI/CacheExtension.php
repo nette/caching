@@ -15,7 +15,7 @@ use Nette;
 /**
  * Cache extension for Nette DI.
  */
-class CacheExtension extends Nette\DI\CompilerExtension
+final class CacheExtension extends Nette\DI\CompilerExtension
 {
 	/** @var string */
 	private $tempDir;

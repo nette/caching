@@ -54,7 +54,7 @@ class Cache
 	/**
 	 * Returns cache storage.
 	 */
-	public function getStorage(): IStorage
+	final public function getStorage(): IStorage
 	{
 		return $this->storage;
 	}
@@ -63,7 +63,7 @@ class Cache
 	/**
 	 * Returns cache namespace.
 	 */
-	public function getNamespace(): string
+	final public function getNamespace(): string
 	{
 		return (string) substr($this->namespace, 0, -1);
 	}
