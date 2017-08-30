@@ -30,16 +30,15 @@ class SQLiteJournal implements IJournal
 	 */
 	public function __construct($path)
 	{
+		if (!extension_loaded('pdo_sqlite')) {
+			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
+		}
 		$this->path = $path;
 	}
 
 
 	private function open()
 	{
-		if (!extension_loaded('pdo_sqlite')) {
-			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
-		}
-
 		if ($this->path !== ':memory:' && !is_file($this->path)) {
 			touch($this->path); // ensures ordinary file permissions
 		}
