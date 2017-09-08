@@ -271,7 +271,7 @@ class Cache
 			$key[0][0] = get_class($function[0]);
 		}
 		return $this->load($key, function () use ($function, $key) {
-			return Callback::invokeArgs($function, array_slice($key, 1));
+			return $function(...array_slice($key, 1));
 		});
 	}
 
@@ -289,7 +289,7 @@ class Cache
 			}
 			$data = $this->load($key);
 			if ($data === null) {
-				$data = $this->save($key, Callback::invokeArgs($function, $key[1]), $dependencies);
+				$data = $this->save($key, $function(...$key[1]), $dependencies);
 			}
 			return $data;
 		};
