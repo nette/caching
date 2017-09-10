@@ -7,21 +7,33 @@ Nette Caching
 [![Latest Stable Version](https://poser.pugx.org/nette/caching/v/stable)](https://github.com/nette/caching/releases)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/caching/blob/master/license.md)
 
+
+Introduction
+------------
+
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
+Documentation can be found on the [website](https://doc.nette.org/caching).
 If you like Nette, **[please make a donation now](https://nette.org/donate)**. Thank you!
 
-Install it using Composer:
+
+Installation
+------------
+
+The recommended way to install Nette Caching is via Composer:
 
 ```
 composer require nette/caching
 ```
 
-The last stable release requires PHP version 5.6 or newer (is compatible with PHP 7.0 and 7.1). The dev-master version requires PHP 7.1.
+It requires PHP version 5.6 and supports PHP up to 7.3. The dev-master version requires PHP 7.1.
 
-Nette offers a very intuitive API for cache manipulation. After all, you wouldn't expect anything else, right? ;-)
-Before we show you the first example, we need to think about place where to store data physically. We can use a database, //Memcached// server,
-or the most available storage - hard drive:
+
+Usage
+-----
+
+Nette Caching offers a very intuitive API for cache manipulation. Before we show you the first example, we need to think about place where
+to store data physically. We can use a database, Memcached server, or the most available storage - hard drive:
 
 ```php
 // the `temp` directory will be the storage
@@ -84,7 +96,7 @@ $cache = new Cache($storage, 'htmlOutput');
 
 
 Caching Function Results
--------------------------
+------------------------
 
 Caching the result of a function or method call can be achieved using the `call()` method:
 
@@ -96,7 +108,7 @@ The `gethostbyaddr($ip)` will therefore be called only once and next time, only 
 different results are cached.
 
 Output Caching
-------------------
+--------------
 
 The output can be cached not only in templates:
 
@@ -219,9 +231,8 @@ $cache->clean(array(
 ```
 
 
-
 Cache Storage
---------
+-------------
 In addition to already mentioned `FileStorage`, Nette Framework also provides `MemcachedStorage` which stores
 data to the `Memcached` server, and also `MemoryStorage` for storing data in memory for duration of the request.
 The special `DevNullStorage`, which does precisely nothing, can be used for testing, when we want to eliminate the influence of caching.
@@ -240,8 +251,8 @@ The solution is to modify application behaviour so that data are created only by
 or use an anonymous function:
 
 ```php
-$result = $cache->save($key, function() { // or callback(...)
-        return buildData(); // difficult operation
+$result = $cache->save($key, function() {
+	return buildData(); // difficult operation
 });
 ```
 
