@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Nette\Caching;
 
 use Nette;
-use Nette\Utils\Callback;
 
 
 /**

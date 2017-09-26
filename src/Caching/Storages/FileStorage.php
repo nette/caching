@@ -47,7 +47,6 @@ class FileStorage implements Nette\Caching\IStorage
 		FILE = 'file',
 		HANDLE = 'handle';
 
-
 	/** @var float  probability that the clean() routine is started */
 	public static $gcProbability = 0.001;
 
