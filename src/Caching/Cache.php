@@ -81,7 +81,7 @@ class Cache
 
 	/**
 	 * Reads the specified item from the cache or generate it.
-	 * @param  mixed
+	 * @param  mixed  $key
 	 * @return mixed
 	 */
 	public function load($key, callable $fallback = null)
@@ -153,8 +153,8 @@ class Cache
 	 * - Cache::ITEMS => (array|string) cache items
 	 * - Cache::CONSTS => (array|string) cache items
 	 *
-	 * @param  mixed
-	 * @param  mixed
+	 * @param  mixed  $key
+	 * @param  mixed  $data
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -233,7 +233,7 @@ class Cache
 
 	/**
 	 * Removes item from the cache.
-	 * @param  mixed
+	 * @param  mixed  $key
 	 */
 	public function remove($key): void
 	{
@@ -295,7 +295,7 @@ class Cache
 
 	/**
 	 * Starts the output cache.
-	 * @param  mixed
+	 * @param  mixed  $key
 	 */
 	public function start($key): ?OutputHelper
 	{

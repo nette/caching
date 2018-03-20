@@ -292,8 +292,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk.
-	 * @param  string  file path
-	 * @param  int     lock mode
 	 */
 	protected function readMetaAndLock(string $file, int $lock): ?array
 	{
@@ -352,7 +350,7 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Deletes and closes file.
-	 * @param  resource $handle
+	 * @param  resource  $handle
 	 */
 	private static function delete(string $file, $handle = null): void
 	{

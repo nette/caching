@@ -116,7 +116,7 @@ final class CacheMacro implements Latte\IMacro
 
 	/**
 	 * Ends the output cache.
-	 * @param  Nette\Caching\OutputHelper[]
+	 * @param  Nette\Caching\OutputHelper[]  $parents
 	 */
 	public static function endCache(array &$parents, array $args = null): void
 	{
