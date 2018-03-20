@@ -260,10 +260,9 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
-	 * @param  mixed
 	 * @return mixed
 	 */
-	public function call($function)
+	public function call(callable $function)
 	{
 		$key = func_get_args();
 		if (is_array($function) && is_object($function[0])) {
@@ -277,9 +276,8 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
-	 * @param  mixed
 	 */
-	public function wrap($function, array $dependencies = null): \Closure
+	public function wrap(callable $function, array $dependencies = null): \Closure
 	{
 		return function () use ($function, $dependencies) {
 			$key = [$function, func_get_args()];
