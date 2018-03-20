@@ -26,7 +26,7 @@ class SQLiteJournal implements IJournal
 
 
 	/**
-	 * @param  string
+	 * @param  string  $path
 	 */
 	public function __construct($path)
 	{

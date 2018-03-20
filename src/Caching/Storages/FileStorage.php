@@ -92,7 +92,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Verifies dependencies.
-	 * @param  array
 	 * @return bool
 	 */
 	private function verify(array $meta)
@@ -294,8 +293,8 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk.
-	 * @param  string  file path
-	 * @param  int     lock mode
+	 * @param  string  $file
+	 * @param  int  $lock
 	 * @return array|null
 	 */
 	protected function readMetaAndLock($file, $lock)
@@ -325,7 +324,6 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk and closes cache file handle.
-	 * @param  array
 	 * @return mixed
 	 */
 	protected function readData(array $meta)
@@ -344,7 +342,7 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Returns file name.
-	 * @param  string
+	 * @param  string  $key
 	 * @return string
 	 */
 	protected function getCacheFile($key)
@@ -359,8 +357,8 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Deletes and closes file.
-	 * @param  string
-	 * @param  resource
+	 * @param  string  $file
+	 * @param  resource  $handle
 	 * @return void
 	 */
 	private static function delete($file, $handle = null)
