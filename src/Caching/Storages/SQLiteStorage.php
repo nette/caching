@@ -52,10 +52,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	}
 
 
-	/**
-	 * Read from cache.
-	 * @return mixed
-	 */
 	public function read(string $key)
 	{
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
@@ -69,10 +65,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	}
 
 
-	/**
-	 * Reads from cache in bulk.
-	 * @return array key => value pairs, missing items are omitted
-	 */
 	public function bulkRead(array $keys): array
 	{
 		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
@@ -93,17 +85,11 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	}
 
 
-	/**
-	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 */
 	public function lock(string $key): void
 	{
 	}
 
 
-	/**
-	 * Writes item into the cache.
-	 */
 	public function write(string $key, $data, array $dependencies): void
 	{
 		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : null;
@@ -125,9 +111,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	}
 
 
-	/**
-	 * Removes item from the cache.
-	 */
 	public function remove(string $key): void
 	{
 		$this->pdo->prepare('DELETE FROM cache WHERE key=?')
@@ -135,9 +118,6 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	}
 
 
-	/**
-	 * Removes items from the cache by conditions & garbage collector.
-	 */
 	public function clean(array $conditions): void
 	{
 		if (!empty($conditions[Cache::ALL])) {

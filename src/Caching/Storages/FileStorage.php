@@ -78,10 +78,6 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Read from cache.
-	 * @return mixed
-	 */
 	public function read(string $key)
 	{
 		$meta = $this->readMetaAndLock($this->getCacheFile($key), LOCK_SH);
@@ -132,9 +128,6 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 */
 	public function lock(string $key): void
 	{
 		$cacheFile = $this->getCacheFile($key);
@@ -149,9 +142,6 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Writes item into the cache.
-	 */
 	public function write(string $key, $data, array $dp): void
 	{
 		$meta = [
@@ -231,9 +221,6 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Removes item from the cache.
-	 */
 	public function remove(string $key): void
 	{
 		unset($this->locks[$key]);
@@ -241,9 +228,6 @@ class FileStorage implements Nette\Caching\IStorage
 	}
 
 
-	/**
-	 * Removes items from the cache by conditions & garbage collector.
-	 */
 	public function clean(array $conditions): void
 	{
 		$all = !empty($conditions[Cache::ALL]);

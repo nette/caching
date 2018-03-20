@@ -63,9 +63,6 @@ class SQLiteJournal implements IJournal
 	}
 
 
-	/**
-	 * Writes entry information into the journal.
-	 */
 	public function write(string $key, array $dependencies): void
 	{
 		if (!$this->pdo) {
@@ -93,10 +90,6 @@ class SQLiteJournal implements IJournal
 	}
 
 
-	/**
-	 * Cleans entries from journal.
-	 * @return array|null  removed items or null when performing a full cleanup
-	 */
 	public function clean(array $conditions): ?array
 	{
 		if (!$this->pdo) {
