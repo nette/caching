@@ -8,7 +8,6 @@
 namespace Nette\Caching;
 
 use Nette;
-use Nette\Utils\Callback;
 
 
 /**
@@ -83,10 +82,9 @@ class Cache
 	/**
 	 * Reads the specified item from the cache or generate it.
 	 * @param  mixed
-	 * @param  callable
 	 * @return mixed
 	 */
-	public function load($key, $fallback = null)
+	public function load($key, callable $fallback = null)
 	{
 		$data = $this->storage->read($this->generateKey($key));
 		if ($data === null && $fallback) {
@@ -101,10 +99,9 @@ class Cache
 	/**
 	 * Reads multiple items from the cache.
 	 * @param  array
-	 * @param  callable
 	 * @return array
 	 */
-	public function bulkLoad(array $keys, $fallback = null)
+	public function bulkLoad(array $keys, callable $fallback = null)
 	{
 		if (count($keys) === 0) {
 			return [];
@@ -273,27 +270,25 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
-	 * @param  mixed
 	 * @return mixed
 	 */
-	public function call($function)
+	public function call(callable $function)
 	{
 		$key = func_get_args();
 		if (is_array($function) && is_object($function[0])) {
 			$key[0][0] = get_class($function[0]);
 		}
 		return $this->load($key, function () use ($function, $key) {
-			return Callback::invokeArgs($function, array_slice($key, 1));
+			return call_user_func_array($function, array_slice($key, 1));
 		});
 	}
 
 
 	/**
 	 * Caches results of function/method calls.
-	 * @param  mixed
 	 * @return \Closure
 	 */
-	public function wrap($function, array $dependencies = null)
+	public function wrap(callable $function, array $dependencies = null)
 	{
 		return function () use ($function, $dependencies) {
 			$key = [$function, func_get_args()];
@@ -302,7 +297,7 @@ class Cache
 			}
 			$data = $this->load($key);
 			if ($data === null) {
-				$data = $this->save($key, Callback::invokeArgs($function, $key[1]), $dependencies);
+				$data = $this->save($key, call_user_func_array($function, $key[1]), $dependencies);
 			}
 			return $data;
 		};
