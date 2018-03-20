@@ -76,11 +76,6 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 	}
 
 
-	/**
-	 * Read from cache.
-	 * @param  string
-	 * @return mixed
-	 */
 	public function read($key)
 	{
 		$key = urlencode($this->prefix . $key);
@@ -110,11 +105,6 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 	}
 
 
-	/**
-	 * Reads from cache in bulk.
-	 * @param  string
-	 * @return array key => value pairs, missing items are omitted
-	 */
 	public function bulkRead(array $keys)
 	{
 		$prefixedKeys = array_map(function ($key) {
@@ -143,22 +133,11 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 	}
 
 
-	/**
-	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 * @param  string
-	 * @return void
-	 */
 	public function lock($key)
 	{
 	}
 
 
-	/**
-	 * Writes item into the cache.
-	 * @param  string
-	 * @param  mixed
-	 * @return void
-	 */
 	public function write($key, $data, array $dp)
 	{
 		if (isset($dp[Cache::ITEMS])) {
@@ -193,22 +172,12 @@ class NewMemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulk
 	}
 
 
-	/**
-	 * Removes item from the cache.
-	 * @param  string
-	 * @return void
-	 */
 	public function remove($key)
 	{
 		$this->memcached->delete(urlencode($this->prefix . $key), 0);
 	}
 
 
-	/**
-	 * Removes items from the cache by conditions & garbage collector.
-	 * @param  array  conditions
-	 * @return void
-	 */
 	public function clean(array $conditions)
 	{
 		if (!empty($conditions[Cache::ALL])) {
