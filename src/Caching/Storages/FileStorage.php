@@ -100,7 +100,7 @@ class FileStorage implements Nette\Caching\IStorage
 	 * @param  array
 	 * @return bool
 	 */
-	private function verify($meta)
+	private function verify(array $meta)
 	{
 		do {
 			if (!empty($meta[self::META_DELTA])) {
@@ -354,7 +354,7 @@ class FileStorage implements Nette\Caching\IStorage
 	 * @param  array
 	 * @return mixed
 	 */
-	protected function readData($meta)
+	protected function readData(array $meta)
 	{
 		$data = stream_get_contents($meta[self::HANDLE]);
 		flock($meta[self::HANDLE], LOCK_UN);

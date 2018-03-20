@@ -20,7 +20,7 @@ class OutputHelper
 	/** @var array */
 	public $dependencies;
 
-	/** @var Cache */
+	/** @var Cache|null */
 	private $cache;
 
 	/** @var string */
