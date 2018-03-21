@@ -43,7 +43,7 @@ class Cache
 	private $namespace;
 
 
-	public function __construct(IStorage $storage, $namespace = null)
+	public function __construct(IStorage $storage, string $namespace = null)
 	{
 		$this->storage = $storage;
 		$this->namespace = $namespace . self::NAMESPACE_SEPARATOR;

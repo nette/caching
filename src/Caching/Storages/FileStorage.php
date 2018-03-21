@@ -63,7 +63,7 @@ class FileStorage implements Nette\Caching\IStorage
 	private $locks;
 
 
-	public function __construct($dir, IJournal $journal = null)
+	public function __construct(string $dir, IJournal $journal = null)
 	{
 		if (!is_dir($dir)) {
 			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found.");

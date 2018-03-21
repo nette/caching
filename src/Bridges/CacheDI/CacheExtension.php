@@ -21,7 +21,7 @@ final class CacheExtension extends Nette\DI\CompilerExtension
 	private $tempDir;
 
 
-	public function __construct($tempDir)
+	public function __construct(string $tempDir)
 	{
 		$this->tempDir = $tempDir;
 	}
