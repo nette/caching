@@ -82,9 +82,10 @@ class Cache
 	/**
 	 * Reads the specified item from the cache or generate it.
 	 * @param  mixed  $key
+	 * @param  callable  $fallback
 	 * @return mixed
 	 */
-	public function load($key, callable $fallback = null)
+	public function load($key, $fallback = null)
 	{
 		$data = $this->storage->read($this->generateKey($key));
 		if ($data === null && $fallback) {
@@ -98,9 +99,10 @@ class Cache
 
 	/**
 	 * Reads multiple items from the cache.
+	 * @param  callable  $fallback
 	 * @return array
 	 */
-	public function bulkLoad(array $keys, callable $fallback = null)
+	public function bulkLoad(array $keys, $fallback = null)
 	{
 		if (count($keys) === 0) {
 			return [];
@@ -268,9 +270,10 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
+	 * @param  callable  $function
 	 * @return mixed
 	 */
-	public function call(callable $function)
+	public function call($function)
 	{
 		$key = func_get_args();
 		if (is_array($function) && is_object($function[0])) {
@@ -284,9 +287,10 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
+	 * @param  callable  $function
 	 * @return \Closure
 	 */
-	public function wrap(callable $function, array $dependencies = null)
+	public function wrap($function, array $dependencies = null)
 	{
 		return function () use ($function, $dependencies) {
 			$key = [$function, func_get_args()];
