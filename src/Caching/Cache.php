@@ -18,7 +18,8 @@ class Cache
 	use Nette\SmartObject;
 
 	/** dependency */
-	const PRIORITY = 'priority',
+	const
+		PRIORITY = 'priority',
 		EXPIRATION = 'expire',
 		EXPIRE = 'expire',
 		SLIDING = 'sliding',

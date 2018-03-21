@@ -19,7 +19,8 @@ class MemcachedStorage implements Nette\Caching\IStorage
 	use Nette\SmartObject;
 
 	/** @internal cache structure */
-	const META_CALLBACKS = 'callbacks',
+	const
+		META_CALLBACKS = 'callbacks',
 		META_DATA = 'data',
 		META_DELTA = 'delta';
 

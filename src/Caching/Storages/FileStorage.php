@@ -30,8 +30,8 @@ class FileStorage implements Nette\Caching\IStorage
 	 */
 
 	/** @internal cache file structure */
-	const META_HEADER_LEN = 28, // 22b signature + 6b meta-struct size + serialized meta-struct + data
-	// meta structure: array of
+	const
+		META_HEADER_LEN = 28, // 22b signature + 6b meta-struct size + serialized meta-struct + data
 		META_TIME = 'time', // timestamp
 		META_SERIALIZED = 'serialized', // is content serialized?
 		META_EXPIRE = 'expire', // expiration timestamp
