@@ -324,9 +324,10 @@ class FileStorage implements Nette\Caching\IStorage
 
 	/**
 	 * Reads cache data from disk and closes cache file handle.
+	 * @param  array  $meta
 	 * @return mixed
 	 */
-	protected function readData(array $meta)
+	protected function readData($meta)
 	{
 		$data = stream_get_contents($meta[self::HANDLE]);
 		flock($meta[self::HANDLE], LOCK_UN);
