@@ -9,6 +9,8 @@ Nette Caching
 
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
+If you like Nette, **[please make a donation now](https://nette.org/donate)**. Thank you!
+
 Install it using Composer:
 
 ```
