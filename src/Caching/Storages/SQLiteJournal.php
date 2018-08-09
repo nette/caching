@@ -108,7 +108,7 @@ class SQLiteJournal implements IJournal
 
 		$unions = $args = [];
 		if (!empty($conditions[Cache::TAGS])) {
-			$tags = $conditions[Cache::TAGS];
+			$tags = (array) $conditions[Cache::TAGS];
 			$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
 			$args = $tags;
 		}
