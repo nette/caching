@@ -16,20 +16,17 @@
 	],
 	"require": {
 		"php": ">=7.1",
-		"nette/finder": "^2.4 || ~3.0.0",
-		"nette/utils": "^2.4 || ~3.0.0"
+		"nette/finder": "^2.4 || ^3.0",
+		"nette/utils": "^2.4 || ^3.0"
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",
-		"nette/di": "^v3.0.0-beta2",
+		"nette/di": "^v3.0",
 		"latte/latte": "^2.4",
 		"tracy/tracy": "^2.4"
 	},
 	"suggest": {
 		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal"
-	},
-	"conflict": {
-		"nette/nette": "<2.2"
 	},
 	"autoload": {
 		"classmap": ["src/"]
