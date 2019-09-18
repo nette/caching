@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 $key = 'nette';
 $value = 'rulez';
 
-$cache = new Cache(new FileStorage(TEMP_DIR), 'ns1');
+$cache = new Cache(new FileStorage(getTempDir()), 'ns1');
 $cache = $cache->derive('ns2');
 
 $cache->save($key, $value);

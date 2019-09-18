@@ -16,7 +16,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$storage = new FileStorage(TEMP_DIR, new SQLiteJournal(TEMP_DIR . '/journal.s3db'));
+$storage = new FileStorage(getTempDir(), new SQLiteJournal(getTempDir() . '/journal.s3db'));
 $cache = new Cache($storage);
 
 

@@ -30,7 +30,7 @@ class Mock
 }
 
 
-$cache = new Cache(new FileStorage(TEMP_DIR));
+$cache = new Cache(new FileStorage(getTempDir()));
 $mock = new Mock;
 
 $called = false;

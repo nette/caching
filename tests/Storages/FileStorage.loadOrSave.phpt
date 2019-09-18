@@ -18,7 +18,7 @@ require __DIR__ . '/../bootstrap.php';
 $key = '../' . implode('', range("\x00", "\x1F"));
 $value = range("\x00", "\xFF");
 
-$cache = new Cache(new FileStorage(TEMP_DIR));
+$cache = new Cache(new FileStorage(getTempDir()));
 
 Assert::null($cache->load($key));
 

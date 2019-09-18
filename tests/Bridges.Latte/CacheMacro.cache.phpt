@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $latte = new Latte\Engine;
-$latte->setTempDirectory(TEMP_DIR);
+$latte->setTempDirectory(getTempDir());
 $latte->addMacro('cache', new CacheMacro($latte->getCompiler()));
 $latte->addProvider('cacheStorage', new Nette\Caching\Storages\DevNullStorage);
 

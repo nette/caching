@@ -13,7 +13,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-$storage = new FileStorage(TEMP_DIR);
+$storage = new FileStorage(getTempDir());
 
 /*
  * Create filestorage cache without namespace and some with namespaces

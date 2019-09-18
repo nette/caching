@@ -14,7 +14,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$storage = new FileStorage(TEMP_DIR);
+$storage = new FileStorage(getTempDir());
 $cacheA = new Cache($storage, 'a');
 $cacheB = new Cache($storage, 'b');
 

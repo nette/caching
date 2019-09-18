@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 
 test(function () {
 	$compiler = new DI\Compiler;
-	$compiler->addExtension('cache', new CacheExtension(TEMP_DIR));
+	$compiler->addExtension('cache', new CacheExtension(getTempDir()));
 
 	eval($compiler->compile());
 

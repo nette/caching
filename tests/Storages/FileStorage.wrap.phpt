@@ -31,7 +31,7 @@ class Test
 }
 
 
-$cache = new Cache(new FileStorage(TEMP_DIR));
+$cache = new Cache(new FileStorage(getTempDir()));
 
 $called = false;
 Assert::same(55, $cache->wrap('mockFunction')(5, 50));

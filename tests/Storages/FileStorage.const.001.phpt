@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 $key = 'nette';
 $value = 'rulez';
 
-$cache = new Cache(new FileStorage(TEMP_DIR));
+$cache = new Cache(new FileStorage(getTempDir()));
 
 
 define('ANY_CONST', 10);

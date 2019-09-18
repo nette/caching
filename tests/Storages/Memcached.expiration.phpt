@@ -18,7 +18,7 @@ if (!MemcachedStorage::isAvailable()) {
 	Tester\Environment::skip('Requires PHP extension Memcached.');
 }
 
-Tester\Environment::lock('memcached-expiration', TEMP_DIR);
+Tester\Environment::lock('memcached-expiration', getTempDir());
 
 
 $key = 'nette-memcached-expiration-key';

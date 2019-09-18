@@ -19,10 +19,10 @@ if (!MemcachedStorage::isAvailable()) {
 	Tester\Environment::skip('Requires PHP extension Memcached.');
 }
 
-Tester\Environment::lock('memcached-priority', TEMP_DIR);
+Tester\Environment::lock('memcached-priority', getTempDir());
 
 
-$storage = new MemcachedStorage('localhost', 11211, '', new SQLiteJournal(TEMP_DIR . '/journal-memcached.s3db'));
+$storage = new MemcachedStorage('localhost', 11211, '', new SQLiteJournal(getTempDir() . '/journal-memcached.s3db'));
 $cache = new Cache($storage);
 
 

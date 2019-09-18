@@ -18,7 +18,7 @@ if (!MemcachedStorage::isAvailable()) {
 	Tester\Environment::skip('Requires PHP extension Memcached.');
 }
 
-Tester\Environment::lock('memcached-files', TEMP_DIR);
+Tester\Environment::lock('memcached-files', getTempDir());
 
 
 

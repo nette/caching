@@ -19,7 +19,7 @@ class SQLiteJournalTest extends IJournalTestCase
 	public function createJournal()
 	{
 		static $id = 0;
-		return new SQLiteJournal(TEMP_DIR . '/sqlitejournal_' . ++$id . '.sqlite');
+		return new SQLiteJournal(getTempDir() . '/sqlitejournal_' . ++$id . '.sqlite');
 	}
 }
 

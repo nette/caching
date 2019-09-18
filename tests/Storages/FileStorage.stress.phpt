@@ -33,7 +33,7 @@ function checkStr($s)
 define('COUNT_FILES', 3);
 
 
-$storage = new FileStorage(TEMP_DIR);
+$storage = new FileStorage(getTempDir());
 
 
 // clear playground

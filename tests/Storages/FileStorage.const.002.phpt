@@ -18,7 +18,7 @@ $key = 'nette';
 $value = 'rulez';
 
 
-$cache = new Cache(new FileStorage(TEMP_DIR));
+$cache = new Cache(new FileStorage(getTempDir()));
 
 
 // Deleting dependent const
