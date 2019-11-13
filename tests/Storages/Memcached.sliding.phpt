@@ -66,4 +66,4 @@ for ($i = 0; $i < 5; $i++) {
 // Sleeping few seconds...
 sleep(5);
 
-Assert::null($cache->load([$key])[$key]);
+Assert::null($cache->load([$key]));
