@@ -81,12 +81,9 @@ class FileStorage implements Nette\Caching\IStorage
 	public function read(string $key)
 	{
 		$meta = $this->readMetaAndLock($this->getCacheFile($key), LOCK_SH);
-		if ($meta && $this->verify($meta)) {
-			return $this->readData($meta); // calls fclose()
-
-		} else {
-			return null;
-		}
+		return $meta && $this->verify($meta)
+			? $this->readData($meta) // calls fclose()
+			: null;
 	}
 
 
@@ -327,11 +324,7 @@ class FileStorage implements Nette\Caching\IStorage
 		flock($meta[self::HANDLE], LOCK_UN);
 		fclose($meta[self::HANDLE]);
 
-		if (empty($meta[self::META_SERIALIZED])) {
-			return $data;
-		} else {
-			return unserialize($data);
-		}
+		return empty($meta[self::META_SERIALIZED]) ? $data : unserialize($data);
 	}
 
 

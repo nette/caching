@@ -92,8 +92,12 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 
 	public function write(string $key, $data, array $dependencies): void
 	{
-		$expire = isset($dependencies[Cache::EXPIRATION]) ? $dependencies[Cache::EXPIRATION] + time() : null;
-		$slide = isset($dependencies[Cache::SLIDING]) ? $dependencies[Cache::EXPIRATION] : null;
+		$expire = isset($dependencies[Cache::EXPIRATION])
+			? $dependencies[Cache::EXPIRATION] + time()
+			: null;
+		$slide = isset($dependencies[Cache::SLIDING])
+			? $dependencies[Cache::EXPIRATION]
+			: null;
 
 		$this->pdo->exec('BEGIN TRANSACTION');
 		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')

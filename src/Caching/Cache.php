@@ -74,8 +74,7 @@ class Cache
 	 */
 	public function derive(string $namespace)
 	{
-		$derived = new static($this->storage, $this->namespace . $namespace);
-		return $derived;
+		return new static($this->storage, $this->namespace . $namespace);
 	}
 
 
@@ -206,7 +205,7 @@ class Cache
 		// convert FILES into CALLBACKS
 		if (isset($dp[self::FILES])) {
 			foreach (array_unique((array) $dp[self::FILES]) as $item) {
-				$dp[self::CALLBACKS][] = [[__CLASS__, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
+				$dp[self::CALLBACKS][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
 			}
 			unset($dp[self::FILES]);
 		}
@@ -219,7 +218,7 @@ class Cache
 		// convert CONSTS into CALLBACKS
 		if (isset($dp[self::CONSTS])) {
 			foreach (array_unique((array) $dp[self::CONSTS]) as $item) {
-				$dp[self::CALLBACKS][] = [[__CLASS__, 'checkConst'], $item, constant($item)];
+				$dp[self::CALLBACKS][] = [[self::class, 'checkConst'], $item, constant($item)];
 			}
 			unset($dp[self::CONSTS]);
 		}

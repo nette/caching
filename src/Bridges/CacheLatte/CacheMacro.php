@@ -59,7 +59,8 @@ final class CacheMacro implements Latte\IMacro
 		$this->used = true;
 		$node->empty = false;
 		$node->openingCode = Latte\PhpWriter::using($node)
-			->write('<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
+			->write(
+				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
 				Nette\Utils\Random::generate()
 			);
 	}
@@ -94,8 +95,12 @@ final class CacheMacro implements Latte\IMacro
 	 * Starts the output cache. Returns Nette\Caching\OutputHelper object if buffering was started.
 	 * @return Nette\Caching\OutputHelper|\stdClass
 	 */
-	public static function createCache(Nette\Caching\IStorage $cacheStorage, string $key, ?array &$parents, array $args = null)
-	{
+	public static function createCache(
+		Nette\Caching\IStorage $cacheStorage,
+		string $key,
+		?array &$parents,
+		array $args = null
+	) {
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
 				return $parents[] = new \stdClass;

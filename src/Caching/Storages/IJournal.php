@@ -15,7 +15,6 @@ namespace Nette\Caching\Storages;
  */
 interface IJournal
 {
-
 	/**
 	 * Writes entry information into the journal.
 	 */

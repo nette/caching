@@ -23,8 +23,8 @@ $dependencies = [Cache::TAGS => ['tag']];
 $cache->save('key', 'value', $dependencies);
 
 $res = $cache->load('key');
-Assert::equal('value', $res['data']);
-Assert::equal($dependencies, $res['dependencies']);
+Assert::same('value', $res['data']);
+Assert::same($dependencies, $res['dependencies']);
 
 
 // save callback return value
@@ -36,8 +36,8 @@ $cache->save('key', function () {
 });
 
 $res = $cache->load('key');
-Assert::equal('value', $res['data']);
-Assert::equal([], $res['dependencies']);
+Assert::same('value', $res['data']);
+Assert::same([], $res['dependencies']);
 
 
 // save callback return value with dependencies
@@ -50,8 +50,8 @@ $cache->save('key', function () {
 }, $dependencies);
 
 $res = $cache->load('key');
-Assert::equal('value', $res['data']);
-Assert::equal($dependencies, $res['dependencies']);
+Assert::same('value', $res['data']);
+Assert::same($dependencies, $res['dependencies']);
 
 
 // do not save already expired data
@@ -62,7 +62,7 @@ $dependencies = [Cache::EXPIRATION => new DateTime];
 $res = $cache->save('key', function () {
 	return 'value';
 }, $dependencies);
-Assert::equal('value', $res);
+Assert::same('value', $res);
 
 $res = $cache->load('key');
 Assert::null($res);

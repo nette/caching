@@ -45,8 +45,12 @@ class MemcachedStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkRea
 	}
 
 
-	public function __construct(string $host = 'localhost', int $port = 11211, string $prefix = '', IJournal $journal = null)
-	{
+	public function __construct(
+		string $host = 'localhost',
+		int $port = 11211,
+		string $prefix = '',
+		IJournal $journal = null
+	) {
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
 		}
