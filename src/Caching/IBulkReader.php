@@ -15,7 +15,6 @@ namespace Nette\Caching;
  */
 interface IBulkReader
 {
-
 	/**
 	 * Reads from cache in bulk.
 	 * @return array key => value pairs, missing items are omitted

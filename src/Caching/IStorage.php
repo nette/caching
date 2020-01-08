@@ -15,7 +15,6 @@ namespace Nette\Caching;
  */
 interface IStorage
 {
-
 	/**
 	 * Read from cache.
 	 * @return mixed
