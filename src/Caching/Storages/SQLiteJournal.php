@@ -72,10 +72,13 @@ class SQLiteJournal implements IJournal
 
 		if (!empty($dependencies[Cache::TAGS])) {
 			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute([$key]);
+			$arr = [];
 
 			foreach ($dependencies[Cache::TAGS] as $tag) {
-				$arr[] = $key;
-				$arr[] = $tag;
+				if ($tag !== null) {
+					$arr[] = $key;
+					$arr[] = $tag;
+				}
 			}
 			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
 				->execute($arr);
