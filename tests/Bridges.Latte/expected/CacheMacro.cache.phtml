@@ -1,11 +1,4 @@
 <?php
-// source: %A%
-
-class Template%a% extends Latte\Runtime\Template
-{
-
-	function main()
-	{
 %A%
 Noncached content
 
@@ -17,7 +10,7 @@ Noncached content
 
 <?php
 			/* line 7 */
-			$this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html');
+			$this->createTemplate('include.cache.latte', %a%)->renderToContentType('html');
 ?>
 
 <?php
@@ -27,11 +20,8 @@ Noncached content
 	}
 
 
-	function prepare()
+	%a?%function prepare()%a?%
 	{
 %A%
 		Nette\Bridges\CacheLatte\CacheMacro::initRuntime($this);
 %A%
-	}
-
-}
