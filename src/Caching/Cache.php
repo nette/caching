@@ -83,13 +83,19 @@ class Cache
 	 * @param  mixed  $key
 	 * @return mixed
 	 */
-	public function load($key, callable $fallback = null)
+	public function load($key, callable $generator = null)
 	{
-		$data = $this->storage->read($this->generateKey($key));
-		if ($data === null && $fallback) {
-			return $this->save($key, function (&$dependencies) use ($fallback) {
-				return $fallback(...[&$dependencies]);
-			});
+		$storageKey = $this->generateKey($key);
+		$data = $this->storage->read($storageKey);
+		if ($data === null && $generator) {
+			$this->storage->lock($storageKey);			
+			try {
+				$data = $generator(...[&$dependencies]);
+			} catch (\Throwable $e) {
+				$this->storage->remove($storageKey);
+				throw $e;
+			}
+			$this->save($key, $data, $dependencies);
 		}
 		return $data;
 	}
@@ -98,7 +104,7 @@ class Cache
 	/**
 	 * Reads multiple items from the cache.
 	 */
-	public function bulkLoad(array $keys, callable $fallback = null): array
+	public function bulkLoad(array $keys, callable $generator = null): array
 	{
 		if (count($keys) === 0) {
 			return [];
@@ -108,30 +114,31 @@ class Cache
 				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in bulkLoad()');
 			}
 		}
-		$storageKeys = array_map([$this, 'generateKey'], $keys);
+
+		$result = [];
 		if (!$this->storage instanceof BulkReader) {
-			$result = array_combine($keys, array_map([$this->storage, 'read'], $storageKeys));
-			if ($fallback !== null) {
-				foreach ($result as $key => $value) {
-					if ($value === null) {
-						$result[$key] = $this->save($key, function (&$dependencies) use ($key, $fallback) {
-							return $fallback(...[$key, &$dependencies]);
-						});
-					}
-				}
+			foreach ($keys as $key) {
+				$result[$key] = $this->load(
+					$key,
+					$generator
+						? function (&$dependencies) use ($key, $generator) {
+							return $generator(...[$key, &$dependencies]);
+						}
+						: null
+				);
 			}
 			return $result;
 		}
 
+		$storageKeys = array_map([$this, 'generateKey'], $keys);
 		$cacheData = $this->storage->bulkRead($storageKeys);
-		$result = [];
 		foreach ($keys as $i => $key) {
 			$storageKey = $storageKeys[$i];
 			if (isset($cacheData[$storageKey])) {
 				$result[$key] = $cacheData[$storageKey];
-			} elseif ($fallback) {
-				$result[$key] = $this->save($key, function (&$dependencies) use ($key, $fallback) {
-					return $fallback(...[$key, &$dependencies]);
+			} elseif ($generator) {
+				$result[$key] = $this->load($key, function (&$dependencies) use ($key, $generator) {
+					return $generator(...[$key, &$dependencies]);
 				});
 			} else {
 				$result[$key] = null;
@@ -279,15 +286,14 @@ class Cache
 	public function wrap(callable $function, array $dependencies = null): \Closure
 	{
 		return function () use ($function, $dependencies) {
-			$key = [$function, func_get_args()];
+			$key = [$function, $args = func_get_args()];
 			if (is_array($function) && is_object($function[0])) {
 				$key[0][0] = get_class($function[0]);
 			}
-			$data = $this->load($key);
-			if ($data === null) {
-				$data = $this->save($key, $function(...$key[1]), $dependencies);
-			}
-			return $data;
+			return $this->load($key, function (&$deps) use ($function, $args, $dependencies) {
+				$deps = $dependencies;
+				return $function(...$args);
+			});
 		};
 	}
 
