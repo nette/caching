@@ -24,7 +24,7 @@ Assert::null($cache->load($key));
 
 
 // Writing cache using Closure...
-$res = $cache->save($key, function () use ($value) {
+$res = @$cache->save($key, function () use ($value) { // @ deprecated
 	return $value;
 });
 
@@ -34,7 +34,7 @@ Assert::same($cache->load($key), $value);
 
 
 // Removing from cache using null callback...
-$cache->save($key, function () {
+@$cache->save($key, function () { // @ deprecated
 	return null;
 });
 
