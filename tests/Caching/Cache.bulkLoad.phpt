@@ -14,8 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 require __DIR__ . '/Cache.php';
 
-// storage without bulk load support
-test(function () {
+test('storage without bulk load support', function () {
 	$storage = new TestStorage;
 	$cache = new Cache($storage, 'ns');
 	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]), 'data');
@@ -29,8 +28,7 @@ test(function () {
 	Assert::same(2, $data[2]['data']);
 });
 
-// storage with bulk load support
-test(function () {
+test('storage with bulk load support', function () {
 	$storage = new BulkReadTestStorage;
 	$cache = new Cache($storage, 'ns');
 	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]));
@@ -44,8 +42,7 @@ test(function () {
 	Assert::same(2, $data[2]['data']);
 });
 
-// dependencies
-test(function () {
+test('dependencies', function () {
 	$storage = new BulkReadTestStorage;
 	$cache = new Cache($storage, 'ns');
 	$dependencies = [Cache::TAGS => ['tag']];
@@ -58,7 +55,7 @@ test(function () {
 	Assert::same($dependencies, $data[1]['dependencies']);
 });
 
-test(function () {
+test('', function () {
 	Assert::exception(function () {
 		$cache = new Cache(new BulkReadTestStorage);
 		$cache->bulkLoad([[1]]);

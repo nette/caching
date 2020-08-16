@@ -19,7 +19,7 @@ if (defined('PHP_WINDOWS_VERSION_BUILD')) {
 }
 
 
-test(function () {
+test('', function () {
 	$file = getTempDir() . '/sqlitejournal.permissions.1.sqlite';
 	Assert::false(file_exists($file));
 
@@ -30,7 +30,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$file = getTempDir() . '/sqlitejournal.permissions.2.sqlite';
 	Assert::false(file_exists($file));
 

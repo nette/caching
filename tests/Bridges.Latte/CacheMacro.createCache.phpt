@@ -14,7 +14,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-test(function () {
+test('', function () {
 	$parents = [];
 	$dp = [Cache::TAGS => ['rum', 'cola']];
 	$outputHelper = CacheMacro::createCache(new DevNullStorage, 'test', $parents);
@@ -23,7 +23,7 @@ test(function () {
 	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
 });
 
-test(function () {
+test('', function () {
 	$parents = [];
 	$dp = [Cache::TAGS => ['rum', 'cola']];
 	$dpFallback = function () use ($dp) {
@@ -34,7 +34,7 @@ test(function () {
 	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
 });
 
-test(function () {
+test('', function () {
 	$parents = [];
 	$dp = [
 		Cache::TAGS => ['rum', 'cola'],
