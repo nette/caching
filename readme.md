@@ -9,6 +9,9 @@ Nette Caching
 
 Cache accelerates your application by storing data - once hardly retrieved - for future use.
 
+It requires PHP version 5.6 and supports PHP up to 8.0.
+
+
 Nette offers a very intuitive API for cache manipulation. After all, you wouldn't expect anything else, right? ;-)
 Before we show you the first example, we need to think about place where to store data physically. We can use a database, //Memcached// server,
 or the most available storage - hard drive:
