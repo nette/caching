@@ -36,14 +36,14 @@ class Cache
 	/** @internal */
 	public const NAMESPACE_SEPARATOR = "\x00";
 
-	/** @var IStorage */
+	/** @var Storage */
 	private $storage;
 
 	/** @var string */
 	private $namespace;
 
 
-	public function __construct(IStorage $storage, string $namespace = null)
+	public function __construct(Storage $storage, string $namespace = null)
 	{
 		$this->storage = $storage;
 		$this->namespace = $namespace . self::NAMESPACE_SEPARATOR;
@@ -53,7 +53,7 @@ class Cache
 	/**
 	 * Returns cache storage.
 	 */
-	final public function getStorage(): IStorage
+	final public function getStorage(): Storage
 	{
 		return $this->storage;
 	}
@@ -109,7 +109,7 @@ class Cache
 			}
 		}
 		$storageKeys = array_map([$this, 'generateKey'], $keys);
-		if (!$this->storage instanceof IBulkReader) {
+		if (!$this->storage instanceof BulkReader) {
 			$result = array_combine($keys, array_map([$this->storage, 'read'], $storageKeys));
 			if ($fallback !== null) {
 				foreach ($result as $key => $value) {

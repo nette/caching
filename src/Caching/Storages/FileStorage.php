@@ -16,7 +16,7 @@ use Nette\Caching\Cache;
 /**
  * Cache file storage.
  */
-class FileStorage implements Nette\Caching\IStorage
+class FileStorage implements Nette\Caching\Storage
 {
 	use Nette\SmartObject;
 
@@ -56,14 +56,14 @@ class FileStorage implements Nette\Caching\IStorage
 	/** @var string */
 	private $dir;
 
-	/** @var IJournal */
+	/** @var Journal */
 	private $journal;
 
 	/** @var array */
 	private $locks;
 
 
-	public function __construct(string $dir, IJournal $journal = null)
+	public function __construct(string $dir, Journal $journal = null)
 	{
 		if (!is_dir($dir)) {
 			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found.");

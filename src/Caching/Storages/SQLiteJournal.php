@@ -16,7 +16,7 @@ use Nette\Caching\Cache;
 /**
  * SQLite based journal.
  */
-class SQLiteJournal implements IJournal
+class SQLiteJournal implements Journal
 {
 	use Nette\SmartObject;
 

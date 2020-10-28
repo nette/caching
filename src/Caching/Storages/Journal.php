@@ -13,7 +13,7 @@ namespace Nette\Caching\Storages;
 /**
  * Cache journal provider.
  */
-interface IJournal
+interface Journal
 {
 	/**
 	 * Writes entry information into the journal.
@@ -26,3 +26,6 @@ interface IJournal
 	 */
 	function clean(array $conditions): ?array;
 }
+
+
+class_exists(IJournal::class);

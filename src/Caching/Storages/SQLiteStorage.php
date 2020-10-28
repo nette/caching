@@ -16,7 +16,7 @@ use Nette\Caching\Cache;
 /**
  * SQLite storage.
  */
-class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
+class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
 	use Nette\SmartObject;
 

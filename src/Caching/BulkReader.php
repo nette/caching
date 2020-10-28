@@ -13,7 +13,7 @@ namespace Nette\Caching;
 /**
  * Cache storage with a bulk read support.
  */
-interface IBulkReader
+interface BulkReader
 {
 	/**
 	 * Reads from cache in bulk.
@@ -21,3 +21,6 @@ interface IBulkReader
 	 */
 	function bulkRead(array $keys): array;
 }
+
+
+class_exists(IBulkReader::class);

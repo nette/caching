@@ -100,7 +100,7 @@ final class CacheMacro implements Latte\IMacro
 	 * @return Nette\Caching\OutputHelper|\stdClass
 	 */
 	public static function createCache(
-		Nette\Caching\IStorage $cacheStorage,
+		Nette\Caching\Storage $cacheStorage,
 		string $key,
 		?array &$parents,
 		array $args = null

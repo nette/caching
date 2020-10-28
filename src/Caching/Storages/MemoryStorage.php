@@ -15,7 +15,7 @@ use Nette;
 /**
  * Memory cache storage.
  */
-class MemoryStorage implements Nette\Caching\IStorage
+class MemoryStorage implements Nette\Caching\Storage
 {
 	use Nette\SmartObject;
 
