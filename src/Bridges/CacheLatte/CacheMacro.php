@@ -126,16 +126,18 @@ final class CacheMacro implements Latte\IMacro
 	public static function endCache(array &$parents, array $args = null): void
 	{
 		$helper = array_pop($parents);
-		if ($helper instanceof Nette\Caching\OutputHelper) {
-			if (isset($args['dependencies'])) {
-				$args += $args['dependencies']();
-			}
-			if (isset($args['expire'])) {
-				$args['expiration'] = $args['expire']; // back compatibility
-			}
-			$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
-			$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
-			$helper->end();
+		if (!$helper instanceof Nette\Caching\OutputHelper) {
+			return;
 		}
+
+		if (isset($args['dependencies'])) {
+			$args += $args['dependencies']();
+		}
+		if (isset($args['expire'])) {
+			$args['expiration'] = $args['expire']; // back compatibility
+		}
+		$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
+		$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
+		$helper->end();
 	}
 }

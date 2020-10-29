@@ -132,10 +132,12 @@ class FileStorage implements Nette\Caching\IStorage
 			@mkdir($dir); // @ - directory may already exist
 		}
 		$handle = fopen($cacheFile, 'c+b');
-		if ($handle) {
-			$this->locks[$key] = $handle;
-			flock($handle, LOCK_EX);
+		if (!$handle) {
+			return;
 		}
+
+		$this->locks[$key] = $handle;
+		flock($handle, LOCK_EX);
 	}
 
 
@@ -269,12 +271,14 @@ class FileStorage implements Nette\Caching\IStorage
 		} elseif ($namespaces) {
 			foreach ($namespaces as $namespace) {
 				$dir = $this->dir . '/_' . urlencode($namespace);
-				if (is_dir($dir)) {
-					foreach (Nette\Utils\Finder::findFiles('_*')->in($dir) as $entry) {
-						$this->delete((string) $entry);
-					}
-					@rmdir($dir); // may already contain new files
+				if (!is_dir($dir)) {
+					continue;
 				}
+
+				foreach (Nette\Utils\Finder::findFiles('_*')->in($dir) as $entry) {
+					$this->delete((string) $entry);
+				}
+				@rmdir($dir); // may already contain new files
 			}
 		}
 
@@ -358,12 +362,14 @@ class FileStorage implements Nette\Caching\IStorage
 		if (!$handle) {
 			$handle = @fopen($file, 'r+'); // @ - file may not exist
 		}
-		if ($handle) {
-			flock($handle, LOCK_EX);
-			ftruncate($handle, 0);
-			flock($handle, LOCK_UN);
-			fclose($handle);
-			@unlink($file); // @ - file may not already exist
+		if (!$handle) {
+			return;
 		}
+
+		flock($handle, LOCK_EX);
+		ftruncate($handle, 0);
+		flock($handle, LOCK_UN);
+		fclose($handle);
+		@unlink($file); // @ - file may not already exist
 	}
 }

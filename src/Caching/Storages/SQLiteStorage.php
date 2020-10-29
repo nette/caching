@@ -56,12 +56,14 @@ class SQLiteStorage implements Nette\Caching\IStorage, Nette\Caching\IBulkReader
 	{
 		$stmt = $this->pdo->prepare('SELECT data, slide FROM cache WHERE key=? AND (expire IS NULL OR expire >= ?)');
 		$stmt->execute([$key, time()]);
-		if ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-			if ($row['slide'] !== null) {
-				$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
-			}
-			return unserialize($row['data']);
+		if (!$row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			return;
 		}
+
+		if ($row['slide'] !== null) {
+			$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
+		}
+		return unserialize($row['data']);
 	}
 
 
