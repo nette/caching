@@ -48,4 +48,14 @@ class OutputHelper
 		$this->cache->save($this->key, ob_get_flush(), $dependencies + $this->dependencies);
 		$this->cache = null;
 	}
+
+
+	/**
+	 * Stops and throws away the output.
+	 */
+	public function rollback(): void
+	{
+		ob_end_flush();
+		$this->cache = null;
+	}
 }

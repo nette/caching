@@ -31,3 +31,14 @@ Assert::same('Hello', $cache->load('key'));
 ob_start();
 Assert::null($cache->start('key'));
 Assert::same('Hello', ob_get_clean());
+
+
+
+ob_start();
+$block = $cache->start('key2');
+Assert::type(Nette\Caching\OutputHelper::class, $block);
+echo 'Hello';
+$block->rollback();
+Assert::same('Hello', ob_get_clean());
+
+Assert::same(null, $cache->load('key2'));
