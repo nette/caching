@@ -3,7 +3,7 @@
 		echo 'Noncached content
 
 ';
-		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, '%[\w]+%', $this->global->cacheStack, [$id, 'tags' => 'mytag'])) {
+		if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, '%[\w]+%', $this->global->cacheStack, [$id, 'tags' => 'mytag'])) try {
 			echo '
 <h1>';
 			echo LR\Filters::escapeHtmlText(($this->filters->upper)($title)) /* line 5 */;
@@ -14,6 +14,10 @@
 			$this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html');
 			echo "\n";
 			Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, [$id, 'tags' => 'mytag']);
+		}
+		catch (\Throwable $__e) {
+			Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack);
+			throw $__e;
 		}
 %A%
 	}

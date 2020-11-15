@@ -60,7 +60,7 @@ final class CacheMacro implements Latte\IMacro
 		$node->empty = false;
 		$node->openingCode = Latte\PhpWriter::using($node)
 			->write(
-				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) { ?>',
+				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) try { ?>',
 				Nette\Utils\Random::generate()
 			);
 	}
@@ -73,7 +73,11 @@ final class CacheMacro implements Latte\IMacro
 	public function nodeClosed(Latte\MacroNode $node)
 	{
 		$node->closingCode = Latte\PhpWriter::using($node)
-			->write('<?php Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?); } ?>');
+			->write('<?php
+				Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?);
+				} catch (\Throwable $__e) {
+					Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack); throw $__e;
+				} ?>');
 	}
 
 
@@ -139,5 +143,17 @@ final class CacheMacro implements Latte\IMacro
 		$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
 		$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
 		$helper->end();
+	}
+
+
+	/**
+	 * @param  Nette\Caching\OutputHelper[]  $parents
+	 */
+	public static function rollback(array &$parents): void
+	{
+		$helper = array_pop($parents);
+		if ($helper instanceof Nette\Caching\OutputHelper) {
+			$helper->rollback();
+		}
 	}
 }
