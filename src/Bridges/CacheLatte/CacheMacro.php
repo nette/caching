@@ -75,8 +75,8 @@ final class CacheMacro implements Latte\IMacro
 		$node->closingCode = Latte\PhpWriter::using($node)
 			->write('<?php
 				Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?);
-				} catch (\Throwable $__e) {
-					Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack); throw $__e;
+				} catch (\Throwable $ʟ_e) {
+					Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack); throw $ʟ_e;
 				} ?>');
 	}
 
