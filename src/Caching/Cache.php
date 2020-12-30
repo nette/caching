@@ -303,7 +303,7 @@ class Cache
 	 * Starts the output cache.
 	 * @param  mixed  $key
 	 */
-	public function start($key): ?OutputHelper
+	public function capture($key): ?OutputHelper
 	{
 		$data = $this->load($key);
 		if ($data === null) {
@@ -311,6 +311,15 @@ class Cache
 		}
 		echo $data;
 		return null;
+	}
+
+
+	/**
+	 * @deprecated  use capture()
+	 */
+	public function start($key): ?OutputHelper
+	{
+		return $this->capture($key);
 	}
 
 

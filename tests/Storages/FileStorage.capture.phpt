@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage start().
+ * Test: Nette\Caching\Storages\FileStorage capture().
  */
 
 declare(strict_types=1);
@@ -18,10 +18,10 @@ $cache = new Cache(new FileStorage(getTempDir()));
 
 
 ob_start();
-$block = $cache->start('key');
-Assert::type(Nette\Caching\OutputHelper::class, $block);
+$capture = $cache->capture('key');
+Assert::type(Nette\Caching\OutputHelper::class, $capture);
 echo 'Hello';
-$block->end();
+$capture->end();
 Assert::same('Hello', ob_get_clean());
 
 
@@ -29,16 +29,16 @@ Assert::same('Hello', $cache->load('key'));
 
 
 ob_start();
-Assert::null($cache->start('key'));
+Assert::null($cache->capture('key'));
 Assert::same('Hello', ob_get_clean());
 
 
 
 ob_start();
-$block = $cache->start('key2');
-Assert::type(Nette\Caching\OutputHelper::class, $block);
+$capture = $cache->capture('key2');
+Assert::type(Nette\Caching\OutputHelper::class, $capture);
 echo 'Hello';
-$block->rollback();
+$capture->rollback();
 Assert::same('Hello', ob_get_clean());
 
 Assert::same(null, $cache->load('key2'));
