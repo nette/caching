@@ -10,14 +10,13 @@
 			echo '</h1>
 
 ';
-			/* line 7 */
-			$this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, "include")->renderToContentType('html');
+			$this->createTemplate('include.cache.latte', ['localvar' => 11] + $this->params, 'include')->renderToContentType('html') /* line %d% */;
 			echo "\n";
 			Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, [$id, 'tags' => 'mytag']);
 		}
-		catch (\Throwable $__e) {
+		catch (\Throwable $ʟ_e) {
 			Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack);
-			throw $__e;
+			throw $ʟ_e;
 		}
 %A%
 	}
