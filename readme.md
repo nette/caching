@@ -2,7 +2,7 @@ Nette Caching
 =============
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/caching.svg)](https://packagist.org/packages/nette/caching)
-[![Build Status](https://travis-ci.org/nette/caching.svg?branch=master)](https://travis-ci.org/nette/caching)
+[![Tests](https://github.com/nette/caching/workflows/Tests/badge.svg?branch=master)](https://github.com/nette/caching/actions)
 [![Coverage Status](https://coveralls.io/repos/github/nette/caching/badge.svg?branch=master)](https://coveralls.io/github/nette/caching?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/nette/caching/v/stable)](https://github.com/nette/caching/releases)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/caching/blob/master/license.md)
