@@ -88,7 +88,7 @@ class Cache
 		$storageKey = $this->generateKey($key);
 		$data = $this->storage->read($storageKey);
 		if ($data === null && $generator) {
-			$this->storage->lock($storageKey);			
+			$this->storage->lock($storageKey);
 			try {
 				$data = $generator(...[&$dependencies]);
 			} catch (\Throwable $e) {
