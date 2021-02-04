@@ -60,8 +60,9 @@ final class CacheMacro implements Latte\IMacro
 		$node->empty = false;
 		$node->openingCode = Latte\PhpWriter::using($node)
 			->write(
-				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) try { ?>',
-				Nette\Utils\Random::generate()
+				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) /* line %var */ try { ?>',
+				Nette\Utils\Random::generate(),
+				$node->startLine
 			);
 	}
 
@@ -73,11 +74,14 @@ final class CacheMacro implements Latte\IMacro
 	public function nodeClosed(Latte\MacroNode $node)
 	{
 		$node->closingCode = Latte\PhpWriter::using($node)
-			->write('<?php
-				Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?);
+			->write(
+				'<?php
+				Nette\Bridges\CacheLatte\CacheMacro::endCache($this->global->cacheStack, %node.array?) /* line %var */;
 				} catch (\Throwable $ʟ_e) {
 					Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack); throw $ʟ_e;
-				} ?>');
+				} ?>',
+				$node->startLine
+			);
 	}
 
 
