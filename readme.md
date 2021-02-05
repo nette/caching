@@ -15,7 +15,19 @@ Cache accelerates your application by storing data - once hardly retrieved - for
 
 Documentation can be found on the [website](https://doc.nette.org/caching).
 
-Install Nette Caching via Composer:
+
+[Support Me](https://github.com/sponsors/dg)
+--------------------------------------------
+
+Do you like Nette Caching? Are you looking forward to the new features?
+
+[![Buy me a coffee](https://files.nette.org/icons/donation-3.svg)](https://github.com/sponsors/dg)
+
+Thank you!
+
+
+Installation
+------------
 
 ```
 composer require nette/caching
