@@ -16,12 +16,11 @@
 	],
 	"require": {
 		"php": ">=8.0 <8.3",
-		"nette/finder": "^2.4 || ^3.0",
-		"nette/utils": "^2.4 || ^3.0"
+		"nette/utils": "^4.0"
 	},
 	"require-dev": {
 		"nette/tester": "^2.4",
-		"nette/di": "^3.1 || ^4.0",
+		"nette/di": "^v4.0",
 		"latte/latte": "^2.11 || ^3.0",
 		"tracy/tracy": "^2.8",
 		"phpstan/phpstan": "^1.0"
