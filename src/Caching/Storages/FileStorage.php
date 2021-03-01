@@ -47,20 +47,17 @@ class FileStorage implements Nette\Caching\Storage
 		File = 'file',
 		Handle = 'handle';
 
-	/** @var float  probability that the clean() routine is started */
-	public static $gcProbability = 0.001;
+	/** probability that the clean() routine is started */
+	public static float $gcProbability = 0.001;
 
 	/** @deprecated */
 	public static $useDirectories = true;
 
-	/** @var string */
-	private $dir;
+	private string $dir;
 
-	/** @var Journal */
-	private $journal;
+	private ?Journal $journal;
 
-	/** @var array */
-	private $locks;
+	private array $locks;
 
 
 	public function __construct(string $dir, ?Journal $journal = null)

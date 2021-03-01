@@ -19,14 +19,11 @@ class OutputHelper
 {
 	use Nette\SmartObject;
 
-	/** @var array */
-	public $dependencies = [];
+	public array $dependencies = [];
 
-	/** @var Cache|null */
-	private $cache;
+	private ?Cache $cache;
 
-	/** @var string */
-	private $key;
+	private mixed $key;
 
 
 	public function __construct(Cache $cache, $key)

@@ -50,11 +50,9 @@ class Cache
 		NamespaceSeparator = "\x00",
 		NAMESPACE_SEPARATOR = self::NamespaceSeparator;
 
-	/** @var Storage */
-	private $storage;
+	private Storage $storage;
 
-	/** @var string */
-	private $namespace;
+	private string $namespace;
 
 
 	public function __construct(Storage $storage, ?string $namespace = null)
