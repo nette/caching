@@ -7,7 +7,7 @@ use Nette\Caching\IStorage;
 
 class TestStorage implements IStorage
 {
-	private $data = [];
+	private array $data = [];
 
 
 	public function read(string $key)

@@ -17,8 +17,7 @@ use Nette;
  */
 final class CacheExtension extends Nette\DI\CompilerExtension
 {
-	/** @var string */
-	private $tempDir;
+	private string $tempDir;
 
 
 	public function __construct(string $tempDir)

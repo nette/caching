@@ -20,8 +20,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
 	use Nette\SmartObject;
 
-	/** @var \PDO */
-	private $pdo;
+	private \PDO $pdo;
 
 
 	public function __construct(string $path)
