@@ -16,15 +16,15 @@
 	],
 	"require": {
 		"php": ">=8.0 <8.2",
-		"nette/finder": "^2.4 || ^3.0",
-		"nette/utils": "^2.4 || ^3.0"
+		"nette/finder": "^2.5.2 || ^3.0",
+		"nette/utils": "^4.0"
 	},
 	"require-dev": {
-		"nette/tester": "^2.0",
-		"nette/di": "^v3.0",
+		"nette/tester": "^2.4",
+		"nette/di": "^v4.0",
 		"latte/latte": "^2.10",
-		"tracy/tracy": "^2.4",
-		"phpstan/phpstan": "^0.12"
+		"tracy/tracy": "^2.8",
+		"phpstan/phpstan": "^1.0"
 	},
 	"suggest": {
 		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal"
