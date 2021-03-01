@@ -13,8 +13,7 @@ use Tester\Assert;
 
 abstract class IJournalTestCase extends Tester\TestCase
 {
-	/** @var IJournal */
-	private $journal;
+	private IJournal $journal;
 
 
 	/** @return IJournal  */

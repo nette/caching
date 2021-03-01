@@ -19,8 +19,7 @@ class MemoryStorage implements Nette\Caching\Storage
 {
 	use Nette\SmartObject;
 
-	/** @var array */
-	private $data = [];
+	private array $data = [];
 
 
 	public function read(string $key)
