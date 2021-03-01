@@ -21,8 +21,7 @@ final class CacheMacro implements Latte\IMacro
 {
 	use Nette\SmartObject;
 
-	/** @var bool */
-	private $used;
+	private bool $used;
 
 
 	/**

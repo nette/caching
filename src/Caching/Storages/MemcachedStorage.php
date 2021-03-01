@@ -26,14 +26,11 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		META_DATA = 'data',
 		META_DELTA = 'delta';
 
-	/** @var \Memcached */
-	private $memcached;
+	private \Memcached $memcached;
 
-	/** @var string */
-	private $prefix;
+	private string $prefix;
 
-	/** @var Journal */
-	private $journal;
+	private ?Journal $journal;
 
 
 	/**

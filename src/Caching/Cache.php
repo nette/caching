@@ -36,11 +36,9 @@ class Cache
 	/** @internal */
 	public const NAMESPACE_SEPARATOR = "\x00";
 
-	/** @var Storage */
-	private $storage;
+	private Storage $storage;
 
-	/** @var string */
-	private $namespace;
+	private string $namespace;
 
 
 	public function __construct(Storage $storage, ?string $namespace = null)
