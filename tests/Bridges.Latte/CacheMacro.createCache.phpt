@@ -26,9 +26,7 @@ test('', function () {
 test('', function () {
 	$parents = [];
 	$dp = [Cache::TAGS => ['rum', 'cola']];
-	$dpFallback = function () use ($dp) {
-		return $dp;
-	};
+	$dpFallback = fn() => $dp;
 	$outputHelper = CacheMacro::createCache(new DevNullStorage, 'test', $parents);
 	CacheMacro::endCache($parents, ['dependencies' => $dpFallback]);
 	Assert::same($dp + [Cache::EXPIRATION => '+ 7 days'], $outputHelper->dependencies);
@@ -40,9 +38,7 @@ test('', function () {
 		Cache::TAGS => ['rum', 'cola'],
 		Cache::EXPIRATION => '+ 1 days',
 	];
-	$dpFallback = function () use ($dp) {
-		return $dp;
-	};
+	$dpFallback = fn() => $dp;
 	$outputHelper = CacheMacro::createCache(new DevNullStorage, 'test', $parents);
 	CacheMacro::endCache($parents, ['dependencies' => $dpFallback]);
 	Assert::same($dp, $outputHelper->dependencies);
