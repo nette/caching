@@ -169,7 +169,6 @@ class Cache
 		$key = $this->generateKey($key);
 
 		if ($data instanceof \Closure) {
-			trigger_error(__METHOD__ . '() closure argument is deprecated.', E_USER_WARNING);
 			$this->storage->lock($key);
 			try {
 				$data = $data(...[&$dependencies]);
