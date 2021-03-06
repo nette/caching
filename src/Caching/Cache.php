@@ -121,10 +121,8 @@ class Cache
 				$result[$key] = $this->load(
 					$key,
 					$generator
-						? function (&$dependencies) use ($key, $generator) {
-							return $generator(...[$key, &$dependencies]);
-						}
-						: null
+						? fn(&$dependencies) => $generator(...[$key, &$dependencies])
+						: null,
 				);
 			}
 			return $result;
@@ -137,9 +135,7 @@ class Cache
 			if (isset($cacheData[$storageKey])) {
 				$result[$key] = $cacheData[$storageKey];
 			} elseif ($generator) {
-				$result[$key] = $this->load($key, function (&$dependencies) use ($key, $generator) {
-					return $generator(...[$key, &$dependencies]);
-				});
+				$result[$key] = $this->load($key, fn(&$dependencies) => $generator(...[$key, &$dependencies]));
 			} else {
 				$result[$key] = null;
 			}
@@ -274,9 +270,7 @@ class Cache
 		if (is_array($function) && is_object($function[0])) {
 			$key[0][0] = get_class($function[0]);
 		}
-		return $this->load($key, function () use ($function, $key) {
-			return $function(...array_slice($key, 1));
-		});
+		return $this->load($key, fn() => $function(...array_slice($key, 1)));
 	}
 
 
