@@ -21,7 +21,7 @@ try {
 	$cache->load('key', function () {
 		throw new Exception;
 	});
-} catch (Exception $e) {
+} catch (Throwable $e) {
 }
 
 Assert::noError(function () use ($cache) {
