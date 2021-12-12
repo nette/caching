@@ -108,7 +108,7 @@ final class CacheMacro implements Latte\IMacro
 		Nette\Caching\Storage $cacheStorage,
 		string $key,
 		?array &$parents,
-		array $args = null
+		?array $args = null
 	) {
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
@@ -135,7 +135,7 @@ final class CacheMacro implements Latte\IMacro
 	 * Ends the output cache.
 	 * @param  Nette\Caching\OutputHelper[]  $parents
 	 */
-	public static function endCache(array &$parents, array $args = null): void
+	public static function endCache(array &$parents, ?array $args = null): void
 	{
 		$helper = array_pop($parents);
 		if (!$helper instanceof Nette\Caching\OutputHelper) {

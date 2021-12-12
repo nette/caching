@@ -49,7 +49,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		string $host = 'localhost',
 		int $port = 11211,
 		string $prefix = '',
-		Journal $journal = null
+		?Journal $journal = null
 	) {
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");

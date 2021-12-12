@@ -43,7 +43,7 @@ class Cache
 	private $namespace;
 
 
-	public function __construct(Storage $storage, string $namespace = null)
+	public function __construct(Storage $storage, ?string $namespace = null)
 	{
 		$this->storage = $storage;
 		$this->namespace = $namespace . self::NAMESPACE_SEPARATOR;
@@ -83,7 +83,7 @@ class Cache
 	 * @param  mixed  $key
 	 * @return mixed
 	 */
-	public function load($key, callable $generator = null)
+	public function load($key, ?callable $generator = null)
 	{
 		$storageKey = $this->generateKey($key);
 		$data = $this->storage->read($storageKey);
@@ -106,7 +106,7 @@ class Cache
 	/**
 	 * Reads multiple items from the cache.
 	 */
-	public function bulkLoad(array $keys, callable $generator = null): array
+	public function bulkLoad(array $keys, ?callable $generator = null): array
 	{
 		if (count($keys) === 0) {
 			return [];
@@ -169,7 +169,7 @@ class Cache
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function save($key, $data, array $dependencies = null)
+	public function save($key, $data, ?array $dependencies = null)
 	{
 		$key = $this->generateKey($key);
 
@@ -263,7 +263,7 @@ class Cache
 	 * - Cache::TAGS => (array) tags
 	 * - Cache::ALL => true
 	 */
-	public function clean(array $conditions = null): void
+	public function clean(?array $conditions = null): void
 	{
 		$conditions = (array) $conditions;
 		if (isset($conditions[self::TAGS])) {
@@ -294,7 +294,7 @@ class Cache
 	/**
 	 * Caches results of function/method calls.
 	 */
-	public function wrap(callable $function, array $dependencies = null): \Closure
+	public function wrap(callable $function, ?array $dependencies = null): \Closure
 	{
 		return function () use ($function, $dependencies) {
 			$key = [$function, $args = func_get_args()];
