@@ -75,7 +75,7 @@ class FileStorage implements Nette\Caching\Storage
 	}
 
 
-	public function read(string $key)
+	public function read(string $key): mixed
 	{
 		$meta = $this->readMetaAndLock($this->getCacheFile($key), LOCK_SH);
 		return $meta && $this->verify($meta)
@@ -324,9 +324,8 @@ class FileStorage implements Nette\Caching\Storage
 
 	/**
 	 * Reads cache data from disk and closes cache file handle.
-	 * @return mixed
 	 */
-	protected function readData(array $meta)
+	protected function readData(array $meta): mixed
 	{
 		$data = stream_get_contents($meta[self::Handle]);
 		flock($meta[self::Handle], LOCK_UN);
