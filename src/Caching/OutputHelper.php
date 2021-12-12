@@ -24,7 +24,7 @@ class OutputHelper
 	private mixed $key;
 
 
-	public function __construct(Cache $cache, $key)
+	public function __construct(Cache $cache, mixed $key)
 	{
 		$this->cache = $cache;
 		$this->key = $key;

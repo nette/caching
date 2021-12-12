@@ -74,7 +74,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-	public function read(string $key)
+	public function read(string $key): mixed
 	{
 		$key = urlencode($this->prefix . $key);
 		$meta = $this->memcached->get($key);

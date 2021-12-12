@@ -81,9 +81,8 @@ class Cache
 
 	/**
 	 * Returns new nested cache object.
-	 * @return static
 	 */
-	public function derive(string $namespace)
+	public function derive(string $namespace): static
 	{
 		return new static($this->storage, $this->namespace . $namespace);
 	}
@@ -91,10 +90,8 @@ class Cache
 
 	/**
 	 * Reads the specified item from the cache or generate it.
-	 * @param  mixed  $key
-	 * @return mixed
 	 */
-	public function load($key, ?callable $generator = null)
+	public function load(mixed $key, ?callable $generator = null): mixed
 	{
 		$storageKey = $this->generateKey($key);
 		$data = $this->storage->read($storageKey);
@@ -170,12 +167,10 @@ class Cache
 	 * - Cache::Files => (array|string) file names
 	 * - Cache::Items => (array|string) cache items
 	 * - Cache::Constants => (array|string) cache items
-	 * @param  mixed  $key
-	 * @param  mixed  $data
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function save($key, $data, ?array $dependencies = null)
+	public function save(mixed $key, mixed $data, ?array $dependencies = null): mixed
 	{
 		$key = $this->generateKey($key);
 
@@ -191,6 +186,7 @@ class Cache
 
 		if ($data === null) {
 			$this->storage->remove($key);
+			return null;
 		} else {
 			$dependencies = $this->completeDependencies($dependencies);
 			if (isset($dependencies[self::Expire]) && $dependencies[self::Expire] <= 0) {
@@ -254,9 +250,8 @@ class Cache
 
 	/**
 	 * Removes item from the cache.
-	 * @param  mixed  $key
 	 */
-	public function remove($key): void
+	public function remove(mixed $key): void
 	{
 		$this->save($key, null);
 	}
@@ -282,9 +277,8 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
-	 * @return mixed
 	 */
-	public function call(callable $function)
+	public function call(callable $function): mixed
 	{
 		$key = func_get_args();
 		if (is_array($function) && is_object($function[0])) {
@@ -316,9 +310,8 @@ class Cache
 
 	/**
 	 * Starts the output cache.
-	 * @param  mixed  $key
 	 */
-	public function capture($key): ?OutputHelper
+	public function capture(mixed $key): ?OutputHelper
 	{
 		$data = $this->load($key);
 		if ($data === null) {
