@@ -101,14 +101,13 @@ final class CacheMacro implements Latte\IMacro
 
 	/**
 	 * Starts the output cache. Returns Nette\Caching\OutputHelper object if buffering was started.
-	 * @return Nette\Caching\OutputHelper|\stdClass
 	 */
 	public static function createCache(
 		Nette\Caching\Storage $cacheStorage,
 		string $key,
 		?array &$parents,
 		?array $args = null,
-	) {
+	): Nette\Caching\OutputHelper|\stdClass {
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
 				return $parents[] = new \stdClass;

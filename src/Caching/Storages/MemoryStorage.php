@@ -22,7 +22,7 @@ class MemoryStorage implements Nette\Caching\Storage
 	private array $data = [];
 
 
-	public function read(string $key)
+	public function read(string $key): mixed
 	{
 		return $this->data[$key] ?? null;
 	}
