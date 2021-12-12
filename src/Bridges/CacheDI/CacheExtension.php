@@ -51,6 +51,7 @@ final class CacheExtension extends Nette\DI\CompilerExtension
 			if (extension_loaded('pdo_sqlite')) {
 				$builder->addAlias('nette.cacheJournal', $this->prefix('journal'));
 			}
+
 			$builder->addAlias('cacheStorage', $this->prefix('storage'));
 		}
 	}

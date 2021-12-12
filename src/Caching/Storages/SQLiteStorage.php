@@ -63,6 +63,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 		if ($row['slide'] !== null) {
 			$this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key=?')->execute([time(), $key]);
 		}
+
 		return unserialize($row['data']);
 	}
 
@@ -77,12 +78,15 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			if ($row['slide'] !== null) {
 				$updateSlide[] = $row['key'];
 			}
+
 			$result[$row['key']] = unserialize($row['data']);
 		}
+
 		if (!empty($updateSlide)) {
 			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
 			$stmt->execute(array_merge([time()], $updateSlide));
 		}
+
 		return $result;
 	}
 
@@ -110,9 +114,11 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 				$arr[] = $key;
 				$arr[] = $tag;
 			}
+
 			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
 				->execute($arr);
 		}
+
 		$this->pdo->exec('COMMIT');
 	}
 

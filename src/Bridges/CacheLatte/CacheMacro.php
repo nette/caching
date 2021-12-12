@@ -56,6 +56,7 @@ final class CacheMacro implements Latte\IMacro
 		if ($node->modifiers) {
 			throw new Latte\CompileException('Modifiers are not allowed in ' . $node->getNotation());
 		}
+
 		$this->used = true;
 		$node->empty = false;
 		$node->openingCode = Latte\PhpWriter::using($node)
@@ -113,8 +114,10 @@ final class CacheMacro implements Latte\IMacro
 			if (array_key_exists('if', $args) && !$args['if']) {
 				return $parents[] = new \stdClass;
 			}
+
 			$key = array_merge([$key], array_intersect_key($args, range(0, count($args))));
 		}
+
 		if ($parents) {
 			end($parents)->dependencies[Cache::ITEMS][] = $key;
 		}
@@ -123,6 +126,7 @@ final class CacheMacro implements Latte\IMacro
 		if ($helper = $cache->start($key)) {
 			$parents[] = $helper;
 		}
+
 		return $helper;
 	}
 
@@ -141,9 +145,11 @@ final class CacheMacro implements Latte\IMacro
 		if (isset($args['dependencies'])) {
 			$args += $args['dependencies']();
 		}
+
 		if (isset($args['expire'])) {
 			$args['expiration'] = $args['expire']; // back compatibility
 		}
+
 		$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
 		$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
 		$helper->end();

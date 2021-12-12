@@ -95,8 +95,10 @@ class Cache
 				$this->storage->remove($storageKey);
 				throw $e;
 			}
+
 			$this->save($key, $data, $dependencies);
 		}
+
 		return $data;
 	}
 
@@ -109,6 +111,7 @@ class Cache
 		if (count($keys) === 0) {
 			return [];
 		}
+
 		foreach ($keys as $key) {
 			if (!is_scalar($key)) {
 				throw new Nette\InvalidArgumentException('Only scalar keys are allowed in bulkLoad()');
@@ -127,6 +130,7 @@ class Cache
 						: null
 				);
 			}
+
 			return $result;
 		}
 
@@ -144,6 +148,7 @@ class Cache
 				$result[$key] = null;
 			}
 		}
+
 		return $result;
 	}
 
@@ -187,6 +192,7 @@ class Cache
 			} else {
 				$this->storage->write($key, $data, $dependencies);
 			}
+
 			return $data;
 		}
 	}
@@ -214,6 +220,7 @@ class Cache
 			foreach (array_unique((array) $dp[self::FILES]) as $item) {
 				$dp[self::CALLBACKS][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
 			}
+
 			unset($dp[self::FILES]);
 		}
 
@@ -227,12 +234,14 @@ class Cache
 			foreach (array_unique((array) $dp[self::CONSTS]) as $item) {
 				$dp[self::CALLBACKS][] = [[self::class, 'checkConst'], $item, constant($item)];
 			}
+
 			unset($dp[self::CONSTS]);
 		}
 
 		if (!is_array($dp)) {
 			$dp = [];
 		}
+
 		return $dp;
 	}
 
@@ -260,6 +269,7 @@ class Cache
 		if (isset($conditions[self::TAGS])) {
 			$conditions[self::TAGS] = array_values((array) $conditions[self::TAGS]);
 		}
+
 		$this->storage->clean($conditions);
 	}
 
@@ -274,6 +284,7 @@ class Cache
 		if (is_array($function) && is_object($function[0])) {
 			$key[0][0] = get_class($function[0]);
 		}
+
 		return $this->load($key, function () use ($function, $key) {
 			return $function(...array_slice($key, 1));
 		});
@@ -290,6 +301,7 @@ class Cache
 			if (is_array($function) && is_object($function[0])) {
 				$key[0][0] = get_class($function[0]);
 			}
+
 			return $this->load($key, function (&$deps) use ($function, $args, $dependencies) {
 				$deps = $dependencies;
 				return $function(...$args);
@@ -308,6 +320,7 @@ class Cache
 		if ($data === null) {
 			return new OutputHelper($this, $key);
 		}
+
 		echo $data;
 		return null;
 	}
@@ -344,6 +357,7 @@ class Cache
 				return false;
 			}
 		}
+
 		return true;
 	}
 

@@ -32,6 +32,7 @@ class SQLiteJournal implements Journal
 		if (!extension_loaded('pdo_sqlite')) {
 			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
 		}
+
 		$this->path = $path;
 	}
 
@@ -68,6 +69,7 @@ class SQLiteJournal implements Journal
 		if (!$this->pdo) {
 			$this->open();
 		}
+
 		$this->pdo->exec('BEGIN');
 
 		if (!empty($dependencies[Cache::TAGS])) {
@@ -77,6 +79,7 @@ class SQLiteJournal implements Journal
 				$arr[] = $key;
 				$arr[] = $tag;
 			}
+
 			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
 				->execute($arr);
 		}
@@ -95,6 +98,7 @@ class SQLiteJournal implements Journal
 		if (!$this->pdo) {
 			$this->open();
 		}
+
 		if (!empty($conditions[Cache::ALL])) {
 			$this->pdo->exec('
 				BEGIN;

@@ -98,6 +98,7 @@ class FileStorage implements Nette\Caching\Storage
 				if (filemtime($meta[self::FILE]) + $meta[self::META_DELTA] < time()) {
 					break;
 				}
+
 				touch($meta[self::FILE]);
 
 			} elseif (!empty($meta[self::META_EXPIRE]) && $meta[self::META_EXPIRE] < time()) {
@@ -131,6 +132,7 @@ class FileStorage implements Nette\Caching\Storage
 		if (!is_dir($dir = dirname($cacheFile))) {
 			@mkdir($dir); // @ - directory may already exist
 		}
+
 		$handle = fopen($cacheFile, 'c+b');
 		if (!$handle) {
 			return;
@@ -174,6 +176,7 @@ class FileStorage implements Nette\Caching\Storage
 				return;
 			}
 		}
+
 		$handle = $this->locks[$key];
 		unset($this->locks[$key]);
 
@@ -183,6 +186,7 @@ class FileStorage implements Nette\Caching\Storage
 			if (!$this->journal) {
 				throw new Nette\InvalidStateException('CacheJournal has not been provided.');
 			}
+
 			$this->journal->write($cacheFile, $dp);
 		}
 
@@ -242,6 +246,7 @@ class FileStorage implements Nette\Caching\Storage
 					@rmdir($path); // @ - removing dirs is not necessary
 					continue;
 				}
+
 				if ($all) {
 					$this->delete($path);
 
@@ -266,6 +271,7 @@ class FileStorage implements Nette\Caching\Storage
 			if ($this->journal) {
 				$this->journal->clean($conditions);
 			}
+
 			return;
 
 		} elseif ($namespaces) {
@@ -278,6 +284,7 @@ class FileStorage implements Nette\Caching\Storage
 				foreach (Nette\Utils\Finder::findFiles('_*')->in($dir) as $entry) {
 					$this->delete((string) $entry);
 				}
+
 				@rmdir($dir); // may already contain new files
 			}
 		}
@@ -341,6 +348,7 @@ class FileStorage implements Nette\Caching\Storage
 		if ($a = strrpos($file, '%00')) { // %00 = urlencode(Nette\Caching\Cache::NAMESPACE_SEPARATOR)
 			$file = substr_replace($file, '/_', $a, 3);
 		}
+
 		return $this->dir . '/_' . $file;
 	}
 
@@ -356,12 +364,14 @@ class FileStorage implements Nette\Caching\Storage
 				flock($handle, LOCK_UN);
 				fclose($handle);
 			}
+
 			return;
 		}
 
 		if (!$handle) {
 			$handle = @fopen($file, 'r+'); // @ - file may not exist
 		}
+
 		if (!$handle) {
 			return;
 		}

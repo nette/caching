@@ -128,6 +128,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 				$this->memcached->replace($prefixedKey, $meta, $meta[self::META_DELTA] + time());
 			}
 		}
+
 		if (!empty($deleteKeys)) {
 			$this->memcached->deleteMulti($deleteKeys, 0);
 		}
@@ -168,6 +169,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 			if (!$this->journal) {
 				throw new Nette\InvalidStateException('CacheJournal has not been provided.');
 			}
+
 			$this->journal->write($key, $dp);
 		}
 

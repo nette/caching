@@ -45,6 +45,7 @@ class OutputHelper
 		if ($this->cache === null) {
 			throw new Nette\InvalidStateException('Output cache has already been saved.');
 		}
+
 		$this->cache->save($this->key, ob_get_flush(), $dependencies + $this->dependencies);
 		$this->cache = null;
 	}
