@@ -60,6 +60,7 @@ class SQLiteJournal implements Journal
 			CREATE UNIQUE INDEX IF NOT EXISTS idx_tags_key_tag ON tags(key, tag);
 			CREATE UNIQUE INDEX IF NOT EXISTS idx_priorities_key ON priorities(key);
 			CREATE INDEX IF NOT EXISTS idx_priorities_priority ON priorities(priority);
+			PRAGMA synchronous = NORMAL;
 		');
 	}
 
