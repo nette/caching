@@ -22,7 +22,7 @@ $cache = new Cache(new FileStorage(getTempDir()));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::EXPIRATION => time() + 3,
+	Cache::Expire => time() + 3,
 ]);
 
 

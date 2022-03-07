@@ -28,7 +28,7 @@ function dependency($val)
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::CALLBACKS => [['dependency', 1]],
+	Cache::Callbacks => [['dependency', 1]],
 ]);
 
 Assert::truthy($cache->load($key));
@@ -36,7 +36,7 @@ Assert::truthy($cache->load($key));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::CALLBACKS => [['dependency', 0]],
+	Cache::Callbacks => [['dependency', 0]],
 ]);
 
 Assert::null($cache->load($key));

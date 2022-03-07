@@ -45,7 +45,7 @@ test('storage with bulk load support', function () {
 test('dependencies', function () {
 	$storage = new BulkReadTestStorage;
 	$cache = new Cache($storage, 'ns');
-	$dependencies = [Cache::TAGS => ['tag']];
+	$dependencies = [Cache::Tags => ['tag']];
 	$cache->bulkLoad([1], function ($key, &$deps) use ($dependencies) {
 		$deps = $dependencies;
 		return $key;

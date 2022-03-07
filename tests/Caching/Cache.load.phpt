@@ -31,7 +31,7 @@ Assert::same('value', $data['data']);
 
 
 // load twice with closure fallback, pass dependencies
-$dependencies = [Cache::TAGS => ['tag']];
+$dependencies = [Cache::Tags => ['tag']];
 $storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 

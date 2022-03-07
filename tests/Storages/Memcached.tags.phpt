@@ -28,15 +28,15 @@ $cache = new Cache($storage);
 
 // Writing cache...
 $cache->save('nette-memcached-tags-key1', 'value1', [
-	Cache::TAGS => ['one', 'two'],
+	Cache::Tags => ['one', 'two'],
 ]);
 
 $cache->save('nette-memcached-tags-key2', 'value2', [
-	Cache::TAGS => ['one', 'three'],
+	Cache::Tags => ['one', 'three'],
 ]);
 
 $cache->save('nette-memcached-tags-key3', 'value3', [
-	Cache::TAGS => ['two', 'three'],
+	Cache::Tags => ['two', 'three'],
 ]);
 
 $cache->save('nette-memcached-tags-key4', 'value4');
@@ -44,7 +44,7 @@ $cache->save('nette-memcached-tags-key4', 'value4');
 
 // Cleaning by tags...
 $cache->clean([
-	Cache::TAGS => 'one',
+	Cache::Tags => 'one',
 ]);
 
 Assert::null($cache->load('nette-memcached-tags-key1'));

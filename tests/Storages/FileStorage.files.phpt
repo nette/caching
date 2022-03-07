@@ -25,7 +25,7 @@ $dependentFile = getTempDir() . '/spec.file';
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::FILES => [
+	Cache::Files => [
 		__FILE__,
 		$dependentFile,
 	],
@@ -42,7 +42,7 @@ Assert::null($cache->load($key));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::FILES => $dependentFile,
+	Cache::Files => $dependentFile,
 ]);
 
 Assert::truthy($cache->load($key));

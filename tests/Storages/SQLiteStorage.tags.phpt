@@ -20,15 +20,15 @@ $cache = new Cache(new SQLiteStorage(':memory:'));
 
 // Writing cache...
 $cache->save('key1', 'value1', [
-	Cache::TAGS => ['one', 'two'],
+	Cache::Tags => ['one', 'two'],
 ]);
 
 $cache->save('key2', 'value2', [
-	Cache::TAGS => ['one', 'three'],
+	Cache::Tags => ['one', 'three'],
 ]);
 
 $cache->save('key3', 'value3', [
-	Cache::TAGS => ['two', 'three'],
+	Cache::Tags => ['two', 'three'],
 ]);
 
 $cache->save('key4', 'value4');
@@ -36,7 +36,7 @@ $cache->save('key4', 'value4');
 
 // Cleaning by tags...
 $cache->clean([
-	Cache::TAGS => ['one', 'xx'],
+	Cache::Tags => ['one', 'xx'],
 ]);
 
 Assert::null($cache->load('key1'));

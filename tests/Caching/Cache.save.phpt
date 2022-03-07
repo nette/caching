@@ -18,7 +18,7 @@ require __DIR__ . '/Cache.php';
 // save value with dependencies
 $storage = new testStorage;
 $cache = new Cache($storage, 'ns');
-$dependencies = [Cache::TAGS => ['tag']];
+$dependencies = [Cache::Tags => ['tag']];
 
 $cache->save('key', 'value', $dependencies);
 
@@ -43,7 +43,7 @@ Assert::same([], $res['dependencies']);
 // save callback return value with dependencies
 $storage = new testStorage;
 $cache = new Cache($storage, 'ns');
-$dependencies = [Cache::TAGS => ['tag']];
+$dependencies = [Cache::Tags => ['tag']];
 
 $cache->save('key', function () {
 	return 'value';
@@ -57,7 +57,7 @@ Assert::same($dependencies, $res['dependencies']);
 // do not save already expired data
 $storage = new testStorage;
 $cache = new Cache($storage, 'ns');
-$dependencies = [Cache::EXPIRATION => new DateTime];
+$dependencies = [Cache::Expire => new DateTime];
 
 $res = $cache->save('key', function () {
 	return 'value';

@@ -23,7 +23,7 @@ $cache = new Cache(new SQLiteStorage(':memory:'));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::EXPIRATION => time() + 3,
+	Cache::Expire => time() + 3,
 ]);
 
 

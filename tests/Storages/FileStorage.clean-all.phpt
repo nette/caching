@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage clean with Cache::ALL
+ * Test: Nette\Caching\Storages\FileStorage clean with Cache::All
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ Assert::same('David Grudl divaD ldurG', implode(' ', [
 	$cacheB->load('test2'),
 ]));
 
-$storage->clean([Cache::ALL => true]);
+$storage->clean([Cache::All => true]);
 
 Assert::null($cacheA->load('test1'));
 Assert::null($cacheA->load('test2'));

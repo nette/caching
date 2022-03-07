@@ -94,7 +94,7 @@ final class CacheMacro implements Latte\IMacro
 		if (!empty($template->global->cacheStack)) {
 			$file = (new \ReflectionClass($template))->getFileName();
 			if (@is_file($file)) { // @ - may trigger error
-				end($template->global->cacheStack)->dependencies[Cache::FILES][] = $file;
+				end($template->global->cacheStack)->dependencies[Cache::Files][] = $file;
 			}
 		}
 	}
@@ -119,7 +119,7 @@ final class CacheMacro implements Latte\IMacro
 		}
 
 		if ($parents) {
-			end($parents)->dependencies[Cache::ITEMS][] = $key;
+			end($parents)->dependencies[Cache::Items][] = $key;
 		}
 
 		$cache = new Cache($cacheStorage, 'Nette.Templating.Cache');
@@ -150,8 +150,8 @@ final class CacheMacro implements Latte\IMacro
 			$args['expiration'] = $args['expire']; // back compatibility
 		}
 
-		$helper->dependencies[Cache::TAGS] = $args['tags'] ?? null;
-		$helper->dependencies[Cache::EXPIRATION] = $args['expiration'] ?? '+ 7 days';
+		$helper->dependencies[Cache::Tags] = $args['tags'] ?? null;
+		$helper->dependencies[Cache::Expire] = $args['expiration'] ?? '+ 7 days';
 		$helper->end();
 	}
 

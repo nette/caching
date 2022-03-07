@@ -29,8 +29,8 @@ $cache = new Cache(new MemcachedStorage('localhost'));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => true,
+	Cache::Expire => time() + 3,
+	Cache::Sliding => true,
 ]);
 
 
@@ -51,8 +51,8 @@ Assert::null($cache->load($key));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::EXPIRATION => time() + 3,
-	Cache::SLIDING => true,
+	Cache::Expire => time() + 3,
+	Cache::Sliding => true,
 ]);
 
 

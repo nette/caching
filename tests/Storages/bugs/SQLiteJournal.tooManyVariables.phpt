@@ -25,17 +25,17 @@ for ($i = 0; $i < 2000; $i++) {
 
 foreach ($keys as $key) {
 	$journal->write($key, [
-		Cache::TAGS => ['one', 'two'],
+		Cache::Tags => ['one', 'two'],
 	]);
 }
 
 $journal->write('keyThree', [
-	Cache::TAGS => ['three'],
+	Cache::Tags => ['three'],
 ]);
 
 // Cleaning by tags...
 $keys = $journal->clean([
-	Cache::TAGS => ['one', 'xx'],
+	Cache::Tags => ['one', 'xx'],
 ]);
 
 Assert::same($keys, $keys);

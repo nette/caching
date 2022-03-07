@@ -21,5 +21,5 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$storage = new FileStorage(getTempDir());
-	$storage->write('a', 'b', [Cache::TAGS => 'c']);
+	$storage->write('a', 'b', [Cache::Tags => 'c']);
 }, Nette\InvalidStateException::class, 'CacheJournal has not been provided.');

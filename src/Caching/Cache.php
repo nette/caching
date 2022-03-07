@@ -21,20 +21,32 @@ class Cache
 
 	/** dependency */
 	public const
-		PRIORITY = 'priority',
-		EXPIRATION = 'expire',
-		EXPIRE = 'expire',
-		SLIDING = 'sliding',
-		TAGS = 'tags',
-		FILES = 'files',
-		ITEMS = 'items',
-		CONSTS = 'consts',
-		CALLBACKS = 'callbacks',
-		NAMESPACES = 'namespaces',
-		ALL = 'all';
+		Priority = 'priority',
+		Expire = 'expire',
+		Sliding = 'sliding',
+		Tags = 'tags',
+		Files = 'files',
+		Items = 'items',
+		Constants = 'consts',
+		Callbacks = 'callbacks',
+		Namespaces = 'namespaces',
+		All = 'all';
+
+	public const
+		PRIORITY = self::Priority,
+		EXPIRATION = self::Expire,
+		EXPIRE = self::Expire,
+		SLIDING = self::Sliding,
+		TAGS = self::Tags,
+		FILES = self::Files,
+		ITEMS = self::Items,
+		CONSTS = self::Constants,
+		CALLBACKS = self::Callbacks,
+		NAMESPACES = self::Namespaces,
+		ALL = self::All;
 
 	/** @internal */
-	public const NAMESPACE_SEPARATOR = "\x00";
+	public const NamespaceSeparator = "\x00";
 
 	/** @var Storage */
 	private $storage;
@@ -46,7 +58,7 @@ class Cache
 	public function __construct(Storage $storage, ?string $namespace = null)
 	{
 		$this->storage = $storage;
-		$this->namespace = $namespace . self::NAMESPACE_SEPARATOR;
+		$this->namespace = $namespace . self::NamespaceSeparator;
 	}
 
 
@@ -156,13 +168,13 @@ class Cache
 	/**
 	 * Writes item into the cache.
 	 * Dependencies are:
-	 * - Cache::PRIORITY => (int) priority
-	 * - Cache::EXPIRATION => (timestamp) expiration
-	 * - Cache::SLIDING => (bool) use sliding expiration?
-	 * - Cache::TAGS => (array) tags
-	 * - Cache::FILES => (array|string) file names
-	 * - Cache::ITEMS => (array|string) cache items
-	 * - Cache::CONSTS => (array|string) cache items
+	 * - Cache::Priortiy => (int) priority
+	 * - Cache::Exprie => (timestamp) expiration
+	 * - Cache::Sliding => (bool) use sliding expiration?
+	 * - Cache::Tags => (array) tags
+	 * - Cache::Files => (array|string) file names
+	 * - Cache::Items => (array|string) cache items
+	 * - Cache::Consts => (array|string) cache items
 	 *
 	 * @param  mixed  $key
 	 * @param  mixed  $data
@@ -187,7 +199,7 @@ class Cache
 			$this->storage->remove($key);
 		} else {
 			$dependencies = $this->completeDependencies($dependencies);
-			if (isset($dependencies[self::EXPIRATION]) && $dependencies[self::EXPIRATION] <= 0) {
+			if (isset($dependencies[self::Expire]) && $dependencies[self::Expire] <= 0) {
 				$this->storage->remove($key);
 			} else {
 				$this->storage->write($key, $data, $dependencies);
@@ -201,41 +213,41 @@ class Cache
 	private function completeDependencies(?array $dp): array
 	{
 		// convert expire into relative amount of seconds
-		if (isset($dp[self::EXPIRATION])) {
-			$dp[self::EXPIRATION] = Nette\Utils\DateTime::from($dp[self::EXPIRATION])->format('U') - time();
+		if (isset($dp[self::Expire])) {
+			$dp[self::Expire] = Nette\Utils\DateTime::from($dp[self::Expire])->format('U') - time();
 		}
 
 		// make list from TAGS
-		if (isset($dp[self::TAGS])) {
-			$dp[self::TAGS] = array_values((array) $dp[self::TAGS]);
+		if (isset($dp[self::Tags])) {
+			$dp[self::Tags] = array_values((array) $dp[self::Tags]);
 		}
 
 		// make list from NAMESPACES
-		if (isset($dp[self::NAMESPACES])) {
-			$dp[self::NAMESPACES] = array_values((array) $dp[self::NAMESPACES]);
+		if (isset($dp[self::Namespaces])) {
+			$dp[self::Namespaces] = array_values((array) $dp[self::Namespaces]);
 		}
 
 		// convert FILES into CALLBACKS
-		if (isset($dp[self::FILES])) {
-			foreach (array_unique((array) $dp[self::FILES]) as $item) {
-				$dp[self::CALLBACKS][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
+		if (isset($dp[self::Files])) {
+			foreach (array_unique((array) $dp[self::Files]) as $item) {
+				$dp[self::Callbacks][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
 			}
 
-			unset($dp[self::FILES]);
+			unset($dp[self::Files]);
 		}
 
 		// add namespaces to items
-		if (isset($dp[self::ITEMS])) {
-			$dp[self::ITEMS] = array_unique(array_map([$this, 'generateKey'], (array) $dp[self::ITEMS]));
+		if (isset($dp[self::Items])) {
+			$dp[self::Items] = array_unique(array_map([$this, 'generateKey'], (array) $dp[self::Items]));
 		}
 
 		// convert CONSTS into CALLBACKS
-		if (isset($dp[self::CONSTS])) {
-			foreach (array_unique((array) $dp[self::CONSTS]) as $item) {
-				$dp[self::CALLBACKS][] = [[self::class, 'checkConst'], $item, constant($item)];
+		if (isset($dp[self::Constants])) {
+			foreach (array_unique((array) $dp[self::Constants]) as $item) {
+				$dp[self::Callbacks][] = [[self::class, 'checkConst'], $item, constant($item)];
 			}
 
-			unset($dp[self::CONSTS]);
+			unset($dp[self::Constants]);
 		}
 
 		if (!is_array($dp)) {
@@ -259,15 +271,15 @@ class Cache
 	/**
 	 * Removes items from the cache by conditions.
 	 * Conditions are:
-	 * - Cache::PRIORITY => (int) priority
-	 * - Cache::TAGS => (array) tags
-	 * - Cache::ALL => true
+	 * - Cache::Priority => (int) priority
+	 * - Cache::Tags => (array) tags
+	 * - Cache::All => true
 	 */
 	public function clean(?array $conditions = null): void
 	{
 		$conditions = (array) $conditions;
-		if (isset($conditions[self::TAGS])) {
-			$conditions[self::TAGS] = array_values((array) $conditions[self::TAGS]);
+		if (isset($conditions[self::Tags])) {
+			$conditions[self::Tags] = array_values((array) $conditions[self::Tags]);
 		}
 
 		$this->storage->clean($conditions);

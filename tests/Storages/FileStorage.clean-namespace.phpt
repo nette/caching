@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\Caching\Storages\FileStorage clean with Cache::NAMESPACE
+ * Test: Nette\Caching\Storages\FileStorage clean with namespace
  */
 
 declare(strict_types=1);
@@ -19,7 +19,7 @@ $storage = new FileStorage(getTempDir());
  * Create filestorage cache without namespace and some with namespaces
  */
 $cacheA = new Cache($storage);
-$cacheB = new Cache($storage, 'C' . Cache::NAMESPACE_SEPARATOR . 'A');
+$cacheB = new Cache($storage, 'C' . Cache::NamespaceSeparator . 'A');
 $cacheC = new Cache($storage, 'C');
 $cacheD = new Cache($storage, 'D');
 
@@ -58,7 +58,7 @@ Assert::same('Wayne', $cacheD->load('test2'));
 /*
  * Clean one namespace
  */
-$storage->clean([Cache::NAMESPACES => [$cacheB->getNamespace()]]);
+$storage->clean([Cache::Namespaces => [$cacheB->getNamespace()]]);
 
 Assert::same('David', $cacheA->load('test1'));
 Assert::same('Grudl', $cacheA->load('test2'));
@@ -77,7 +77,7 @@ Assert::same('Wayne', $cacheD->load('test2'));
 /*
  * Test cleaning multiple namespaces
  */
-$storage->clean([Cache::NAMESPACES => [$cacheC->getNamespace(), $cacheD->getNamespace()]]);
+$storage->clean([Cache::Namespaces => [$cacheC->getNamespace(), $cacheD->getNamespace()]]);
 
 Assert::same('David', $cacheA->load('test1'));
 Assert::same('Grudl', $cacheA->load('test2'));

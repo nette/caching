@@ -48,7 +48,7 @@ class MemoryStorage implements Nette\Caching\Storage
 
 	public function clean(array $conditions): void
 	{
-		if (!empty($conditions[Nette\Caching\Cache::ALL])) {
+		if (!empty($conditions[Nette\Caching\Cache::All])) {
 			$this->data = [];
 		}
 	}

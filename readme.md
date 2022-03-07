@@ -118,7 +118,7 @@ The validity of the data is set at the time of saving using the third parameter 
 
 ```php
 $cache->save($key, $value, [
-	Cache::EXPIRE => '20 minutes',
+	Cache::Expire => '20 minutes',
 ]);
 ```
 
@@ -126,7 +126,7 @@ Or using the `$dependencies` parameter passed by reference to the callback in th
 
 ```php
 $value = $cache->load($key, function (&$dependencies) {
-	$dependencies[Cache::EXPIRE] = '20 minutes';
+	$dependencies[Cache::Expire] = '20 minutes';
 	return ...;
 ]);
 ```
@@ -141,27 +141,27 @@ The simplest exiration is the time limit. Here's how to cache data valid for 20 
 
 ```php
 // it also accepts the number of seconds or the UNIX timestamp
-$dependencies[Cache::EXPIRE] = '20 minutes';
+$dependencies[Cache::Expire] = '20 minutes';
 ```
 
 If we want to extend the validity period with each reading, it can be achieved this way, but beware, this will increase the cache overhead:
 
 ```php
-$dependencies[Cache::SLIDING] = true;
+$dependencies[Cache::Sliding] = true;
 ```
 
 The handy option is the ability to let the data expire when a particular file is changed or one of several files. This can be used, for example, for caching data resulting from procession these files. Use absolute paths.
 
 ```php
-$dependencies[Cache::FILES] = '/path/to/data.yaml';
+$dependencies[Cache::Files] = '/path/to/data.yaml';
 // nebo
-$dependencies[Cache::FILES] = ['/path/to/data1.yaml', '/path/to/data2.yaml'];
+$dependencies[Cache::Files] = ['/path/to/data1.yaml', '/path/to/data2.yaml'];
 ```
 
 We can let an item in the cache expired when another item (or one of several others) expires. This can be used when we cache the entire HTML page and fragments of it under other keys. Once the snippet changes, the entire page becomes invalid. If we have fragments stored under keys such as `frag1` and `frag2`, we will use:
 
 ```php
-$dependencies[Cache::ITEMS] = ['frag1', 'frag2'];
+$dependencies[Cache::Items] = ['frag1', 'frag2'];
 ```
 
 Expiration can also be controlled using custom functions or static methods, which always decide when reading whether the item is still valid. For example, we can let the item expire whenever the PHP version changes. We will create a function that compares the current version with the parameter, and when saving we will add an array in the form `[function name, ...arguments]` to the dependencies:
@@ -172,7 +172,7 @@ function checkPhpVersion($ver): bool
 	return $ver === PHP_VERSION_ID;
 }
 
-$dependencies[Cache::CALLBACKS] = [
+$dependencies[Cache::Callbacks] = [
 	['checkPhpVersion', PHP_VERSION_ID] // expire when checkPhpVersion(...) === false
 ];
 ```
@@ -180,8 +180,8 @@ $dependencies[Cache::CALLBACKS] = [
 Of course, all criteria can be combined. The cache then expires when at least one criterion is not met.
 
 ```php
-$dependencies[Cache::EXPIRE] = '20 minutes';
-$dependencies[Cache::FILES] = '/path/to/data.yaml';
+$dependencies[Cache::Expire] = '20 minutes';
+$dependencies[Cache::Files] = '/path/to/data.yaml';
 ```
 
 
@@ -192,14 +192,14 @@ Invalidation using Tags
 Tags are a very useful invalidation tool. We can assign a list of tags, which are arbitrary strings, to each item stored in the cache. For example, suppose we have an HTML page with an article and comments, which we want to cache. So we specify tags when saving to cache:
 
 ```php
-$dependencies[Cache::TAGS] = ["article/$articleId", "comments/$articleId"];
+$dependencies[Cache::Tags] = ["article/$articleId", "comments/$articleId"];
 ```
 
 Now, let's move to the administration. Here we have a form for article editing. Together with saving the article to a database, we call the `clean()` command, which will delete cached items by tag:
 
 ```php
 $cache->clean([
-	Cache::TAGS => ["article/$articleId"],
+	Cache::Tags => ["article/$articleId"],
 ]);
 ```
 
@@ -207,7 +207,7 @@ Likewise, in the place of adding a new comment (or editing a comment), we will n
 
 ```php
 $cache->clean([
-	Cache::TAGS => ["comments/$articleId"],
+	Cache::Tags => ["comments/$articleId"],
 ]);
 ```
 
@@ -222,14 +222,14 @@ Invalidation by Priority
 We can set the priority for individual items in the cache, and it will be possible to delete them in a controlled way when, for example, the cache exceeds a certain size:
 
 ```php
-$dependencies[Cache::PRIORITY] = 50;
+$dependencies[Cache::Priority] = 50;
 ```
 
 Delete all items with a priority equal to or less than 100:
 
 ```php
 $cache->clean([
-	Cache::PRIORITY => 100,
+	Cache::Priority => 100,
 ]);
 ```
 
@@ -239,11 +239,11 @@ Priorities require so-called [Journal](#Journal).
 Clear Cache
 -----------
 
-The `Cache::ALL` parameter clears everything:
+The `Cache::All` parameter clears everything:
 
 ```php
 $cache->clean([
-	Cache::ALL => true,
+	Cache::All => true,
 ]);
 ```
 

@@ -22,31 +22,31 @@ $cache = new Cache($storage);
 
 // Writing cache...
 $cache->save('key1', 'value1', [
-	Cache::TAGS => ['one', 'two'],
+	Cache::Tags => ['one', 'two'],
 ]);
 
 $cache->save('key2', 'value2', [
-	Cache::TAGS => ['one', 'three'],
+	Cache::Tags => ['one', 'three'],
 ]);
 
 $cache->save('key3', 'value3', [
-	Cache::TAGS => ['foo' => 'one', 'bar' => 'two'],
+	Cache::Tags => ['foo' => 'one', 'bar' => 'two'],
 ]);
 
 $cache->save('key4', 'value4', [
-	Cache::TAGS => 'one',
+	Cache::Tags => 'one',
 ]);
 
 $cache->save('key5', 'value5', [
-	Cache::TAGS => ['two', 'three'],
+	Cache::Tags => ['two', 'three'],
 ]);
 
 $cache->save('key6', 'value6', [
-	Cache::TAGS => ['foo' => 'two', 'bar' => 'three'],
+	Cache::Tags => ['foo' => 'two', 'bar' => 'three'],
 ]);
 
 $cache->save('key7', 'value7', [
-	Cache::TAGS => 'two',
+	Cache::Tags => 'two',
 ]);
 
 $cache->save('key8', 'value8');
@@ -54,7 +54,7 @@ $cache->save('key8', 'value8');
 
 // Cleaning by tags...
 $cache->clean([
-	Cache::TAGS => [
+	Cache::Tags => [
 		0 => 'non-existent1',
 		1 => 'non-existent2',
 		3 => 'one',

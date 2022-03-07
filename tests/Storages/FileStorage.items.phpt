@@ -22,7 +22,7 @@ $cache = new Cache(new FileStorage(getTempDir()));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::ITEMS => ['dependent'],
+	Cache::Items => ['dependent'],
 ]);
 
 Assert::truthy($cache->load($key));
@@ -36,7 +36,7 @@ Assert::null($cache->load($key));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::ITEMS => 'dependent',
+	Cache::Items => 'dependent',
 ]);
 
 Assert::truthy($cache->load($key));
@@ -51,7 +51,7 @@ Assert::null($cache->load($key));
 
 // Writing cache...
 $cache->save($key, $value, [
-	Cache::ITEMS => 'dependent',
+	Cache::Items => 'dependent',
 ]);
 
 Assert::truthy($cache->load($key));

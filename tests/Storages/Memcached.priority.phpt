@@ -28,15 +28,15 @@ $cache = new Cache($storage);
 
 // Writing cache...
 $cache->save('nette-memcached-priority-key1', 'value1', [
-	Cache::PRIORITY => 100,
+	Cache::Priority => 100,
 ]);
 
 $cache->save('nette-memcached-priority-key2', 'value2', [
-	Cache::PRIORITY => 200,
+	Cache::Priority => 200,
 ]);
 
 $cache->save('nette-memcached-priority-key3', 'value3', [
-	Cache::PRIORITY => 300,
+	Cache::Priority => 300,
 ]);
 
 $cache->save('nette-memcached-priority-key4', 'value4');
@@ -44,7 +44,7 @@ $cache->save('nette-memcached-priority-key4', 'value4');
 
 // Cleaning by priority...
 $cache->clean([
-	Cache::PRIORITY => '200',
+	Cache::Priority => '200',
 ]);
 
 Assert::null($cache->load('nette-memcached-priority-key1'));
