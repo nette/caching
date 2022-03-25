@@ -22,7 +22,7 @@
 	"require-dev": {
 		"nette/tester": "^2.0",
 		"nette/di": "^v3.0",
-		"latte/latte": "^2.10",
+		"latte/latte": "^2.11 || ^3.0",
 		"tracy/tracy": "^2.4",
 		"phpstan/phpstan": "^0.12"
 	},

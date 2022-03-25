@@ -15,7 +15,7 @@ use Nette\Caching\Cache;
 
 
 /**
- * Macro {cache} ... {/cache}
+ * Macro {cache} ... {/cache} for Latte v2
  */
 final class CacheMacro implements Latte\IMacro
 {
