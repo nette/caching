@@ -19,9 +19,7 @@ test('storage without bulk load support', function () {
 	$cache = new Cache($storage, 'ns');
 	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]), 'data');
 
-	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], function ($key) {
-		return $key;
-	}));
+	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], fn($key) => $key));
 
 	$data = $cache->bulkLoad([1, 2]);
 	Assert::same(1, $data[1]['data']);
@@ -33,9 +31,7 @@ test('storage with bulk load support', function () {
 	$cache = new Cache($storage, 'ns');
 	Assert::same([1 => null, 2 => null], $cache->bulkLoad([1, 2]));
 
-	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], function ($key) {
-		return $key;
-	}));
+	Assert::same([1 => 1, 2 => 2], $cache->bulkLoad([1, 2], fn($key) => $key));
 
 	$data = $cache->bulkLoad([1, 2]);
 	Assert::same(1, $data[1]['data']);

@@ -49,7 +49,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		string $host = 'localhost',
 		int $port = 11211,
 		string $prefix = '',
-		?Journal $journal = null
+		?Journal $journal = null,
 	) {
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
@@ -110,9 +110,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 	public function bulkRead(array $keys): array
 	{
-		$prefixedKeys = array_map(function ($key) {
-			return urlencode($this->prefix . $key);
-		}, $keys);
+		$prefixedKeys = array_map(fn($key) => urlencode($this->prefix . $key), $keys);
 		$keys = array_combine($prefixedKeys, $keys);
 		$metas = $this->memcached->getMulti($prefixedKeys);
 		$result = [];

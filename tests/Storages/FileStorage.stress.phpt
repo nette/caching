@@ -41,7 +41,6 @@ for ($i = 0; $i <= COUNT_FILES; $i++) {
 	$storage->write((string) $i, randomStr(), []);
 }
 
-
 // test loop
 $hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0];
 for ($counter = 0; $counter < 1000; $counter++) {
@@ -67,7 +66,6 @@ for ($counter = 0; $counter < 1000; $counter++) {
 		$hits['error']++;
 	}
 }
-
 
 Assert::same([
 	'ok' => 1000,
