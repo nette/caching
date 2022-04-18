@@ -19,14 +19,10 @@ require __DIR__ . '/Cache.php';
 $storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 
-$value = $cache->load('key', function () {
-	return 'value';
-});
+$value = $cache->load('key', fn() => 'value');
 Assert::same('value', $value);
 
-$data = $cache->load('key', function () {
-	return "won't load this value"; // will read from storage
-});
+$data = $cache->load('key', fn() => "won't load this value");
 Assert::same('value', $data['data']);
 
 
@@ -41,9 +37,7 @@ $value = $cache->load('key', function (&$deps) use ($dependencies) {
 });
 Assert::same('value', $value);
 
-$data = $cache->load('key', function () {
-	return "won't load this value"; // will read from storage
-});
+$data = $cache->load('key', fn() => "won't load this value");
 Assert::same('value', $data['data']);
 Assert::same($dependencies, $data['dependencies']);
 

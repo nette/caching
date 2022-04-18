@@ -63,7 +63,7 @@ final class CacheMacro implements Latte\IMacro
 			->write(
 				'<?php if (Nette\Bridges\CacheLatte\CacheMacro::createCache($this->global->cacheStorage, %var, $this->global->cacheStack, %node.array?)) /* line %var */ try { ?>',
 				Nette\Utils\Random::generate(),
-				$node->startLine
+				$node->startLine,
 			);
 	}
 
@@ -81,7 +81,7 @@ final class CacheMacro implements Latte\IMacro
 				} catch (\Throwable $ʟ_e) {
 					Nette\Bridges\CacheLatte\CacheMacro::rollback($this->global->cacheStack); throw $ʟ_e;
 				} ?>',
-				$node->startLine
+				$node->startLine,
 			);
 	}
 
@@ -108,7 +108,7 @@ final class CacheMacro implements Latte\IMacro
 		Nette\Caching\Storage $cacheStorage,
 		string $key,
 		?array &$parents,
-		?array $args = null
+		?array $args = null,
 	) {
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
