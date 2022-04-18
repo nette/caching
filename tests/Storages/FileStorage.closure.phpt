@@ -24,9 +24,7 @@ Assert::null($cache->load($key));
 
 
 // Writing cache using Closure...
-$res = $cache->save($key, function () use ($value) {
-	return $value;
-});
+$res = $cache->save($key, fn() => $value);
 
 Assert::same($res, $value);
 
@@ -34,8 +32,6 @@ Assert::same($cache->load($key), $value);
 
 
 // Removing from cache using null callback...
-$cache->save($key, function () {
-	return null;
-});
+$cache->save($key, fn() => null);
 
 Assert::null($cache->load($key));
