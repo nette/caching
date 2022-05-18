@@ -46,7 +46,9 @@ class Cache
 		ALL = self::All;
 
 	/** @internal */
-	public const NamespaceSeparator = "\x00";
+	public const
+		NamespaceSeparator = "\x00",
+		NAMESPACE_SEPARATOR = self::NamespaceSeparator;
 
 	/** @var Storage */
 	private $storage;
