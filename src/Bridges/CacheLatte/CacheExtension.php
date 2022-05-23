@@ -13,7 +13,6 @@ use Latte;
 use Latte\Compiler\Nodes\AuxiliaryNode;
 use Latte\Compiler\Nodes\TemplateNode;
 use Latte\Compiler\Tag;
-use Latte\Engine;
 use Nette\Caching\Storage;
 
 
@@ -61,8 +60,10 @@ final class CacheExtension extends Latte\Extension
 	}
 
 
-	public function beforeRender(Engine $engine): void
+	public function getProviders(): array
 	{
-		$engine->addProvider('cacheStorage', $this->storage);
+		return [
+			'cacheStorage' => $this->storage,
+		];
 	}
 }
