@@ -32,18 +32,38 @@ class Cache
 		Namespaces = 'namespaces',
 		All = 'all';
 
-	public const
-		PRIORITY = self::Priority,
-		EXPIRATION = self::Expire,
-		EXPIRE = self::Expire,
-		SLIDING = self::Sliding,
-		TAGS = self::Tags,
-		FILES = self::Files,
-		ITEMS = self::Items,
-		CONSTS = self::Constants,
-		CALLBACKS = self::Callbacks,
-		NAMESPACES = self::Namespaces,
-		ALL = self::All;
+	/** @deprecated use Cache::Priority */
+	public const PRIORITY = self::Priority;
+
+	/** @deprecated use Cache::Expire */
+	public const EXPIRATION = self::Expire;
+
+	/** @deprecated use Cache::Expire */
+	public const EXPIRE = self::Expire;
+
+	/** @deprecated use Cache::Sliding */
+	public const SLIDING = self::Sliding;
+
+	/** @deprecated use Cache::Tags */
+	public const TAGS = self::Tags;
+
+	/** @deprecated use Cache::Files */
+	public const FILES = self::Files;
+
+	/** @deprecated use Cache::Items */
+	public const ITEMS = self::Items;
+
+	/** @deprecated use Cache::Constants */
+	public const CONSTS = self::Constants;
+
+	/** @deprecated use Cache::Callbacks */
+	public const CALLBACKS = self::Callbacks;
+
+	/** @deprecated use Cache::Namespaces */
+	public const NAMESPACES = self::Namespaces;
+
+	/** @deprecated use Cache::All */
+	public const ALL = self::All;
 
 	/** @internal */
 	public const
