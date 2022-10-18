@@ -51,8 +51,7 @@ Assert::same($dependencies, $data['dependencies']);
 // load twice with fallback, pass dependencies
 function fallback(&$deps)
 {
-	global $dependencies;
-	$deps = $dependencies;
+	$deps = $GLOBALS['dependencies'];
 	return 'value';
 }
 
