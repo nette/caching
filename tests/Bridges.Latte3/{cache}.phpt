@@ -24,7 +24,7 @@ $params['title'] = 'Hello';
 $params['id'] = 456;
 
 Assert::matchFile(
-	__DIR__ . '/expected/cache.phtml',
+	__DIR__ . '/expected/cache.php',
 	$latte->compile(__DIR__ . '/templates/cache.latte')
 );
 Assert::matchFile(
@@ -35,6 +35,6 @@ Assert::matchFile(
 	)
 );
 Assert::matchFile(
-	__DIR__ . '/expected/cache.inc.phtml',
+	__DIR__ . '/expected/cache.inc.php',
 	file_get_contents($latte->getCacheFile(__DIR__ . strtr('/templates/include.cache.latte', '/', DIRECTORY_SEPARATOR)))
 );
