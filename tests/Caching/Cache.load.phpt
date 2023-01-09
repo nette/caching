@@ -42,6 +42,15 @@ Assert::same('value', $data['data']);
 Assert::same($dependencies, $data['dependencies']);
 
 
+$value = $cache->load('key2', fn() => 'value2', $dependencies);
+Assert::same('value2', $value);
+
+$data = $cache->load('key2', fn() => "won't load this value");
+Assert::same('value2', $data['data']);
+Assert::same($dependencies, $data['dependencies']);
+
+
+
 // load twice with fallback, pass dependencies
 function fallback(&$deps)
 {
@@ -50,8 +59,8 @@ function fallback(&$deps)
 }
 
 
-$value = $cache->load('key2', 'fallback');
+$value = $cache->load('key3', 'fallback');
 Assert::same('value', $value);
-$data = $cache->load('key2');
+$data = $cache->load('key3');
 Assert::same('value', $data['data']);
 Assert::same($dependencies, $data['dependencies']);
