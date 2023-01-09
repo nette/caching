@@ -111,7 +111,7 @@ class Cache
 	/**
 	 * Reads the specified item from the cache or generate it.
 	 */
-	public function load(mixed $key, ?callable $generator = null): mixed
+	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
 	{
 		$storageKey = $this->generateKey($key);
 		$data = $this->storage->read($storageKey);

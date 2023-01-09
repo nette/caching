@@ -131,6 +131,14 @@ $value = $cache->load($key, function (&$dependencies) {
 ]);
 ```
 
+Or using 3rd parameter in the `load()` method, eg:
+
+```php
+$value = $cache->load($key, function () {
+	return ...;
+], [Cache::Expire => '20 minutes']);
+```
+
 In the following examples, we will assume the second variant and thus the existence of a variable `$dependencies`.
 
 
