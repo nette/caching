@@ -170,14 +170,13 @@ class Cache
 	/**
 	 * Writes item into the cache.
 	 * Dependencies are:
-	 * - Cache::Priortiy => (int) priority
-	 * - Cache::Exprie => (timestamp) expiration
+	 * - Cache::Priority => (int) priority
+	 * - Cache::Expire => (timestamp) expiration
 	 * - Cache::Sliding => (bool) use sliding expiration?
 	 * - Cache::Tags => (array) tags
 	 * - Cache::Files => (array|string) file names
 	 * - Cache::Items => (array|string) cache items
-	 * - Cache::Consts => (array|string) cache items
-	 *
+	 * - Cache::Constants => (array|string) cache items
 	 * @param  mixed  $key
 	 * @param  mixed  $data
 	 * @return mixed  value itself
