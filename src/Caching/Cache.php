@@ -392,6 +392,7 @@ class Cache
 	 */
 	public function start(mixed $key): ?OutputHelper
 	{
+		trigger_error(__METHOD__ . '() was renamed to capture()', E_USER_DEPRECATED);
 		return $this->capture($key);
 	}
 
