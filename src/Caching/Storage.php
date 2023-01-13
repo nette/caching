@@ -15,9 +15,8 @@ interface Storage
 {
 	/**
 	 * Reads item from the cache. Returns null if the item does not exist or has expired.
-	 * @return mixed
 	 */
-	function read(string $key);
+	function read(string $key): mixed;
 
 	/**
 	 * Prevents item reading and writing. Lock is released by write() or remove().
