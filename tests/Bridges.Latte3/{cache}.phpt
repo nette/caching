@@ -18,7 +18,7 @@ if (version_compare(Latte\Engine::VERSION, '3', '<')) {
 
 $latte = new Latte\Engine;
 $latte->setTempDirectory(getTempDir());
-$latte->addExtension(new CacheExtension(new Nette\Caching\Storages\DevNullStorage));
+$latte->addExtension(new CacheExtension(new Nette\Caching\Storages\MemoryStorage));
 
 $params['title'] = 'Hello';
 $params['id'] = 456;
@@ -26,6 +26,13 @@ $params['id'] = 456;
 Assert::matchFile(
 	__DIR__ . '/expected/cache.php',
 	$latte->compile(__DIR__ . '/templates/cache.latte')
+);
+Assert::matchFile(
+	__DIR__ . '/expected/cache.html',
+	$latte->renderToString(
+		__DIR__ . '/templates/cache.latte',
+		$params
+	)
 );
 Assert::matchFile(
 	__DIR__ . '/expected/cache.html',
