@@ -107,7 +107,7 @@ final class CacheMacro implements Latte\IMacro
 		string $key,
 		?array &$parents,
 		?array $args = null,
-	): Nette\Caching\OutputHelper|\stdClass
+	): Nette\Caching\OutputHelper|\stdClass|null
 	{
 		if ($args) {
 			if (array_key_exists('if', $args) && !$args['if']) {
