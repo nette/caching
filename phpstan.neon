@@ -3,3 +3,6 @@ parameters:
 
 	paths:
 		- src
+
+	excludePaths:
+		- src/Bridges/CacheLatte/CacheMacro.php
