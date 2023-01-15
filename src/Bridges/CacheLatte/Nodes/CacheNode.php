@@ -9,15 +9,12 @@ declare(strict_types=1);
 
 namespace Nette\Bridges\CacheLatte\Nodes;
 
-use Latte;
 use Latte\Compiler\Nodes\AreaNode;
 use Latte\Compiler\Nodes\Php\Expression\ArrayNode;
 use Latte\Compiler\Nodes\StatementNode;
 use Latte\Compiler\Position;
 use Latte\Compiler\PrintContext;
 use Latte\Compiler\Tag;
-use Nette;
-use Nette\Caching\Cache;
 
 
 /**
@@ -45,17 +42,18 @@ class CacheNode extends StatementNode
 	{
 		return $context->format(
 			<<<'XX'
-				if (Nette\Bridges\CacheLatte\Nodes\CacheNode::createCache($this->global->cacheStorage, %dump, $this->global->cacheStack, %node?)) %line
+				if ($this->global->cache->createCache(%dump, %node?)) %line
 				try {
 					%node
-					Nette\Bridges\CacheLatte\Nodes\CacheNode::endCache($this->global->cacheStack) %line;
+					$this->global->cache->end() %line;
 				} catch (\Throwable $ʟ_e) {
-					Nette\Bridges\CacheLatte\Nodes\CacheNode::rollback($this->global->cacheStack); throw $ʟ_e;
+					$this->global->cache->rollback();
+					throw $ʟ_e;
 				}
 
 
 				XX,
-			Nette\Utils\Random::generate(),
+			base64_encode(random_bytes(10)),
 			$this->args,
 			$this->position,
 			$this->content,
@@ -68,82 +66,5 @@ class CacheNode extends StatementNode
 	{
 		yield $this->args;
 		yield $this->content;
-	}
-
-
-	/********************* run-time helpers ****************d*g**/
-
-
-	public static function initRuntime(Latte\Runtime\Template $template): void
-	{
-		if (!empty($template->global->cacheStack)) {
-			$file = (new \ReflectionClass($template))->getFileName();
-			if (@is_file($file)) { // @ - may trigger error
-				end($template->global->cacheStack)->dependencies[Cache::Files][] = $file;
-			}
-		}
-	}
-
-
-	/**
-	 * Starts the output cache. Returns Nette\Caching\OutputHelper object if buffering was started.
-	 * @return Nette\Caching\OutputHelper|\stdClass
-	 */
-	public static function createCache(
-		Nette\Caching\Storage $cacheStorage,
-		string $key,
-		?array &$parents,
-		?array $args = null,
-	) {
-		if ($args) {
-			if (array_key_exists('if', $args) && !$args['if']) {
-				return $parents[] = new \stdClass;
-			}
-
-			$key = array_merge([$key], array_intersect_key($args, range(0, count($args))));
-		}
-
-		if ($parents) {
-			end($parents)->dependencies[Cache::Items][] = $key;
-		}
-
-		$cache = new Cache($cacheStorage, 'Nette.Templating.Cache');
-		if ($helper = $cache->capture($key)) {
-			$parents[] = $helper;
-
-			if (isset($args['dependencies'])) {
-				$args += $args['dependencies']();
-			}
-
-			$helper->dependencies[Cache::Tags] = $args['tags'] ?? null;
-			$helper->dependencies[Cache::Expire] = $args['expiration'] ?? $args['expire'] ?? '+ 7 days';
-		}
-
-		return $helper;
-	}
-
-
-	/**
-	 * Ends the output cache.
-	 * @param  Nette\Caching\OutputHelper[]  $parents
-	 */
-	public static function endCache(array &$parents): void
-	{
-		$helper = array_pop($parents);
-		if ($helper instanceof Nette\Caching\OutputHelper) {
-			$helper->end();
-		}
-	}
-
-
-	/**
-	 * @param  Nette\Caching\OutputHelper[]  $parents
-	 */
-	public static function rollback(array &$parents): void
-	{
-		$helper = array_pop($parents);
-		if ($helper instanceof Nette\Caching\OutputHelper) {
-			$helper->rollback();
-		}
 	}
 }
