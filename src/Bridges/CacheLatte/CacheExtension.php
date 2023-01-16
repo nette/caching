@@ -42,7 +42,7 @@ final class CacheExtension extends Latte\Extension
 		return [
 			'cache' => function (Tag $tag): \Generator {
 				$this->used = true;
-				return Nodes\CacheNode::create($tag);
+				return yield from Nodes\CacheNode::create($tag);
 			},
 		];
 	}
