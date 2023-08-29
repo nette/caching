@@ -17,8 +17,6 @@ use Nette;
  */
 class OutputHelper
 {
-	use Nette\SmartObject;
-
 	public array $dependencies = [];
 	private ?Cache $cache;
 	private mixed $key;

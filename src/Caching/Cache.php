@@ -17,8 +17,6 @@ use Nette;
  */
 class Cache
 {
-	use Nette\SmartObject;
-
 	/** dependency */
 	public const
 		Priority = 'priority',
