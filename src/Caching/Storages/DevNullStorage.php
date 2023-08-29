@@ -17,8 +17,6 @@ use Nette;
  */
 class DevNullStorage implements Nette\Caching\Storage
 {
-	use Nette\SmartObject;
-
 	public function read(string $key): mixed
 	{
 		return null;

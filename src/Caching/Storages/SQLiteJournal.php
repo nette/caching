@@ -18,8 +18,6 @@ use Nette\Caching\Cache;
  */
 class SQLiteJournal implements Journal
 {
-	use Nette\SmartObject;
-
 	/** @string */
 	private $path;
 	private \PDO $pdo;
