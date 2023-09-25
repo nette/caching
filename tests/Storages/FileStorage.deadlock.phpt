@@ -24,6 +24,6 @@ try {
 } catch (Throwable $e) {
 }
 
-Assert::noError(function () use ($cache) {
-	$cache->load('key', function () {});
-});
+Assert::noError(
+	fn() => $cache->load('key', function () {}),
+);

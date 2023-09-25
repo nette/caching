@@ -20,13 +20,13 @@ set_time_limit(0);
 function randomStr()
 {
 	$s = str_repeat('LaTrine', rand(10, 2000));
-	return sha1($s, true) . $s;
+	return sha1($s, binary: true) . $s;
 }
 
 
 function checkStr($s)
 {
-	return substr($s, 0, 20) === sha1(substr($s, 20), true);
+	return substr($s, 0, 20) === sha1(substr($s, 20), binary: true);
 }
 
 

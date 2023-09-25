@@ -14,9 +14,11 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::exception(function () {
-	new FileStorage(getTempDir() . '/missing');
-}, Nette\DirectoryNotFoundException::class, "Directory '%a%' not found.");
+Assert::exception(
+	fn() => new FileStorage(getTempDir() . '/missing'),
+	Nette\DirectoryNotFoundException::class,
+	"Directory '%a%' not found.",
+);
 
 
 Assert::exception(function () {

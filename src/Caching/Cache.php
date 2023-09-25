@@ -95,7 +95,7 @@ class Cache
 	 */
 	final public function getNamespace(): string
 	{
-		return (string) substr($this->namespace, 0, -1);
+		return substr($this->namespace, 0, -1);
 	}
 
 
