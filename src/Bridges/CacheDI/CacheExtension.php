@@ -24,7 +24,7 @@ final class CacheExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		if (!FileSystem::isAbsolute($this->tempDir)) {
 			throw new Nette\InvalidArgumentException("Cache directory must be absolute, '$this->tempDir' given.");
