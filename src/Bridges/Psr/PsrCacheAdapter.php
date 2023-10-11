@@ -15,7 +15,7 @@ use Psr;
 class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 {
 	public function __construct(
-		private Nette\Caching\Storage $storage,
+		private readonly Nette\Caching\Storage $storage,
 	) {
 	}
 

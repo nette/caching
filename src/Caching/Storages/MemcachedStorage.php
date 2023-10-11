@@ -23,9 +23,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		MetaData = 'data',
 		MetaDelta = 'delta';
 
-	private \Memcached $memcached;
-	private string $prefix;
-	private ?Journal $journal;
+	private readonly \Memcached $memcached;
 
 
 	/**
@@ -40,15 +38,12 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	public function __construct(
 		string $host = 'localhost',
 		int $port = 11211,
-		string $prefix = '',
-		?Journal $journal = null,
+		private readonly string $prefix = '',
+		private readonly ?Journal $journal = null,
 	) {
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
 		}
-
-		$this->prefix = $prefix;
-		$this->journal = $journal;
 		$this->memcached = new \Memcached;
 		if ($host) {
 			$this->addServer($host, $port);
