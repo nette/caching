@@ -27,7 +27,7 @@ class Runtime
 
 
 	public function __construct(
-		private Nette\Caching\Storage $storage,
+		private readonly Nette\Caching\Storage $storage,
 	) {
 	}
 

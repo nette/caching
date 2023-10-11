@@ -159,7 +159,7 @@ class Cache
 			return $result;
 		}
 
-		$storageKeys = array_map([$this, 'generateKey'], $keys);
+		$storageKeys = array_map($this->generateKey(...), $keys);
 		$cacheData = $this->storage->bulkRead($storageKeys);
 		foreach ($keys as $i => $key) {
 			$storageKey = $storageKeys[$i];
@@ -235,7 +235,7 @@ class Cache
 
 		$dependencies = $this->completeDependencies($dependencies);
 		if (isset($dependencies[self::Expire]) && $dependencies[self::Expire] <= 0) {
-			$this->storage->bulkRemove(array_map(fn($key) => $this->generateKey($key), array_keys($items)));
+			$this->storage->bulkRemove(array_map($this->generateKey(...), array_keys($items)));
 			return;
 		}
 
@@ -286,7 +286,7 @@ class Cache
 
 		// add namespaces to items
 		if (isset($dp[self::Items])) {
-			$dp[self::Items] = array_unique(array_map([$this, 'generateKey'], (array) $dp[self::Items]));
+			$dp[self::Items] = array_unique(array_map($this->generateKey(...), (array) $dp[self::Items]));
 		}
 
 		// convert CONSTS into CALLBACKS
@@ -340,7 +340,7 @@ class Cache
 	{
 		$key = func_get_args();
 		if (is_array($function) && is_object($function[0])) {
-			$key[0][0] = get_class($function[0]);
+			$key[0][0] = $function[0]::class;
 		}
 
 		return $this->load($key, fn() => $function(...array_slice($key, 1)));
@@ -355,7 +355,7 @@ class Cache
 		return function () use ($function, $dependencies) {
 			$key = [$function, $args = func_get_args()];
 			if (is_array($function) && is_object($function[0])) {
-				$key[0][0] = get_class($function[0]);
+				$key[0][0] = $function[0]::class;
 			}
 
 			return $this->load($key, function (&$deps) use ($function, $args, $dependencies) {

@@ -19,18 +19,15 @@ use function count, extension_loaded, implode, is_file, str_repeat, touch;
  */
 class SQLiteJournal implements Journal
 {
-	/** @string */
-	private $path;
 	private \PDO $pdo;
 
 
-	public function __construct(string $path)
-	{
+	public function __construct(
+		private readonly string $path,
+	) {
 		if (!extension_loaded('pdo_sqlite')) {
 			throw new Nette\NotSupportedException('SQLiteJournal requires PHP extension pdo_sqlite which is not loaded.');
 		}
-
-		$this->path = $path;
 	}
 
 

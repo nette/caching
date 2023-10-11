@@ -19,7 +19,7 @@ use function array_merge, count, is_file, serialize, str_repeat, time, touch, un
  */
 class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
-	private \PDO $pdo;
+	private readonly \PDO $pdo;
 
 
 	public function __construct(string $path)

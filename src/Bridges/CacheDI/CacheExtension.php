@@ -19,7 +19,7 @@ use Nette\Utils\FileSystem;
 final class CacheExtension extends Nette\DI\CompilerExtension
 {
 	public function __construct(
-		private string $tempDir,
+		private readonly string $tempDir,
 	) {
 	}
 

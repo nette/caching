@@ -81,6 +81,7 @@ class FileStorage implements Nette\Caching\Storage
 
 	/**
 	 * Verifies dependencies.
+	 * @param  array<string, mixed>  $meta
 	 */
 	private function verify(array $meta): bool
 	{
@@ -319,6 +320,7 @@ class FileStorage implements Nette\Caching\Storage
 
 	/**
 	 * Reads cache data from disk and closes cache file handle.
+	 * @param  array<string, mixed>  $meta
 	 */
 	protected function readData(array $meta): mixed
 	{
