@@ -16,14 +16,12 @@ use Nette;
 class OutputHelper
 {
 	public array $dependencies = [];
-	private ?Cache $cache;
-	private mixed $key;
 
 
-	public function __construct(Cache $cache, mixed $key)
-	{
-		$this->cache = $cache;
-		$this->key = $key;
+	public function __construct(
+		private ?Cache $cache,
+		private mixed $key,
+	) {
 		ob_start();
 	}
 
