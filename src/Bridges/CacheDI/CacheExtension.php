@@ -26,7 +26,7 @@ final class CacheExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$dir = $this->tempDir . '/cache';
 		Nette\Utils\FileSystem::createDir($dir);

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Nette\Caching\IBulkReader;
-use Nette\Caching\IStorage;
+use Nette\Caching\BulkReader;
+use Nette\Caching\Storage;
 
-class TestStorage implements IStorage
+class TestStorage implements Storage
 {
 	private array $data = [];
 
@@ -40,7 +40,7 @@ class TestStorage implements IStorage
 	}
 }
 
-class BulkReadTestStorage extends TestStorage implements IBulkReader
+class BulkReadTestStorage extends TestStorage implements BulkReader
 {
 	public function bulkRead(array $keys): array
 	{

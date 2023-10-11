@@ -181,7 +181,7 @@ class Cache
 	 * Writes item into the cache.
 	 * Dependencies are:
 	 * - Cache::Priority => (int) priority
-	 * - Cache::Expire => (timestamp) expiration
+	 * - Cache::Expire => (timestamp) expiration, infinite if null
 	 * - Cache::Sliding => (bool) use sliding expiration?
 	 * - Cache::Tags => (array) tags
 	 * - Cache::Files => (array|string) file names
