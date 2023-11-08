@@ -30,7 +30,7 @@ class CacheNode extends StatementNode
 	/** @return \Generator<int, ?array, array{AreaNode, ?Tag}, static> */
 	public static function create(Tag $tag): \Generator
 	{
-		$node = new static;
+		$node = $tag->node = new static;
 		$node->args = $tag->parser->parseArguments();
 		[$node->content, $endTag] = yield;
 		$node->endLine = $endTag?->position;
