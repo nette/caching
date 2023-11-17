@@ -22,8 +22,8 @@ interface BulkWriter
      * @param array{string, mixed} $items <p>An array of key/data pairs to store on the server</p>
      * @param array $dp Global dependencies of each stored value
      * @return bool <p>Returns <b><code>true</code></b> on success or <b><code>false</code></b> on failure</p>
-     * @throws Nette\NotSupportedException
-     * @throws Nette\InvalidStateException
+     * @throws \Nette\NotSupportedException
+     * @throws \Nette\NotSupportedException
      */
     function bulkWrite(array $items, array $dp): bool;
 
