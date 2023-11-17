@@ -178,28 +178,30 @@ class Cache
 	 *
 	 * @param array $items
 	 * @param array|null $dependencies
-	 * @return bool
+	 * @return array Stored items
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function bulkSave(array $items, ?array $dependencies = null): bool
+	public function bulkSave(array $items, ?array $dependencies = null): array
 	{
-		if (!$this->storage instanceof BulkWriter) {
-			foreach ($items as $key => $data) {
-				$this->save($key, $data, $dependencies ?? []);
+		$storedItems = [];
+
+        if (!$this->storage instanceof BulkWriter) {
+
+            foreach ($items as $key => $data) {
+				$storedItems[] = $this->save($key, $data, $dependencies ?? []);
 			}
-			return true;
+			return $storedItems;
 		}
 
 		$dependencies = $this->completeDependencies($dependencies);
 
 		if (isset($dependencies[self::Expire]) && $dependencies[self::Expire] <= 0) {
 			$this->storage->bulkRemove(array_map(fn($key): string => $this->generateKey($key), array_keys($items)));
-			return true;
+			return [];
 		}
 
 		$removals = [];
-		$storedItems = [];
 		foreach ($items as $key => $data) {
 			$key = $this->generateKey($key);
 
@@ -214,7 +216,9 @@ class Cache
 			$this->storage->bulkRemove($removals);
 		}
 
-		return $this->storage->bulkWrite($storedItems, $dependencies);
+		$this->storage->bulkWrite($storedItems, $dependencies);
+        
+        return $storedItems;
 	}
 
 
