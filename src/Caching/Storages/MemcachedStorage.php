@@ -25,11 +25,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		MetaDelta = 'delta';
 
 	private \Memcached $memcached;
-	private string $prefix;
-	private ?Journal $journal;
 
 
-	/**
+    /**
 	 * Checks if Memcached extension is available.
 	 */
 	public static function isAvailable(): bool
@@ -38,26 +36,23 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-	public function __construct(
+    public function __construct(
 		string $host = 'localhost',
 		int $port = 11211,
-		string $prefix = '',
-		?Journal $journal = null,
-	) {
-		if (!static::isAvailable()) {
+		private string $prefix = '',
+		private ?Journal $journal = null
+    ) {
+        if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
-		}
-
-		$this->prefix = $prefix;
-		$this->journal = $journal;
-		$this->memcached = new \Memcached;
-		if ($host) {
-			$this->addServer($host, $port);
-		}
-	}
+        }
+        $this->memcached = new \Memcached;
+        if ($host) {
+            $this->addServer($host, $port);
+        }
+    }
 
 
-	public function addServer(string $host = 'localhost', int $port = 11211): void
+    public function addServer(string $host = 'localhost', int $port = 11211): void
 	{
 		if (@$this->memcached->addServer($host, $port, 1) === false) { // @ is escalated to exception
 			$error = error_get_last();
@@ -208,10 +203,17 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
         return $this->memcached->setMulti($records, $expire);
     }
 
+
     public function remove(string $key): void
 	{
 		$this->memcached->delete(urlencode($this->prefix . $key), 0);
 	}
+
+
+    public function bulkRemove(array $keys): void
+    {
+        $this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys), 0);
+    }
 
 
 	public function clean(array $conditions): void
