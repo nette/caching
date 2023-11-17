@@ -16,7 +16,7 @@ namespace Nette\Caching;
 interface BulkWriter
 {
     /**
-	 * Writes to cache in bulk.
+     * Writes to cache in bulk.
      * <p>Similar to <code>write()</code>, but instead of a single key/value item, it works on multiple items specified in <code>items</code></p>
      *
      * @param array{string, mixed} $items <p>An array of key/data pairs to store on the server</p>
