@@ -27,7 +27,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	private \Memcached $memcached;
 
 
-    /**
+	/**
 	 * Checks if Memcached extension is available.
 	 */
 	public static function isAvailable(): bool
@@ -36,23 +36,23 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-    public function __construct(
+	public function __construct(
 		string $host = 'localhost',
 		int $port = 11211,
 		private string $prefix = '',
-		private ?Journal $journal = null
-    ) {
-        if (!static::isAvailable()) {
+		private ?Journal $journal = null,
+	) {
+		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'memcached' is not loaded.");
-        }
-        $this->memcached = new \Memcached;
-        if ($host) {
-            $this->addServer($host, $port);
-        }
-    }
+		}
+		$this->memcached = new \Memcached;
+		if ($host) {
+			$this->addServer($host, $port);
+		}
+	}
 
 
-    public function addServer(string $host = 'localhost', int $port = 11211): void
+	public function addServer(string $host = 'localhost', int $port = 11211): void
 	{
 		if (@$this->memcached->addServer($host, $port, 1) === false) { // @ is escalated to exception
 			$error = error_get_last();
@@ -162,58 +162,59 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		$this->memcached->set($key, $meta, $expire);
 	}
 
-    public function bulkWrite(array $items, array $dp): bool
-    {
-        if (isset($dp[Cache::Items])) {
-            throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
-        }
 
-        $records = [];
+	public function bulkWrite(array $items, array $dp): bool
+	{
+		if (isset($dp[Cache::Items])) {
+			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
+		}
 
-        $expire = 0;
-        if (isset($dp[Cache::Expire])) {
-            $expire = (int) $dp[Cache::Expire];
-        }
+		$records = [];
 
-        foreach ($items as $key => $data) {
-            $key = urlencode($this->prefix . $key);
-            $meta = [
-                self::MetaData => $data,
-            ];
+		$expire = 0;
+		if (isset($dp[Cache::Expire])) {
+			$expire = (int) $dp[Cache::Expire];
+		}
 
-            if (!empty($dp[Cache::Sliding])) {
-                $meta[self::MetaDelta] = $expire; // sliding time
-            }
+		foreach ($items as $key => $data) {
+			$key = urlencode($this->prefix . $key);
+			$meta = [
+				self::MetaData => $data,
+			];
 
-            if (isset($dp[Cache::Callbacks])) {
-                $meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
-            }
+			if (!empty($dp[Cache::Sliding])) {
+				$meta[self::MetaDelta] = $expire; // sliding time
+			}
 
-            if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
-                if (!$this->journal) {
-                    throw new Nette\InvalidStateException('CacheJournal has not been provided.');
-                }
+			if (isset($dp[Cache::Callbacks])) {
+				$meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
+			}
 
-                $this->journal->write($key, $dp);
-            }
+			if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
+				if (!$this->journal) {
+					throw new Nette\InvalidStateException('CacheJournal has not been provided.');
+				}
 
-            $records[$key] = $meta;
-        }
+				$this->journal->write($key, $dp);
+			}
 
-        return $this->memcached->setMulti($records, $expire);
-    }
+			$records[$key] = $meta;
+		}
+
+		return $this->memcached->setMulti($records, $expire);
+	}
 
 
-    public function remove(string $key): void
+	public function remove(string $key): void
 	{
 		$this->memcached->delete(urlencode($this->prefix . $key), 0);
 	}
 
 
-    public function bulkRemove(array $keys): void
-    {
-        $this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys), 0);
-    }
+	public function bulkRemove(array $keys): void
+	{
+		$this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys), 0);
+	}
 
 
 	public function clean(array $conditions): void
