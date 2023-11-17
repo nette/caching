@@ -26,4 +26,9 @@ interface BulkWriter
      * @throws Nette\InvalidStateException
      */
     function bulkWrite(array $items, array $dp): bool;
+
+    /**
+     * Removes multiple items from cache
+     */
+    function bulkRemove(array $keys): void;
 }
