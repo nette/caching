@@ -186,10 +186,10 @@ class Cache
 	{
 		$storedItems = [];
 
-        if (!$this->storage instanceof BulkWriter) {
+		if (!$this->storage instanceof BulkWriter) {
 
-            foreach ($items as $key => $data) {
-				$storedItems[] = $this->save($key, $data, $dependencies ?? []);
+			foreach ($items as $key => $data) {
+				$storedItems[$key] = $this->save($key, $data, $dependencies);
 			}
 			return $storedItems;
 		}
@@ -202,13 +202,14 @@ class Cache
 		}
 
 		$removals = [];
+		$toCache = [];
 		foreach ($items as $key => $data) {
-			$key = $this->generateKey($key);
+			$cKey = $this->generateKey($key);
 
 			if ($data === null) {
-				$removals[] = $key;
+				$removals[] = $cKey;
 			} else {
-				$storedItems[$key] = $data;
+				$storedItems[$key] = $toCache[$cKey] = $data;
 			}
 		}
 
@@ -216,9 +217,9 @@ class Cache
 			$this->storage->bulkRemove($removals);
 		}
 
-		$this->storage->bulkWrite($storedItems, $dependencies);
-        
-        return $storedItems;
+		$this->storage->bulkWrite($toCache, $dependencies);
+
+		return $storedItems;
 	}
 
 
