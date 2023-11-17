@@ -174,6 +174,51 @@ class Cache
 
 
 	/**
+	 * Writes multiple items into cache
+	 *
+	 * @param array $items
+	 * @param array|null $dependencies
+	 * @return bool
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function bulkSave(array $items, ?array $dependencies = null): bool
+	{
+		if (!$this->storage instanceof BulkWriter) {
+			foreach ($items as $key => $data) {
+				$this->save($key, $data, $dependencies ?? []);
+			}
+			return true;
+		}
+
+		$dependencies = $this->completeDependencies($dependencies);
+
+		if (isset($dependencies[self::Expire]) && $dependencies[self::Expire] <= 0) {
+			$this->storage->bulkRemove(array_map(fn($key): string => $this->generateKey($key), array_keys($items)));
+			return true;
+		}
+
+		$removals = [];
+		$storedItems = [];
+		foreach ($items as $key => $data) {
+			$key = $this->generateKey($key);
+
+			if ($data === null) {
+				$removals[] = $key;
+			} else {
+				$storedItems[$key] = $data;
+			}
+		}
+
+		if (!empty($removals)) {
+			$this->storage->bulkRemove($removals);
+		}
+
+		return $this->storage->bulkWrite($storedItems, $dependencies);
+	}
+
+
+	/**
 	 * Writes item into the cache.
 	 * Dependencies are:
 	 * - Cache::Priority => (int) priority
