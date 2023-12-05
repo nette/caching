@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(
 	fn() => new FileStorage(getTempDir() . '/missing'),
 	Nette\DirectoryNotFoundException::class,
-	"Directory '%a%' not found.",
+	"Directory '%a%' not found or is not absolute.",
 );
 
 
