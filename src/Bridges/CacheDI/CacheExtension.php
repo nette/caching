@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\Bridges\CacheDI;
 
 use Nette;
+use Nette\Utils\FileSystem;
 
 
 /**
@@ -17,19 +18,19 @@ use Nette;
  */
 final class CacheExtension extends Nette\DI\CompilerExtension
 {
-	private string $tempDir;
-
-
-	public function __construct(string $tempDir)
-	{
-		$this->tempDir = $tempDir;
+	public function __construct(
+		private string $tempDir,
+	) {
 	}
 
 
 	public function loadConfiguration(): void
 	{
+		if (!FileSystem::isAbsolute($this->tempDir)) {
+			throw new Nette\InvalidArgumentException("Cache directory must be absolute, '$this->tempDir' given.");
+		}
 		$dir = $this->tempDir . '/cache';
-		Nette\Utils\FileSystem::createDir($dir);
+		FileSystem::createDir($dir);
 		if (!is_writable($dir)) {
 			throw new Nette\InvalidStateException("Make directory '$dir' writable.");
 		}

@@ -55,8 +55,8 @@ class FileStorage implements Nette\Caching\Storage
 
 	public function __construct(string $dir, ?Journal $journal = null)
 	{
-		if (!is_dir($dir)) {
-			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found.");
+		if (!is_dir($dir) || !Nette\Utils\FileSystem::isAbsolute($dir)) {
+			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found or is not absolute.");
 		}
 
 		$this->dir = $dir;
