@@ -11,6 +11,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
+use Nette\Caching\CacheSelector;
 
 
 /**
@@ -109,9 +110,20 @@ class SQLiteJournal implements Journal
 
 		$unions = $args = [];
 		if (!empty($conditions[Cache::Tags])) {
-			$tags = (array) $conditions[Cache::Tags];
-			$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
-			$args = $tags;
+			if ($conditions[Cache::Tags] instanceof CacheSelector) {
+				$intersects = [];
+				foreach ($conditions[Cache::Tags]->getConditions() as $condition) {
+					$intersects[] = 'SELECT `key` FROM `tags` WHERE `tag` IN (?' . str_repeat(', ?', count((array) $condition) - 1) . ')';
+					is_array($condition)
+						? array_push($args, ...$condition)
+						: array_push($args, $condition);
+				}
+				$unions[] = implode(' INTERSECT ', $intersects);
+			} else {
+				$tags = (array) $conditions[Cache::Tags];
+				$unions[] = 'SELECT DISTINCT key FROM tags WHERE tag IN (?' . str_repeat(', ?', count($tags) - 1) . ')';
+				$args = $tags;
+			}
 		}
 
 		if (!empty($conditions[Cache::Priority])) {
