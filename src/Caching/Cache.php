@@ -277,13 +277,13 @@ class Cache
 	 * Removes items from the cache by conditions.
 	 * Conditions are:
 	 * - Cache::Priority => (int) priority
-	 * - Cache::Tags => (array) tags
+	 * - Cache::Tags => (array) tags | CacheSelector
 	 * - Cache::All => true
 	 */
 	public function clean(?array $conditions = null): void
 	{
 		$conditions = (array) $conditions;
-		if (isset($conditions[self::Tags])) {
+		if (isset($conditions[self::Tags]) && !$conditions[self::Tags] instanceof CacheSelector) {
 			$conditions[self::Tags] = array_values((array) $conditions[self::Tags]);
 		}
 
