@@ -16,7 +16,7 @@ use Nette\Caching\Cache;
 /**
  * Memcached storage using memcached extension.
  */
-class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
+class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, Nette\Caching\BulkWriter
 {
 	/** @internal cache structure */
 	private const
@@ -168,9 +168,51 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
+	public function bulkWrite(array $items, array $dp): void
+	{
+		if (isset($dp[Cache::Items])) {
+			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
+		}
+
+		$meta = $records = [];
+		$expire = 0;
+		if (isset($dp[Cache::Expire])) {
+			$expire = (int) $dp[Cache::Expire];
+			if (!empty($dp[Cache::Sliding])) {
+				$meta[self::MetaDelta] = $expire; // sliding time
+			}
+		}
+
+		if (isset($dp[Cache::Callbacks])) {
+			$meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
+		}
+
+		foreach ($items as $key => $meta[self::MetaData]) {
+			$key = urlencode($this->prefix . $key);
+			$records[$key] = $meta;
+
+			if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
+				if (!$this->journal) {
+					throw new Nette\InvalidStateException('CacheJournal has not been provided.');
+				}
+
+				$this->journal->write($key, $dp);
+			}
+		}
+
+		$this->memcached->setMulti($records, $expire);
+	}
+
+
 	public function remove(string $key): void
 	{
 		$this->memcached->delete(urlencode($this->prefix . $key), 0);
+	}
+
+
+	public function bulkRemove(array $keys): void
+	{
+		$this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys), 0);
 	}
 
 
