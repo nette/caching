@@ -33,6 +33,7 @@ class TestStorage implements Storage
 
 	public function remove(string $key): void
 	{
+		unset($this->data[$key]);
 	}
 
 
