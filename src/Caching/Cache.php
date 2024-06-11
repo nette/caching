@@ -394,7 +394,7 @@ class Cache
 	 */
 	protected function generateKey($key): string
 	{
-		return $this->namespace . md5(is_scalar($key) ? (string) $key : serialize($key));
+		return $this->namespace . hash('xxh128', is_scalar($key) ? (string) $key : serialize($key));
 	}
 
 
