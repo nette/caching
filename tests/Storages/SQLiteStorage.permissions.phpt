@@ -26,7 +26,7 @@ test('', function () {
 	umask(0);
 	(new SQLiteStorage($file))->write('foo', 'bar', []);
 
-	Assert::same(0666, fileperms($file) & 0777);
+	Assert::same(0o666, fileperms($file) & 0o777);
 });
 
 
@@ -34,8 +34,8 @@ test('', function () {
 	$file = getTempDir() . '/sqlitestorage.permissions.2.sqlite';
 	Assert::false(file_exists($file));
 
-	umask(0077);
+	umask(0o077);
 	(new SQLiteStorage($file))->write('foo', 'bar', []);
 
-	Assert::same(0600, fileperms($file) & 0777);
+	Assert::same(0o600, fileperms($file) & 0o777);
 });
