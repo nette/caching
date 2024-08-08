@@ -106,6 +106,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		$prefixedKeys = array_map(fn($key) => urlencode($this->prefix . $key), $keys);
 		$keys = array_combine($prefixedKeys, $keys);
 		$metas = $this->memcached->getMulti($prefixedKeys);
+		if (!$metas) {
+			return [];
+		}
 		$result = [];
 		$deleteKeys = [];
 		foreach ($metas as $prefixedKey => $meta) {
