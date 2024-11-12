@@ -17,7 +17,7 @@ interface BulkWriter
 {
 	/**
 	 * Writes to cache in bulk.
-	 * @param array{string, mixed} $items
+	 * @param array<string, mixed> $items
 	 */
 	function bulkWrite(array $items, array $dependencies): void;
 
