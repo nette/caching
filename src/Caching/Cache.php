@@ -31,37 +31,37 @@ class Cache
 		Namespaces = 'namespaces',
 		All = 'all';
 
-	/** @deprecated use Cache::Priority */
+	#[\Deprecated('use Cache::Priority')]
 	public const PRIORITY = self::Priority;
 
-	/** @deprecated use Cache::Expire */
+	#[\Deprecated('use Cache::Expire')]
 	public const EXPIRATION = self::Expire;
 
-	/** @deprecated use Cache::Expire */
+	#[\Deprecated('use Cache::Expire')]
 	public const EXPIRE = self::Expire;
 
-	/** @deprecated use Cache::Sliding */
+	#[\Deprecated('use Cache::Sliding')]
 	public const SLIDING = self::Sliding;
 
-	/** @deprecated use Cache::Tags */
+	#[\Deprecated('use Cache::Tags')]
 	public const TAGS = self::Tags;
 
-	/** @deprecated use Cache::Files */
+	#[\Deprecated('use Cache::Files')]
 	public const FILES = self::Files;
 
-	/** @deprecated use Cache::Items */
+	#[\Deprecated('use Cache::Items')]
 	public const ITEMS = self::Items;
 
-	/** @deprecated use Cache::Constants */
+	#[\Deprecated('use Cache::Constants')]
 	public const CONSTS = self::Constants;
 
-	/** @deprecated use Cache::Callbacks */
+	#[\Deprecated('use Cache::Callbacks')]
 	public const CALLBACKS = self::Callbacks;
 
-	/** @deprecated use Cache::Namespaces */
+	#[\Deprecated('use Cache::Namespaces')]
 	public const NAMESPACES = self::Namespaces;
 
-	/** @deprecated use Cache::All */
+	#[\Deprecated('use Cache::All')]
 	public const ALL = self::All;
 
 	/** @internal */
@@ -379,9 +379,7 @@ class Cache
 	}
 
 
-	/**
-	 * @deprecated  use capture()
-	 */
+	#[\Deprecated('use capture()')]
 	public function start($key): ?OutputHelper
 	{
 		trigger_error(__METHOD__ . '() was renamed to capture()', E_USER_DEPRECATED);
