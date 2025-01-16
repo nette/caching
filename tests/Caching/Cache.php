@@ -75,7 +75,6 @@ class BulkWriteTestStorage extends TestStorage implements BulkWriter
 
 	public function bulkRemove(array $keys): void
 	{
-
 	}
 
 

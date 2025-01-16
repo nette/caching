@@ -32,7 +32,7 @@ class FileStorage implements Nette\Caching\Storage
 	/** @internal cache file structure: meta-struct size + serialized meta-struct + data */
 	private const
 		MetaHeaderLen = 6,
-	// meta structure: array of
+		// meta structure: array of
 		MetaTime = 'time', // timestamp
 		MetaSerialized = 'serialized', // is content serialized?
 		MetaExpire = 'expire', // expiration timestamp
