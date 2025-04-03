@@ -54,14 +54,14 @@ test('set multiple ttl DateInterval', function () {
 	Assert::same([
 		'data' => '1',
 		'dependencies' => [
-			Caching\Cache::Expire => (new DateTime)->add($interval)->getTimestamp() - (new DateTime)->getTimestamp(),
+			Caching\Cache::Expire => ($dt = new DateTimeImmutable('', new DateTimeZone('UTC')))->add($interval)->getTimestamp() - $dt->getTimestamp(),
 		],
 	], $storage->read('test1'));
 
 	Assert::same([
 		'data' => '2',
 		'dependencies' => [
-			Caching\Cache::Expire => (new DateTime)->add($interval)->getTimestamp() - (new DateTime)->getTimestamp(),
+			Caching\Cache::Expire => ($dt = new DateTimeImmutable('', new DateTimeZone('UTC')))->add($interval)->getTimestamp() - $dt->getTimestamp(),
 		],
 	], $storage->read('test2'));
 });

@@ -102,17 +102,10 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	private static function ttlToSeconds(null|int|DateInterval $ttl = null): ?int
 	{
 		if ($ttl instanceof DateInterval) {
-			return self::dateIntervalToSeconds($ttl);
+			$now = new \DateTimeImmutable('', new \DateTimeZone('UTC'));
+			return $now->add($ttl)->getTimestamp() - $now->getTimestamp();
 		}
 
 		return $ttl;
-	}
-
-
-	private static function dateIntervalToSeconds(DateInterval $dateInterval): int
-	{
-		$now = new \DateTimeImmutable;
-		$expiresAt = $now->add($dateInterval);
-		return $expiresAt->getTimestamp() - $now->getTimestamp();
 	}
 }
