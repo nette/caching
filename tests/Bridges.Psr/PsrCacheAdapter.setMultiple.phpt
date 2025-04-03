@@ -51,17 +51,19 @@ test('set multiple ttl DateInterval', function () {
 
 	$interval = new DateInterval('P3Y6M4DT12H30M5S');
 	$cache->setMultiple(['test1' => '1', 'test2' => '2'], $interval);
+	$dt = new DateTimeImmutable('', new DateTimeZone('UTC'));
+	$expire = $dt->add($interval)->getTimestamp() - $dt->getTimestamp();
 	Assert::same([
 		'data' => '1',
 		'dependencies' => [
-			Caching\Cache::Expire => (new DateTime)->add($interval)->getTimestamp() - (new DateTime)->getTimestamp(),
+			Caching\Cache::Expire => $expire,
 		],
 	], $storage->read('test1'));
 
 	Assert::same([
 		'data' => '2',
 		'dependencies' => [
-			Caching\Cache::Expire => (new DateTime)->add($interval)->getTimestamp() - (new DateTime)->getTimestamp(),
+			Caching\Cache::Expire => $expire,
 		],
 	], $storage->read('test2'));
 });

@@ -37,10 +37,12 @@ test('set ttl DateInterval', function () {
 
 	$interval = new DateInterval('P3Y6M4DT12H30M5S');
 	$cache->set('test', '3', $interval);
+	$dt = new DateTimeImmutable('', new DateTimeZone('UTC'));
+	$expire = $dt->add($interval)->getTimestamp() - $dt->getTimestamp();
 	Assert::same([
 		'data' => '3',
 		'dependencies' => [
-			Caching\Cache::Expire => (new DateTime)->add($interval)->getTimestamp() - (new DateTime)->getTimestamp(),
+			Caching\Cache::Expire => $expire,
 		],
 	], $storage->read('test'));
 });
