@@ -11,6 +11,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
+use function array_combine, array_map, extension_loaded, time, urlencode;
 
 
 /**

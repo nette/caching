@@ -12,6 +12,7 @@ namespace Nette\Bridges\CacheLatte;
 use Latte;
 use Nette;
 use Nette\Caching\Cache;
+use function array_key_exists, count;
 
 
 /**

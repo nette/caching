@@ -13,6 +13,7 @@ use Latte;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\Caching\OutputHelper;
+use function array_intersect_key, array_key_exists, array_merge, array_pop, count, end, is_file, range;
 
 
 /**
