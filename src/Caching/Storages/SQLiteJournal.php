@@ -11,6 +11,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
+use function count, extension_loaded, implode, is_file, str_repeat, touch;
 
 
 /**
