@@ -21,6 +21,8 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
 	private \PDO $pdo;
 
+	/** probability that the clean() routine is started */
+	public static float $gcProbability = 0.001;
 
 	public function __construct(string $path)
 	{
@@ -46,6 +48,12 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
 			PRAGMA synchronous = OFF;
 		');
+
+		// should we run the clean function to remove expired cached items?
+		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
+			$this->clean([]);
+		}
+
 	}
 
 
