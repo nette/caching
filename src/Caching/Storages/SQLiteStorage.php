@@ -17,6 +17,9 @@ use function count;
  */
 class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
+	/** Probability (0-1) that the garbage collector runs on each instantiation. */
+	public static float $gcProbability = 0.001;
+
 	private readonly \PDO $pdo;
 
 
@@ -44,6 +47,10 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
 			PRAGMA synchronous = OFF;
 		');
+
+		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
+			$this->clean([]);
+		}
 	}
 
 
