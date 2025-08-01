@@ -23,7 +23,7 @@ class Mock
 	}
 
 
-	public function __sleep()
+	public function __serialize()
 	{
 		throw new Exception;
 	}
