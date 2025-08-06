@@ -1,12 +1,12 @@
 <?php
 %A%
-		if ($this->global->cache->createCache('%a%')) /* line %d% */
+		if ($this->global->cache->createCache('%a%')) /* line %a% */
 		try {
 			echo '	';
-			echo LR\Filters::escapeHtmlText(($this->filters->lower)($title)) /* line %d% */;
+			echo LR\%a%(($this->filters->lower)($title)) /* line %a% */;
 			echo "\n";
 
-			$this->global->cache->end() /* line %d% */;
+			$this->global->cache->end() /* line %a% */;
 		} catch (\Throwable $ʟ_e) {
 			$this->global->cache->rollback();
 			throw $ʟ_e;
