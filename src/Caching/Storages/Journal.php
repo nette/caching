@@ -15,12 +15,14 @@ interface Journal
 {
 	/**
 	 * Writes entry information into the journal.
+	 * @param  array<string, mixed>  $dependencies  {Cache::Tags => string[], Cache::Priority => int}
 	 */
 	function write(string $key, array $dependencies): void;
 
 	/**
 	 * Cleans entries from journal.
-	 * @return array|null of removed items or null when performing a full cleanup
+	 * @param  array<string, mixed>  $conditions  {Cache::Tags => string[], Cache::Priority => int, Cache::All => bool}
+	 * @return list<string>|null  array of removed keys or null when performing a full cleanup
 	 */
 	function clean(array $conditions): ?array;
 }

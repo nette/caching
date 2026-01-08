@@ -20,7 +20,7 @@ use function array_intersect_key, array_key_exists, array_merge, array_pop, coun
  */
 class Runtime
 {
-	/** @var array<int, OutputHelper|\stdClass> */
+	/** @var list<OutputHelper|\stdClass> */
 	private array $stack = [];
 
 
@@ -43,6 +43,7 @@ class Runtime
 
 	/**
 	 * Starts the output cache. Returns true if buffering was started.
+	 * @param ?array<string, mixed>  $args {if?: bool, tags?: string[], expire?: string, expiration?: string, dependencies?: callable}
 	 */
 	public function createCache(string $key, ?array $args = null): bool
 	{

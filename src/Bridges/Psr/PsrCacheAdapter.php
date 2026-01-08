@@ -68,7 +68,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 
 
 	/**
-	 * @param iterable<string|int, mixed> $values
+	 * @param iterable<int|string, mixed>  $values
 	 */
 	public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
 	{
@@ -82,6 +82,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	}
 
 
+	/** @param  iterable<int|string, string>  $keys */
 	public function deleteMultiple(iterable $keys): bool
 	{
 		foreach ($keys as $value) {

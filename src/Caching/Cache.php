@@ -101,6 +101,8 @@ class Cache
 
 	/**
 	 * Returns a cached item, or generates and stores it using the given callback.
+	 * @param ?(\Closure(mixed &$dependencies): mixed)  $generator
+	 * @param ?array<string, mixed>  $dependencies
 	 */
 	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
 	{
@@ -124,6 +126,10 @@ class Cache
 
 	/**
 	 * Returns multiple cached items at once, generating missing ones using the given callback.
+	 * @template TKey of int|string
+	 * @param list<TKey>  $keys
+	 * @param ?(\Closure(TKey $key, mixed &$dependencies): mixed)  $generator
+	 * @return array<TKey, mixed>
 	 */
 	public function bulkLoad(array $keys, ?callable $generator = null): array
 	{
@@ -178,7 +184,8 @@ class Cache
 	 * - Cache::Files => (array|string) file paths
 	 * - Cache::Items => (array|string) dependent cache keys
 	 * - Cache::Constants => (array|string) PHP constant names
-	 * @return mixed  the stored value
+	 * @param ?array<string, mixed>  $dependencies
+	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
 	public function save(mixed $key, mixed $data, ?array $dependencies = null): mixed
@@ -213,6 +220,8 @@ class Cache
 
 	/**
 	 * Stores multiple items in the cache at once.
+	 * @param mixed[]  $items
+	 * @param ?array<string, mixed>  $dependencies
 	 */
 	public function bulkSave(array $items, ?array $dependencies = null): void
 	{
@@ -250,6 +259,10 @@ class Cache
 	}
 
 
+	/**
+	 * @param ?array<string, mixed>  $dp
+	 * @return array<string, mixed>
+	 */
 	private function completeDependencies(?array $dp): array
 	{
 		// convert expire into relative amount of seconds
@@ -309,6 +322,7 @@ class Cache
 	 * - Cache::Priority => (int) removes items with equal or lower priority
 	 * - Cache::Tags => (array) removes items with matching tags
 	 * - Cache::All => true clears the entire cache
+	 * @param ?array<string, mixed>  $conditions
 	 */
 	public function clean(?array $conditions = null): void
 	{
@@ -337,6 +351,8 @@ class Cache
 
 	/**
 	 * Returns a cached wrapper around a function. Each unique set of arguments is cached separately.
+	 * @param  ?array<string, mixed>  $dependencies
+	 * @return \Closure(mixed...): mixed
 	 */
 	public function wrap(callable $function, ?array $dependencies = null): \Closure
 	{
@@ -393,6 +409,7 @@ class Cache
 
 	/**
 	 * Validates all callback dependencies. Returns false if any callback returns false.
+	 * @param list<array{0: callable, 1?: mixed, 2?: mixed}>  $callbacks
 	 */
 	public static function checkCallbacks(array $callbacks): bool
 	{
