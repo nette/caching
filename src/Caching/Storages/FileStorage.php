@@ -52,6 +52,8 @@ class FileStorage implements Nette\Caching\Storage
 
 	private string $dir;
 	private ?Journal $journal;
+
+	/** @var array<string, resource>  key => file handle */
 	private array $locks;
 
 
@@ -136,6 +138,7 @@ class FileStorage implements Nette\Caching\Storage
 	}
 
 
+	/** @param  array<string, mixed>  $dp */
 	public function write(string $key, $data, array $dp): void
 	{
 		$meta = [
@@ -224,6 +227,7 @@ class FileStorage implements Nette\Caching\Storage
 	}
 
 
+	/** @param  array<string, mixed>  $conditions */
 	public function clean(array $conditions): void
 	{
 		$all = !empty($conditions[Cache::All]);
@@ -293,6 +297,7 @@ class FileStorage implements Nette\Caching\Storage
 
 	/**
 	 * Reads cache data from disk.
+	 * @return array<string, mixed>|null  meta data with 'file' and 'handle' keys added, or null if not found
 	 */
 	protected function readMetaAndLock(string $file, int $lock): ?array
 	{

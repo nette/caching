@@ -28,6 +28,7 @@ interface Storage
 
 	/**
 	 * Writes item into the cache.
+	 * @param  array<string, mixed>  $dependencies
 	 */
 	function write(string $key, $data, array $dependencies): void;
 
@@ -38,6 +39,7 @@ interface Storage
 
 	/**
 	 * Removes items from the cache by conditions.
+	 * @param  array<string, mixed>  $conditions
 	 */
 	function clean(array $conditions): void;
 }

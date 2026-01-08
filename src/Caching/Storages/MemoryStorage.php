@@ -17,6 +17,7 @@ use Nette;
  */
 class MemoryStorage implements Nette\Caching\Storage
 {
+	/** @var array<string, mixed>  key => cached value */
 	private array $data = [];
 
 

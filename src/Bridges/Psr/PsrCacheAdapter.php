@@ -81,6 +81,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	}
 
 
+	/** @param  iterable<string>  $keys */
 	public function deleteMultiple(iterable $keys): bool
 	{
 		foreach ($keys as $value) {

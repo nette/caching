@@ -45,6 +45,7 @@ class Runtime
 
 	/**
 	 * Starts the output cache. Returns true if buffering was started.
+	 * @param array<string, mixed>|null $args {if?: bool, tags?: string[], expire?: string, expiration?: string, dependencies?: callable}
 	 */
 	public function createCache(string $key, ?array $args = null): bool
 	{
