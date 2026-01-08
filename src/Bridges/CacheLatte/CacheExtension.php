@@ -65,7 +65,7 @@ final class CacheExtension extends Latte\Extension
 	}
 
 
-	public function getCacheKey(Latte\Engine $engine): array
+	public function getCacheKey(Latte\Engine $engine): mixed
 	{
 		return ['version' => 2];
 	}

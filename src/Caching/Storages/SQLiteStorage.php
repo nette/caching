@@ -91,7 +91,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 	}
 
 
-	public function write(string $key, $data, array $dependencies): void
+	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		$expire = isset($dependencies[Cache::Expire])
 			? $dependencies[Cache::Expire] + time()

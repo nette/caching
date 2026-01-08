@@ -26,7 +26,7 @@ class DevNullStorage implements Nette\Caching\Storage
 	}
 
 
-	public function write(string $key, $data, array $dependencies): void
+	public function write(string $key, mixed $data, array $dependencies): void
 	{
 	}
 

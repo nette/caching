@@ -137,7 +137,7 @@ class FileStorage implements Nette\Caching\Storage
 
 
 	/** @param  array<string, mixed>  $dp */
-	public function write(string $key, $data, array $dp): void
+	public function write(string $key, mixed $data, array $dp): void
 	{
 		$meta = [
 			self::MetaTime => microtime(),

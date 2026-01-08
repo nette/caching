@@ -389,7 +389,7 @@ class Cache
 	/**
 	 * @deprecated  use capture()
 	 */
-	public function start($key): ?OutputHelper
+	public function start(mixed $key): ?OutputHelper
 	{
 		return $this->capture($key);
 	}
@@ -398,7 +398,7 @@ class Cache
 	/**
 	 * Generates a namespaced storage key from a user-provided key.
 	 */
-	protected function generateKey($key): string
+	protected function generateKey(mixed $key): string
 	{
 		return $this->namespace . hash('xxh128', is_scalar($key) ? (string) $key : serialize($key));
 	}
@@ -426,7 +426,7 @@ class Cache
 	/**
 	 * Checks whether a PHP constant still has the same value as when cached.
 	 */
-	private static function checkConst(string $const, $value): bool
+	private static function checkConst(string $const, mixed $value): bool
 	{
 		return defined($const) && constant($const) === $value;
 	}
