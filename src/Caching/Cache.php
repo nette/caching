@@ -107,6 +107,8 @@ class Cache
 
 	/**
 	 * Reads the specified item from the cache or generate it.
+	 * @param ?(\Closure(mixed &$dependencies): mixed)  $generator
+	 * @param ?array<string, mixed>  $dependencies
 	 */
 	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
 	{
@@ -130,6 +132,10 @@ class Cache
 
 	/**
 	 * Reads multiple items from the cache.
+	 * @template TKey of int|string
+	 * @param list<TKey>  $keys
+	 * @param ?(\Closure(TKey $key, mixed &$dependencies): mixed)  $generator
+	 * @return array<TKey, mixed>
 	 */
 	public function bulkLoad(array $keys, ?callable $generator = null): array
 	{
@@ -184,6 +190,7 @@ class Cache
 	 * - Cache::Files => (array|string) file names
 	 * - Cache::Items => (array|string) cache items
 	 * - Cache::Constants => (array|string) cache items
+	 * @param ?array<string, mixed>  $dependencies
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -218,7 +225,9 @@ class Cache
 
 
 	/**
-	 * Writes multiple items into cache
+	 * Writes multiple items into cache.
+	 * @param mixed[]  $items
+	 * @param ?array<string, mixed>  $dependencies
 	 */
 	public function bulkSave(array $items, ?array $dependencies = null): void
 	{
@@ -256,6 +265,10 @@ class Cache
 	}
 
 
+	/**
+	 * @param ?array<string, mixed>  $dp
+	 * @return array<string, mixed>
+	 */
 	private function completeDependencies(?array $dp): array
 	{
 		// convert expire into relative amount of seconds
@@ -319,6 +332,7 @@ class Cache
 	 * - Cache::Priority => (int) priority
 	 * - Cache::Tags => (array) tags
 	 * - Cache::All => true
+	 * @param ?array<string, mixed>  $conditions
 	 */
 	public function clean(?array $conditions = null): void
 	{
@@ -333,6 +347,7 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
+	 * @param  callable(mixed...): mixed  $function
 	 */
 	public function call(callable $function): mixed
 	{
@@ -347,6 +362,9 @@ class Cache
 
 	/**
 	 * Caches results of function/method calls.
+	 * @param  callable(mixed...): mixed  $function
+	 * @param  ?array<string, mixed>  $dependencies
+	 * @return \Closure(mixed...): mixed
 	 */
 	public function wrap(callable $function, ?array $dependencies = null): \Closure
 	{
@@ -402,6 +420,7 @@ class Cache
 
 	/**
 	 * Checks CALLBACKS dependencies.
+	 * @param list<array{0: callable(mixed...): bool, 1?: mixed, 2?: mixed}>  $callbacks
 	 */
 	public static function checkCallbacks(array $callbacks): bool
 	{

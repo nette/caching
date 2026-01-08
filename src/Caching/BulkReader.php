@@ -15,7 +15,8 @@ interface BulkReader
 {
 	/**
 	 * Reads from cache in bulk.
-	 * @return array key => value pairs, missing items are omitted
+	 * @param  list<string>  $keys
+	 * @return array<string, mixed>  key => value pairs, missing items are omitted
 	 */
 	function bulkRead(array $keys): array;
 }

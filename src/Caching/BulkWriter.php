@@ -15,12 +15,14 @@ interface BulkWriter
 {
 	/**
 	 * Writes to cache in bulk.
-	 * @param array{string, mixed} $items
+	 * @param  array<string, mixed>  $items
+	 * @param  array<string, mixed>  $dependencies
 	 */
 	function bulkWrite(array $items, array $dependencies): void;
 
 	/**
-	 * Removes multiple items from cache
+	 * Removes multiple items from cache.
+	 * @param  list<string>  $keys
 	 */
 	function bulkRemove(array $keys): void;
 }

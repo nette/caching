@@ -15,6 +15,7 @@ use Nette;
  */
 class OutputHelper
 {
+	/** @var array<string, mixed> */
 	public array $dependencies = [];
 
 
@@ -28,6 +29,7 @@ class OutputHelper
 
 	/**
 	 * Stops and saves the cache.
+	 * @param  array<string, mixed>  $dependencies
 	 */
 	public function end(array $dependencies = []): void
 	{
