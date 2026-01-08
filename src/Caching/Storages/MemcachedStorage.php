@@ -127,7 +127,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-	public function write(string $key, $data, array $dp): void
+	public function write(string $key, mixed $data, array $dp): void
 	{
 		if (isset($dp[Cache::Items])) {
 			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');

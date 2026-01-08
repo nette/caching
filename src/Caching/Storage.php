@@ -28,7 +28,7 @@ interface Storage
 	 * Writes item into the cache.
 	 * @param  array<string, mixed>  $dependencies
 	 */
-	function write(string $key, $data, array $dependencies): void;
+	function write(string $key, mixed $data, array $dependencies): void;
 
 	/**
 	 * Removes item from the cache.
