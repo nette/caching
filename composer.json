@@ -24,7 +24,9 @@
 		"latte/latte": "^3.0.12",
 		"tracy/tracy": "^2.9",
 		"psr/simple-cache": "^2.0 || ^3.0",
-		"phpstan/phpstan-nette": "^2.0@stable"
+		"phpstan/phpstan": "^2.1.40@stable",
+		"phpstan/extension-installer": "^1.4@stable",
+		"nette/phpstan-rules": "^1.0"
 	},
 	"conflict": {
 		"latte/latte": "<3.0.12"
@@ -46,6 +48,11 @@
 	"extra": {
 		"branch-alias": {
 			"dev-master": "3.4-dev"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"phpstan/extension-installer": true
 		}
 	}
 }
