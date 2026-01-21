@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\Caching\Storages\SQLiteStorage expiration test.
- * @phpExtension pdo_sqlite
+ * Test: Nette\Caching\Storages\FileStorage sliding expiration test.
  */
 
 use Nette\Caching\Cache;
-use Nette\Caching\Storages\SQLiteStorage;
+use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
 
@@ -16,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 $key = 'nette';
 $value = 'rulez';
 
-$cache = new Cache(new SQLiteStorage(':memory:'));
+$cache = new Cache(new FileStorage(getTempDir()));
 
 
 // Writing cache...
@@ -29,11 +28,13 @@ $cache->save($key, $value, [
 for ($i = 0; $i < 5; $i++) {
 	// Sleeping 1 second
 	sleep(1);
+	clearstatcache();
 
-	Assert::truthy($cache->load($key));
+	Assert::truthy($cache->bulkLoad([$key])[$key]);
 }
 
 // Sleeping few seconds...
 sleep(5);
+clearstatcache();
 
-Assert::null($cache->load($key));
+Assert::null($cache->bulkLoad([$key])[$key]);
