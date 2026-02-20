@@ -2,6 +2,8 @@
 
 /**
  * Test: {cache ...}
+ * @phpExtension tokenizer
+ * @phpExtension mbstring
  */
 
 declare(strict_types=1);
