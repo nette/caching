@@ -67,10 +67,11 @@ dependency" matrix is partly an illusion:
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
 only by `FileStorage` and `MemcachedStorage`; `Tags`/`Priority` need a `Journal`
-in those two, while `SQLiteStorage` handles `Tags` natively. What a backend
-cannot honor, it rejects with `NotSupportedException` — except `MemoryStorage`,
-which **silently drops** every dependency. An agent adding a backend must reason
-about this **post-desugar** set, not the public constant list.
+in those two, while `MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them
+natively. What a backend cannot honor, it rejects with `NotSupportedException` —
+except `MemoryStorage`, which **silently drops** `Callbacks`, `Items` and
+`Namespaces`. An agent adding a backend must reason about this **post-desugar**
+set, not the public constant list.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
@@ -142,10 +143,10 @@ The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
 package). They do **not** all honor the same dependencies, and the weakest are
 easy traps:
 
-- **`MemoryStorage` ignores every dependency** — its `write()` stores the raw
-  value and drops `$dependencies` entirely, so there is **no expiration, no tags,
-  no invalidation** (only `clean(All)` empties it). It is a process-local map, fine
-  for a single request, wrong for anything that must expire.
+- **`MemoryStorage`** honors `Expire`/`Sliding`, `Tags` and `Priority` in a
+  process-local map, but **silently drops** `Callbacks` — so `Files`/`Constants`
+  do nothing there — `Items` and `Namespaces`. A trap when it stands in for a real
+  backend where file dependencies matter.
 - **`SQLiteStorage`** supports `Expire`/`Sliding`, `Tags` (its own `tags` table,
   no journal) and cleaning by `Namespaces`, and throws for `Callbacks` (so
   `Files`/`Constants`), `Priority`, `Items` and cleaning by `Priority`. A

@@ -64,8 +64,9 @@ composer phpstan
 - **The lock spans two calls** - `Cache` locks before running a generator, and
   `write()`/`remove()` release it. **Stampede protection is real only in
   `FileStorage`**; every other backend's `lock()` is a no-op.
-- **`MemoryStorage` ignores all dependencies** (no expiration, no tags) - a real
-  trap when it stands in for a real backend.
+- **`MemoryStorage` honors only `Expire`, `Sliding`, `Tags` and `Priority`**;
+  `Callbacks` (so `Files`/`Constants`), `Items` and `Namespaces` are silently
+  ignored - a trap when it stands in for a real backend.
 - **Unsupported dependencies throw.** `SQLiteStorage` and `MemcachedStorage`
   throw `NotSupportedException` for a dependency or clean condition they cannot
   honor.
