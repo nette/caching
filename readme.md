@@ -221,7 +221,7 @@ $cache->clean([
 
 What have we achieved? That our HTML cache will be invalidated (deleted) whenever the article or comments change. When editing an article with ID = 10, the tag `article/10` is forced to be invalidated and the HTML page carrying the tag is deleted from the cache. The same happens when you insert a new comment under the relevant article.
 
-In `FileStorage` and `MemcachedStorage`, tags require a [Journal](#Journal); `SQLiteStorage` keeps them itself.
+In `FileStorage` and `MemcachedStorage`, tags require a [Journal](#Journal); the other storages keep them themselves.
 
 
 Invalidation by Priority
@@ -241,7 +241,7 @@ $cache->clean([
 ]);
 ```
 
-In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `SQLiteStorage` does not support them.
+In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `MemoryStorage` keeps them itself and `SQLiteStorage` does not support them.
 
 
 Clear Cache
