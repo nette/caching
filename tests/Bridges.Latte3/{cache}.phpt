@@ -2,6 +2,7 @@
 
 /**
  * Test: {cache ...}
+ * @phpExtension tokenizer
  */
 
 declare(strict_types=1);

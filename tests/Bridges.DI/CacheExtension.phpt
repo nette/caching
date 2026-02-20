@@ -2,6 +2,7 @@
 
 /**
  * Test: CacheExtension.
+ * @phpExtension pdo_sqlite
  */
 
 declare(strict_types=1);
