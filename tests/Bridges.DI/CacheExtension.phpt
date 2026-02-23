@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: CacheExtension.
  */
-
-declare(strict_types=1);
 
 use Nette\Bridges\CacheDI\CacheExtension;
 use Nette\DI;

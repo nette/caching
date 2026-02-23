@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: {cache ...}
  */
-
-declare(strict_types=1);
 
 use Nette\Bridges\CacheLatte\CacheExtension;
 use Tester\Assert;

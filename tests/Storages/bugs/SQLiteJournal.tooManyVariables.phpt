@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Caching\Storages\SQLiteStorage tags dependency test.
  * @phpExtension pdo_sqlite
  */
-
-declare(strict_types=1);
 
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\SQLiteJournal;

@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Caching\Storages\FileStorage constant dependency test (continue...).
  */
-
-declare(strict_types=1);
 
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;

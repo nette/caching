@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Caching\Storages\MemcachedStorage tags dependency test.
  */
-
-declare(strict_types=1);
 
 use Nette\Caching\Cache;
 use Nette\Caching\Storages\MemcachedStorage;

@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Caching\Storages\SQLiteJournal database file permissions.
  * @phpExtension pdo_sqlite
  */
-
-declare(strict_types=1);
 
 use Nette\Caching\Storages\SQLiteJournal;
 use Tester\Assert;
