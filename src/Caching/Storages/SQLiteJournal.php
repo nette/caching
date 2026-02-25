@@ -9,7 +9,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function count, extension_loaded, implode, is_file, str_repeat, touch;
+use function array_values, count, extension_loaded, implode, is_file, str_repeat, touch;
 
 
 /**
@@ -73,7 +73,7 @@ class SQLiteJournal implements Journal
 				$arr[] = $tag;
 			}
 
-			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
+			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
 				->execute($arr);
 		}
 
@@ -136,6 +136,6 @@ class SQLiteJournal implements Journal
 		$this->pdo->prepare("DELETE FROM priorities WHERE key IN ($unionSql)")->execute($args);
 		$this->pdo->exec('COMMIT');
 
-		return $keys;
+		return array_values($keys);
 	}
 }
