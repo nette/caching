@@ -55,7 +55,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	{
 		if (@$this->memcached->addServer($host, $port, 1) === false) { // @ is escalated to exception
 			$error = error_get_last();
-			throw new Nette\InvalidStateException("Memcached::addServer(): $error[message].");
+			throw new Nette\InvalidStateException('Memcached::addServer(): ' . ($error['message'] ?? 'unknown error') . '.');
 		}
 	}
 
@@ -216,7 +216,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 			$this->memcached->flush();
 
 		} elseif ($this->journal) {
-			foreach ($this->journal->clean($conditions) as $entry) {
+			foreach ($this->journal->clean($conditions) ?? [] as $entry) {
 				$this->memcached->delete($entry, 0);
 			}
 		}

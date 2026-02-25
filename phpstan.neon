@@ -1,8 +1,31 @@
 parameters:
-	level: 5
+	level: 8
 
 	paths:
 		- src
 
 	excludePaths:
-		- src/Bridges/CacheLatte/CacheMacro.php
+		- src/compatibility.php
+
+	ignoreErrors:
+		-   # Intentional design pattern for derive() and factory methods
+			identifier: new.static
+			paths:
+				- src/Caching/Cache.php
+				- src/Bridges/CacheLatte/Nodes/CacheNode.php
+
+		-   # Intentional by-reference parameter for dependency injection
+			identifier: argument.byRef
+			path: src/Caching/Cache.php
+
+		-   # Runtime validation for untyped array input
+			identifier: function.alreadyNarrowedType
+			path: src/Caching/Cache.php
+
+		-   # PHPStan cannot narrow callable to array shape after is_array() in closure
+			identifier: offsetAccess.nonOffsetAccessible
+			path: src/Caching/Cache.php
+
+		-
+			identifier: method.childParameterType
+			path: src/Bridges/Psr/PsrCacheAdapter.php

@@ -11,7 +11,7 @@ use Latte;
 use Nette;
 use Nette\Caching\Cache;
 use Nette\Caching\OutputHelper;
-use function array_intersect_key, array_key_exists, array_merge, array_pop, count, end, is_file, range;
+use function array_intersect_key, array_key_exists, array_merge, array_pop, count, end, is_file, is_string, range;
 
 
 /**
@@ -34,7 +34,7 @@ class Runtime
 	{
 		if ($this->stack) {
 			$file = (new \ReflectionClass($template))->getFileName();
-			if (@is_file($file)) { // @ - may trigger error
+			if (is_string($file) && @is_file($file)) { // @ - may trigger error
 				end($this->stack)->dependencies[Cache::Files][] = $file;
 			}
 		}

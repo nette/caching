@@ -111,7 +111,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 				$arr[] = $tag;
 			}
 
-			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', count($arr) / 2 - 1))
+			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
 				->execute($arr);
 		}
 
