@@ -26,9 +26,6 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	private readonly \Memcached $memcached;
 
 
-	/**
-	 * Checks if Memcached extension is available.
-	 */
 	public static function isAvailable(): bool
 	{
 		return extension_loaded('memcached');
@@ -51,6 +48,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
+	/**
+	 * Adds a Memcached server to the connection pool.
+	 */
 	public function addServer(string $host = 'localhost', int $port = 11211): void
 	{
 		if (@$this->memcached->addServer($host, $port, 1) === false) { // @ is escalated to exception

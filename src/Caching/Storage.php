@@ -14,7 +14,7 @@ namespace Nette\Caching;
 interface Storage
 {
 	/**
-	 * Read from cache.
+	 * Reads item from the cache. Returns null if the item does not exist or has expired.
 	 * @return mixed
 	 */
 	function read(string $key);

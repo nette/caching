@@ -15,7 +15,7 @@ use Nette\Caching\Storage;
 
 
 /**
- * Latte v3 extension for Nette Caching
+ * Latte v3 extension providing the {cache} tag.
  */
 final class CacheExtension extends Latte\Extension
 {

@@ -11,7 +11,7 @@ use Nette;
 
 
 /**
- * Cache dummy storage.
+ * No-op storage that discards all data. Useful for disabling caching.
  */
 class DevNullStorage implements Nette\Caching\Storage
 {

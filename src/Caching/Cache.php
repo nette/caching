@@ -12,7 +12,7 @@ use function array_keys, array_map, array_shift, array_slice, array_unique, arra
 
 
 /**
- * Implements the cache for a application.
+ * Caching with namespace isolation, dependency tracking, and stampede prevention.
  */
 class Cache
 {
@@ -78,18 +78,12 @@ class Cache
 	}
 
 
-	/**
-	 * Returns cache storage.
-	 */
 	final public function getStorage(): Storage
 	{
 		return $this->storage;
 	}
 
 
-	/**
-	 * Returns cache namespace.
-	 */
 	final public function getNamespace(): string
 	{
 		return substr($this->namespace, 0, -1);
@@ -97,7 +91,7 @@ class Cache
 
 
 	/**
-	 * Returns new nested cache object.
+	 * Returns a new cache object scoped to a sub-namespace.
 	 */
 	public function derive(string $namespace): static
 	{
@@ -106,7 +100,7 @@ class Cache
 
 
 	/**
-	 * Reads the specified item from the cache or generate it.
+	 * Returns a cached item, or generates and stores it using the given callback.
 	 */
 	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
 	{
@@ -129,7 +123,7 @@ class Cache
 
 
 	/**
-	 * Reads multiple items from the cache.
+	 * Returns multiple cached items at once, generating missing ones using the given callback.
 	 */
 	public function bulkLoad(array $keys, ?callable $generator = null): array
 	{
@@ -175,16 +169,16 @@ class Cache
 
 
 	/**
-	 * Writes item into the cache.
-	 * Dependencies are:
+	 * Stores item in the cache and returns it.
+	 * Dependencies:
 	 * - Cache::Priority => (int) priority
-	 * - Cache::Expire => (timestamp) expiration, infinite if null
+	 * - Cache::Expire => (string|int) expiration time, infinite if null
 	 * - Cache::Sliding => (bool) use sliding expiration?
 	 * - Cache::Tags => (array) tags
-	 * - Cache::Files => (array|string) file names
-	 * - Cache::Items => (array|string) cache items
-	 * - Cache::Constants => (array|string) cache items
-	 * @return mixed  value itself
+	 * - Cache::Files => (array|string) file paths
+	 * - Cache::Items => (array|string) dependent cache keys
+	 * - Cache::Constants => (array|string) PHP constant names
+	 * @return mixed  the stored value
 	 * @throws Nette\InvalidArgumentException
 	 */
 	public function save(mixed $key, mixed $data, ?array $dependencies = null): mixed
@@ -218,7 +212,7 @@ class Cache
 
 
 	/**
-	 * Writes multiple items into cache
+	 * Stores multiple items in the cache at once.
 	 */
 	public function bulkSave(array $items, ?array $dependencies = null): void
 	{
@@ -304,9 +298,6 @@ class Cache
 	}
 
 
-	/**
-	 * Removes item from the cache.
-	 */
 	public function remove(mixed $key): void
 	{
 		$this->save($key, null);
@@ -314,11 +305,10 @@ class Cache
 
 
 	/**
-	 * Removes items from the cache by conditions.
-	 * Conditions are:
-	 * - Cache::Priority => (int) priority
-	 * - Cache::Tags => (array) tags
-	 * - Cache::All => true
+	 * Removes items from the cache by conditions:
+	 * - Cache::Priority => (int) removes items with equal or lower priority
+	 * - Cache::Tags => (array) removes items with matching tags
+	 * - Cache::All => true clears the entire cache
 	 */
 	public function clean(?array $conditions = null): void
 	{
@@ -332,7 +322,7 @@ class Cache
 
 
 	/**
-	 * Caches results of function/method calls.
+	 * Calls a function and caches its result. Subsequent calls with the same arguments return the cached value.
 	 */
 	public function call(callable $function): mixed
 	{
@@ -346,7 +336,7 @@ class Cache
 
 
 	/**
-	 * Caches results of function/method calls.
+	 * Returns a cached wrapper around a function. Each unique set of arguments is cached separately.
 	 */
 	public function wrap(callable $function, ?array $dependencies = null): \Closure
 	{
@@ -365,7 +355,8 @@ class Cache
 
 
 	/**
-	 * Starts the output cache.
+	 * Starts output buffering for caching. Returns null and echoes cached content if already cached,
+	 * or returns an OutputHelper to capture and save new output.
 	 */
 	public function capture(mixed $key): ?OutputHelper
 	{
@@ -389,7 +380,7 @@ class Cache
 
 
 	/**
-	 * Generates internal cache key.
+	 * Generates a namespaced storage key from a user-provided key.
 	 */
 	protected function generateKey($key): string
 	{
@@ -401,7 +392,7 @@ class Cache
 
 
 	/**
-	 * Checks CALLBACKS dependencies.
+	 * Validates all callback dependencies. Returns false if any callback returns false.
 	 */
 	public static function checkCallbacks(array $callbacks): bool
 	{
@@ -416,7 +407,7 @@ class Cache
 
 
 	/**
-	 * Checks CONSTS dependency.
+	 * Checks whether a PHP constant still has the same value as when cached.
 	 */
 	private static function checkConst(string $const, $value): bool
 	{
@@ -425,7 +416,7 @@ class Cache
 
 
 	/**
-	 * Checks FILES dependency.
+	 * Checks whether a file's modification time matches the recorded value.
 	 */
 	private static function checkFile(string $file, ?int $time): bool
 	{

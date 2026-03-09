@@ -12,6 +12,9 @@ use Nette;
 use Psr;
 
 
+/**
+ * Adapts Nette Storage to the PSR-16 SimpleCache interface.
+ */
 class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 {
 	public function __construct(

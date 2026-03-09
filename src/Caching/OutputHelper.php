@@ -27,7 +27,7 @@ class OutputHelper
 
 
 	/**
-	 * Stops and saves the cache.
+	 * Stops output buffering and saves the captured output to the cache.
 	 */
 	public function end(array $dependencies = []): void
 	{

@@ -45,7 +45,7 @@ class FileStorage implements Nette\Caching\Storage
 		File = 'file',
 		Handle = 'handle';
 
-	/** probability that the clean() routine is started */
+	/** Probability (0-1) that the garbage collector runs on each instantiation. */
 	public static float $gcProbability = 0.001;
 
 	private string $dir;
@@ -289,7 +289,7 @@ class FileStorage implements Nette\Caching\Storage
 
 
 	/**
-	 * Reads cache data from disk.
+	 * Opens and locks a cache file and reads its metadata.
 	 */
 	protected function readMetaAndLock(string $file, int $lock): ?array
 	{
@@ -329,7 +329,7 @@ class FileStorage implements Nette\Caching\Storage
 
 
 	/**
-	 * Returns file name.
+	 * Returns the file path for a given cache key.
 	 */
 	protected function getCacheFile(string $key): string
 	{

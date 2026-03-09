@@ -9,7 +9,7 @@ namespace Nette\Caching;
 
 
 /**
- * Cache storage with a bulk read support.
+ * Cache storage with bulk read support.
  */
 interface BulkReader
 {

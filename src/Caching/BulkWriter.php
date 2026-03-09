@@ -9,7 +9,7 @@ namespace Nette\Caching;
 
 
 /**
- * Cache storage with a bulk write support.
+ * Cache storage with bulk write support.
  */
 interface BulkWriter
 {
