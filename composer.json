@@ -21,7 +21,7 @@
 	"require-dev": {
 		"nette/tester": "^2.6",
 		"nette/di": "^3.1 || ^4.0",
-		"latte/latte": "^3.0.12",
+		"latte/latte": "^3.1.4",
 		"tracy/tracy": "^2.9",
 		"psr/simple-cache": "^2.0 || ^3.0",
 		"phpstan/phpstan": "^2.1.40@stable",
@@ -29,7 +29,7 @@
 		"nette/phpstan-rules": "^1.0"
 	},
 	"conflict": {
-		"latte/latte": "<3.0.12"
+		"latte/latte": "<3.1.4"
 	},
 	"suggest": {
 		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal"
