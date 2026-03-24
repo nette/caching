@@ -9,7 +9,7 @@ namespace Nette\Bridges\CacheLatte\Nodes;
 
 use Latte\Compiler\Nodes\{AreaNode, StatementNode};
 use Latte\Compiler\Nodes\Php\Expression\ArrayNode;
-use Latte\Compiler\{Position, PrintContext, Tag};
+use Latte\Compiler\{PrintContext, Tag};
 
 
 /**
@@ -19,7 +19,6 @@ class CacheNode extends StatementNode
 {
 	public ArrayNode $args;
 	public AreaNode $content;
-	public ?Position $endLine;
 
 
 	/** @return \Generator<int, ?list<string>, array{AreaNode, ?Tag}, static> */
@@ -27,8 +26,7 @@ class CacheNode extends StatementNode
 	{
 		$node = $tag->node = new static;
 		$node->args = $tag->parser->parseArguments();
-		[$node->content, $endTag] = yield;
-		$node->endLine = $endTag?->position;
+		[$node->content] = yield;
 		return $node;
 	}
 
@@ -52,7 +50,7 @@ class CacheNode extends StatementNode
 			$this->args,
 			$this->position,
 			$this->content,
-			$this->endLine,
+			end($this->tagRanges),
 		);
 	}
 
