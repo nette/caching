@@ -230,7 +230,11 @@ class FileStorage implements Nette\Caching\Storage
 		// cleaning using file iterator
 		if ($all || $collector) {
 			$now = time();
-			foreach (Nette\Utils\Finder::find('_*')->from($this->dir)->childFirst() as $entry) {
+			$finder = Nette\Utils\Finder::find('_*')
+				->from($this->dir)
+				->descentFilter(fn($dir) => str_starts_with($dir->getFilename(), '_')) // other directories belong to other tools, such as Latte
+				->childFirst();
+			foreach ($finder as $entry) {
 				$path = (string) $entry;
 				if ($entry->isDir()) { // collector: remove empty dirs
 					@rmdir($path); // @ - removing dirs is not necessary
@@ -302,13 +306,14 @@ class FileStorage implements Nette\Caching\Storage
 
 		$size = (int) stream_get_contents($handle, self::MetaHeaderLen);
 		if ($size) {
-			$meta = stream_get_contents($handle, $size, self::MetaHeaderLen);
-			if ($meta !== false) {
-				$meta = unserialize($meta);
-				assert(is_array($meta));
-				$meta[self::File] = $file;
-				$meta[self::Handle] = $handle;
-				return $meta;
+			$raw = stream_get_contents($handle, $size, self::MetaHeaderLen);
+			if ($raw !== false) {
+				$meta = @unserialize($raw); // @ - file may not be a valid cache file
+				if (is_array($meta)) {
+					$meta[self::File] = $file;
+					$meta[self::Handle] = $handle;
+					return $meta;
+				}
 			}
 		}
 
