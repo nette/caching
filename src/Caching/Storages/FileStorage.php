@@ -309,13 +309,14 @@ class FileStorage implements Nette\Caching\Storage
 
 		$size = (int) stream_get_contents($handle, self::MetaHeaderLen);
 		if ($size) {
-			$meta = stream_get_contents($handle, $size, self::MetaHeaderLen);
-			if ($meta !== false) {
-				$meta = unserialize($meta);
-				assert(is_array($meta));
-				$meta[self::File] = $file;
-				$meta[self::Handle] = $handle;
-				return $meta;
+			$raw = stream_get_contents($handle, $size, self::MetaHeaderLen);
+			if ($raw !== false) {
+				$meta = @unserialize($raw); // @ - file may not be a valid cache file
+				if (is_array($meta)) {
+					$meta[self::File] = $file;
+					$meta[self::Handle] = $handle;
+					return $meta;
+				}
 			}
 		}
 
@@ -337,7 +338,7 @@ class FileStorage implements Nette\Caching\Storage
 		return match (true) {
 			$data === false => null,
 			empty($meta[self::MetaSerialized]) => $data,
-			default => unserialize($data),
+			default => @unserialize($data), // @ - data may be corrupted by a truncated write
 		};
 	}
 
