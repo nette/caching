@@ -31,13 +31,19 @@ function checkStr($s)
 define('COUNT_FILES', 3);
 
 
-$storage = new FileStorage(getTempDir());
+$dir = getTempDir();
+$storage = new FileStorage($dir);
 
 
 // clear playground
 for ($i = 0; $i <= COUNT_FILES; $i++) {
 	$storage->write((string) $i, randomStr(), []);
 }
+
+// GH#45: place foreign files in the cache directory to verify they don't
+// interfere with normal cache operations or cause unserialize errors during GC
+file_put_contents($dir . '/_foreign.lock', '0942e7deadbeef');
+file_put_contents($dir . '/_session.tmp', "\xff\xfe\x00\x01binary");
 
 // test loop
 $hits = ['ok' => 0, 'notfound' => 0, 'error' => 0, 'cantwrite' => 0, 'cantdelete' => 0];
