@@ -1,21 +1,20 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Common tests for all IJournal implementations.
+ * Test: Common tests for all Journal implementations.
  */
 
 use Nette\Caching\Cache;
-use Nette\Caching\Storages\IJournal;
+use Nette\Caching\Storages\Journal;
 use Tester\Assert;
 
 
-abstract class IJournalTestCase extends Tester\TestCase
+abstract class JournalTestCase extends Tester\TestCase
 {
-	private IJournal $journal;
+	private Journal $journal;
 
 
-	/** @return IJournal  */
-	abstract public function createJournal();
+	abstract public function createJournal(): Journal;
 
 
 	public function setup()

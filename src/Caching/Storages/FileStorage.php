@@ -263,9 +263,7 @@ class FileStorage implements Nette\Caching\Storage
 				}
 			}
 
-			if ($this->journal) {
-				$this->journal->clean($conditions);
-			}
+			$this->journal?->clean($conditions);
 
 			return;
 

@@ -9,12 +9,12 @@ use Nette\Caching\Storages\SQLiteJournal;
 
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/IJournalTestCase.php';
+require __DIR__ . '/JournalTestCase.php';
 
 
-class SQLiteJournalTest extends IJournalTestCase
+class SQLiteJournalTest extends JournalTestCase
 {
-	public function createJournal()
+	public function createJournal(): SQLiteJournal
 	{
 		static $id = 0;
 		return new SQLiteJournal(getTempDir() . '/sqlitejournal_' . ++$id . '.sqlite');

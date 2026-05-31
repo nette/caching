@@ -21,7 +21,7 @@ class OutputHelper
 
 	public function __construct(
 		private ?Cache $cache,
-		private mixed $key,
+		private readonly mixed $key,
 	) {
 		ob_start();
 	}
