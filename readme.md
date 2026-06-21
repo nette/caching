@@ -33,7 +33,7 @@ Installation
 composer require nette/caching
 ```
 
-It requires PHP version 8.1 and supports PHP up to 8.5.
+It requires PHP version 8.3 and supports PHP up to 8.5.
 
 
 Basic Usage
