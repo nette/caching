@@ -26,6 +26,3 @@ interface Journal
 	 */
 	function clean(array $conditions): ?array;
 }
-
-
-class_exists(IJournal::class);
