@@ -4,9 +4,6 @@ parameters:
 	paths:
 		- src
 
-	excludePaths:
-		- src/compatibility.php
-
 	ignoreErrors:
 		-   # Intentional design pattern for derive() and factory methods
 			identifier: new.static
@@ -36,12 +33,3 @@ parameters:
 			identifier: missingType.callable
 			count: 3
 			path: src/Caching/Cache.php
-
-		-   # BC aliases (IStorage, IBulkReader, IJournal) live in excluded compatibility.php, so PHPStan cannot see them;
-			# the class_exists() calls eagerly trigger alias registration when the new interface is loaded
-			identifier: function.impossibleType
-			message: '#^Call to function class_exists\(\) with ''[^'']+'' will always evaluate to false\.$#'
-			paths:
-				- src/Caching/Storage.php
-				- src/Caching/BulkReader.php
-				- src/Caching/Storages/Journal.php

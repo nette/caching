@@ -20,6 +20,3 @@ interface BulkReader
 	 */
 	function bulkRead(array $keys): array;
 }
-
-
-class_exists(IBulkReader::class);

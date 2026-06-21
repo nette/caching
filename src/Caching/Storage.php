@@ -41,6 +41,3 @@ interface Storage
 	 */
 	function clean(array $conditions): void;
 }
-
-
-class_exists(IStorage::class);
