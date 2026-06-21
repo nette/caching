@@ -26,7 +26,7 @@ Nette Caching provides flexible caching with pluggable storage backends
 tags, files, callbacks), a PSR-16 adapter, and a Latte `{cache}` tag. Part of the
 Nette Framework, usable standalone.
 
-- **PHP Version**: 8.1 - 8.6
+- **PHP Version**: 8.3 - 8.6
 - **Package**: `nette/caching`
 
 ## Essential Commands
