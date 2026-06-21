@@ -32,7 +32,7 @@ class Runtime
 	public function initialize(Latte\Runtime\Template $template): void
 	{
 		if ($this->stack) {
-			$file = (new \ReflectionClass($template))->getFileName();
+			$file = new \ReflectionClass($template)->getFileName();
 			if (is_string($file) && @is_file($file)) { // @ - may trigger error
 				end($this->stack)->dependencies[Cache::Files][] = $file;
 			}

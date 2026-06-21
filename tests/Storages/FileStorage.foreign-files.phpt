@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 $dir = getTempDir();
 $storage = new FileStorage($dir);
 $cache = new Cache($storage);
-(new Cache($storage, 'ns'))->save('key', 'value', [Cache::Expire => 1]);
+new Cache($storage, 'ns')->save('key', 'value', [Cache::Expire => 1]);
 $cache->save('key', 'value');
 
 // Latte stores compiled templates and their lock files in its own subdirectory
@@ -30,7 +30,7 @@ sleep(2);
 
 test('garbage collector skips foreign files', function () use ($storage, $cache, $dir) {
 	Assert::noError(fn() => $storage->clean([]));
-	Assert::null((new Cache($storage, 'ns'))->load('key'));
+	Assert::null(new Cache($storage, 'ns')->load('key'));
 	Assert::same('value', $cache->load('key'));
 	Assert::true(is_file($dir . '/latte/_include-template.php.lock'));
 	Assert::true(is_file($dir . '/_foreign.lock'));

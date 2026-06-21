@@ -47,7 +47,7 @@ Assert::null($cache->load($key));
 // an item overwritten between the read and the extension of its expiration is not stored back
 function overwrite(string $key): bool
 {
-	(new Cache(new MemcachedStorage))->save($key, 'new');
+	new Cache(new MemcachedStorage)->save($key, 'new');
 	return true;
 }
 

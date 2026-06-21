@@ -21,7 +21,7 @@ test('', function () {
 	Assert::false(file_exists($file));
 
 	umask(0);
-	(new SQLiteJournal($file))->write('foo', []);
+	new SQLiteJournal($file)->write('foo', []);
 
 	Assert::same(0o666, fileperms($file) & 0o777);
 });
@@ -32,7 +32,7 @@ test('', function () {
 	Assert::false(file_exists($file));
 
 	umask(0o077);
-	(new SQLiteJournal($file))->write('foo', []);
+	new SQLiteJournal($file)->write('foo', []);
 
 	Assert::same(0o600, fileperms($file) & 0o777);
 });

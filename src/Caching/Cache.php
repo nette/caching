@@ -414,13 +414,7 @@ class Cache
 	 */
 	public static function checkCallbacks(array $callbacks): bool
 	{
-		foreach ($callbacks as $callback) {
-			if (!array_shift($callback)(...$callback)) {
-				return false;
-			}
-		}
-
-		return true;
+		return array_all($callbacks, fn($callback) => array_shift($callback)(...$callback));
 	}
 
 
