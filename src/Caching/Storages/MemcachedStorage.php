@@ -23,6 +23,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		MetaData = 'data',
 		MetaDelta = 'delta';
 
+	/** longest interval that memcached accepts as relative time, longer values are interpreted as absolute timestamps */
+	private const MaxRelativeExpiration = 30 * 24 * 60 * 60;
+
 	private readonly \Memcached $memcached;
 
 
@@ -158,6 +161,10 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 			$this->journal->write($key, $dependencies);
 		}
 
+		if ($expire > self::MaxRelativeExpiration) {
+			$expire += time();
+		}
+
 		$this->memcached->set($key, $meta, $expire);
 	}
 
@@ -192,6 +199,10 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 				$this->journal->write($key, $dependencies);
 			}
+		}
+
+		if ($expire > self::MaxRelativeExpiration) {
+			$expire += time();
 		}
 
 		$this->memcached->setMulti($records, $expire);
