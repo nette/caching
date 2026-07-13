@@ -96,6 +96,18 @@ abstract class JournalTestCase extends Tester\TestCase
 	}
 
 
+	final public function testPriorityZero()
+	{
+		$this->journal->write('ok_test3b', [
+			Cache::Priority => 0,
+		]);
+
+		Assert::same([
+			'ok_test3b',
+		], $this->journal->clean([Cache::Priority => 0]));
+	}
+
+
 	final public function testPriorityAndTagCleanByTag()
 	{
 		$this->journal->write('ok_test4', [

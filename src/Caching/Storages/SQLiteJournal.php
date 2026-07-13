@@ -77,7 +77,7 @@ class SQLiteJournal implements Journal
 				->execute($arr);
 		}
 
-		if (!empty($dependencies[Cache::Priority])) {
+		if (isset($dependencies[Cache::Priority])) {
 			$this->pdo->prepare('REPLACE INTO priorities (key, priority) VALUES (?, ?)')
 				->execute([$key, (int) $dependencies[Cache::Priority]]);
 		}
@@ -110,7 +110,7 @@ class SQLiteJournal implements Journal
 			$args = $tags;
 		}
 
-		if (!empty($conditions[Cache::Priority])) {
+		if (isset($conditions[Cache::Priority])) {
 			$unions[] = 'SELECT DISTINCT key FROM priorities WHERE priority <= ?';
 			$args[] = (int) $conditions[Cache::Priority];
 		}
