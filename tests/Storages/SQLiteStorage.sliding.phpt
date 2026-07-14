@@ -37,3 +37,8 @@ for ($i = 0; $i < 5; $i++) {
 sleep(5);
 
 Assert::null($cache->load($key));
+
+
+// Sliding without Expire is ignored
+Assert::noError(fn() => $cache->save($key, $value, [Cache::Sliding => true]));
+Assert::same($value, $cache->load($key));
