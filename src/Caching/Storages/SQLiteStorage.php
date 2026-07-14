@@ -96,7 +96,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 		$expire = isset($dependencies[Cache::Expire])
 			? $dependencies[Cache::Expire] + time()
 			: null;
-		$slide = isset($dependencies[Cache::Sliding])
+		$slide = $expire !== null && !empty($dependencies[Cache::Sliding])
 			? $dependencies[Cache::Expire]
 			: null;
 
