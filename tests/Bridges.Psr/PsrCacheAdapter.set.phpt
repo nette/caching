@@ -31,6 +31,25 @@ test('set ttl int', function () {
 	], $storage->read('test'));
 });
 
+test('set ttl zero or negative deletes item', function () {
+	$storage = new TestStorage;
+	$cache = new PsrCacheAdapter($storage);
+
+	$cache->set('test', '1');
+	$cache->set('test', '2', 0);
+	Assert::null($storage->read('test'));
+
+	$cache->set('test', '1');
+	$cache->set('test', '2', -1);
+	Assert::null($storage->read('test'));
+
+	$cache->set('test', '1');
+	$interval = new DateInterval('PT1S');
+	$interval->invert = 1;
+	$cache->set('test', '2', $interval);
+	Assert::null($storage->read('test'));
+});
+
 test('set ttl DateInterval', function () {
 	$storage = new TestStorage;
 	$cache = new PsrCacheAdapter($storage);

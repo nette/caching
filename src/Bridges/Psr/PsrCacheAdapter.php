@@ -31,9 +31,15 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 
 	public function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
 	{
+		$ttl = self::ttlToSeconds($ttl);
+		if ($ttl !== null && $ttl <= 0) { // according to PSR-16, zero or negative TTL means immediate deletion
+			$this->storage->remove($key);
+			return true;
+		}
+
 		$dependencies = [];
 		if ($ttl !== null) {
-			$dependencies[Nette\Caching\Cache::Expire] = self::ttlToSeconds($ttl);
+			$dependencies[Nette\Caching\Cache::Expire] = $ttl;
 		}
 
 		$this->storage->write($key, $value, $dependencies);
