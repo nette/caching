@@ -38,3 +38,14 @@ Assert::truthy($cache->load($key));
 // Sleeping 3 seconds
 sleep(3);
 Assert::null($cache->load($key));
+
+
+// non-positive expiration removes the item (zero would mean no expiration in memcached)
+$storage = $cache->getStorage();
+$storage->write($key, $value, []);
+$storage->write($key, $value, [Cache::Expire => 0]);
+Assert::null($storage->read($key));
+
+$storage->write($key, $value, []);
+$storage->bulkWrite([$key => $value], [Cache::Expire => -1]);
+Assert::null($storage->read($key));

@@ -144,6 +144,11 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		$expire = 0;
 		if (isset($dependencies[Cache::Expire])) {
 			$expire = (int) $dependencies[Cache::Expire];
+			if ($expire <= 0) { // zero would mean no expiration in memcached
+				$this->memcached->delete($key);
+				return;
+			}
+
 			if (!empty($dependencies[Cache::Sliding])) {
 				$meta[self::MetaDelta] = $expire; // sliding time
 			}
@@ -179,6 +184,11 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		$expire = 0;
 		if (isset($dependencies[Cache::Expire])) {
 			$expire = (int) $dependencies[Cache::Expire];
+			if ($expire <= 0) { // zero would mean no expiration in memcached
+				$this->bulkRemove(array_map(strval(...), array_keys($items)));
+				return;
+			}
+
 			if (!empty($dependencies[Cache::Sliding])) {
 				$meta[self::MetaDelta] = $expire; // sliding time
 			}
