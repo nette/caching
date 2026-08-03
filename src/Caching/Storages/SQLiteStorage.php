@@ -101,21 +101,32 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			: null;
 
 		$this->pdo->exec('BEGIN TRANSACTION');
-		$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')
-			->execute([$key, serialize($data), $expire, $slide]);
+		try {
+			$this->pdo->prepare('REPLACE INTO cache (key, data, expire, slide) VALUES (?, ?, ?, ?)')
+				->execute([$key, serialize($data), $expire, $slide]);
 
-		if (!empty($dependencies[Cache::Tags])) {
-			$arr = [];
-			foreach ($dependencies[Cache::Tags] as $tag) {
-				$arr[] = $key;
-				$arr[] = $tag;
+			if (!empty($dependencies[Cache::Tags])) {
+				$arr = [];
+				foreach ($dependencies[Cache::Tags] as $tag) {
+					$arr[] = $key;
+					$arr[] = $tag;
+				}
+
+				$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
+					->execute($arr);
 			}
 
-			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
-				->execute($arr);
-		}
+			$this->pdo->exec('COMMIT');
 
-		$this->pdo->exec('COMMIT');
+		} catch (\Throwable $e) {
+			try {
+				$this->pdo->exec('ROLLBACK');
+			} catch (\Throwable) {
+				// the transaction may have been rolled back automatically
+			}
+
+			throw $e;
+		}
 	}
 
 

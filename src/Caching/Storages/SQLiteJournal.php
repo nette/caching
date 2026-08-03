@@ -63,26 +63,36 @@ class SQLiteJournal implements Journal
 		}
 
 		$this->pdo->exec('BEGIN');
+		try {
+			if (!empty($dependencies[Cache::Tags])) {
+				$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute([$key]);
 
-		if (!empty($dependencies[Cache::Tags])) {
-			$this->pdo->prepare('DELETE FROM tags WHERE key = ?')->execute([$key]);
+				$arr = [];
+				foreach ($dependencies[Cache::Tags] as $tag) {
+					$arr[] = $key;
+					$arr[] = $tag;
+				}
 
-			$arr = [];
-			foreach ($dependencies[Cache::Tags] as $tag) {
-				$arr[] = $key;
-				$arr[] = $tag;
+				$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
+					->execute($arr);
 			}
 
-			$this->pdo->prepare('INSERT INTO tags (key, tag) SELECT ?, ?' . str_repeat('UNION SELECT ?, ?', intdiv(count($arr), 2) - 1))
-				->execute($arr);
-		}
+			if (isset($dependencies[Cache::Priority])) {
+				$this->pdo->prepare('REPLACE INTO priorities (key, priority) VALUES (?, ?)')
+					->execute([$key, (int) $dependencies[Cache::Priority]]);
+			}
 
-		if (isset($dependencies[Cache::Priority])) {
-			$this->pdo->prepare('REPLACE INTO priorities (key, priority) VALUES (?, ?)')
-				->execute([$key, (int) $dependencies[Cache::Priority]]);
-		}
+			$this->pdo->exec('COMMIT');
 
-		$this->pdo->exec('COMMIT');
+		} catch (\Throwable $e) {
+			try {
+				$this->pdo->exec('ROLLBACK');
+			} catch (\Throwable) {
+				// the transaction may have been rolled back automatically
+			}
+
+			throw $e;
+		}
 	}
 
 
@@ -122,19 +132,28 @@ class SQLiteJournal implements Journal
 		$unionSql = implode(' UNION ', $unions);
 
 		$this->pdo->exec('BEGIN IMMEDIATE');
+		try {
+			$stmt = $this->pdo->prepare($unionSql);
+			$stmt->execute($args);
+			$keys = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 
-		$stmt = $this->pdo->prepare($unionSql);
-		$stmt->execute($args);
-		$keys = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+			if (empty($keys)) {
+				$this->pdo->exec('COMMIT');
+				return [];
+			}
 
-		if (empty($keys)) {
+			$this->pdo->prepare("DELETE FROM tags WHERE key IN ($unionSql)")->execute($args);
+			$this->pdo->prepare("DELETE FROM priorities WHERE key IN ($unionSql)")->execute($args);
 			$this->pdo->exec('COMMIT');
-			return [];
-		}
+		} catch (\Throwable $e) {
+			try {
+				$this->pdo->exec('ROLLBACK');
+			} catch (\Throwable) {
+				// the transaction may have been rolled back automatically
+			}
 
-		$this->pdo->prepare("DELETE FROM tags WHERE key IN ($unionSql)")->execute($args);
-		$this->pdo->prepare("DELETE FROM priorities WHERE key IN ($unionSql)")->execute($args);
-		$this->pdo->exec('COMMIT');
+			throw $e;
+		}
 
 		return array_values($keys);
 	}
