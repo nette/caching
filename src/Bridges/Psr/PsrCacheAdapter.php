@@ -63,13 +63,27 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 
 
 	/**
+	 * @param  iterable<string>  $keys
 	 * @return \Generator<string, mixed>
 	 */
 	public function getMultiple(iterable $keys, mixed $default = null): \Generator
 	{
-		foreach ($keys as $name) {
-			yield $name => $this->get($name, $default);
-		}
+		$keys = $keys instanceof \Traversable
+			? iterator_to_array($keys, preserve_keys: false)
+			: array_values($keys);
+
+		$values = $this->storage instanceof Nette\Caching\BulkReader && $keys
+			? $this->storage->bulkRead(array_map(strval(...), $keys))
+			: null;
+
+		return (function () use ($keys, $values, $default): \Generator {
+			foreach ($keys as $key) {
+				yield $key => ($values === null
+					? $this->storage->read((string) $key)
+					: $values[$key] ?? null
+				) ?? $default;
+			}
+		})();
 	}
 
 
