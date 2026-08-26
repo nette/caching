@@ -35,6 +35,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 		$this->pdo = new \PDO('sqlite:' . $path);
 		$this->pdo->exec('
 			PRAGMA foreign_keys = ON;
+			PRAGMA journal_mode = WAL;
 			CREATE TABLE IF NOT EXISTS cache (
 				key BLOB NOT NULL PRIMARY KEY,
 				data BLOB NOT NULL,
@@ -48,7 +49,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			CREATE INDEX IF NOT EXISTS cache_expire ON cache(expire);
 			CREATE INDEX IF NOT EXISTS tags_key ON tags(key);
 			CREATE INDEX IF NOT EXISTS tags_tag ON tags(tag);
-			PRAGMA synchronous = OFF;
+			PRAGMA synchronous = NORMAL;
 		');
 
 		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
