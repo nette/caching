@@ -235,7 +235,7 @@ Delete all items with a priority equal to or less than 100:
 $cache->clean(priority: 100);
 ```
 
-In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `MemoryStorage` keeps them itself and `SQLiteStorage` does not support them.
+In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `RedisStorage` and `MemoryStorage` keep them themselves and `SQLiteStorage` does not support them.
 
 
 Clear Cache
@@ -325,12 +325,13 @@ $value = $psrCache->get('key', 'default');
 Storages
 ========
 
-A storage is an object that represents where data is physically stored. We can use a database, a Memcached server, or the most available storage, which are files on disk.
+A storage is an object that represents where data is physically stored. We can use a database, a Memcached or Redis server, or the most available storage, which are files on disk.
 
 Storage | 			Description
 --------|----------------------
 FileStorage | 		default storage with saving to files on disk
 MemcachedStorage | 	uses the `Memcached` server
+RedisStorage | 	uses the `Redis` server
 MemoryStorage | 	data are temporarily in memory
 SQLiteStorage | 	data is stored in SQLite database
 DevNullStorage | 	data aren't stored - for testing purposes
@@ -363,6 +364,19 @@ Requires PHP extension `memcached`.
 ```php
 $storage = new Nette\Caching\Storages\MemcachedStorage('10.0.0.158');
 ```
+
+RedisStorage
+------------
+
+The server [Redis](https://redis.io) is a fast in-memory data store whose adapter is `Nette\Caching\Storages\RedisStorage`. It keeps tags and priorities itself, so it needs no journal.
+
+Requires PHP extension `redis`.
+
+```php
+$storage = new Nette\Caching\Storages\RedisStorage('10.0.0.158');
+```
+
+All keys get the prefix `nette.cache:`, so the database can be shared with other data. An empty prefix means that the whole database belongs to the cache.
 
 MemoryStorage
 -------------

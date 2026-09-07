@@ -29,7 +29,7 @@ whose name still contains `%00`, and the empty root namespace (separator at
 position 0) creates no directory at all. Cleaning by `Namespaces` removes a
 namespace **together with the nested ones** in every storage that supports it:
 FileStorage deletes its directory and those whose name continues with `%00`,
-SQLite the key range.
+SQLite the key range, Redis the `SCAN` of the prefix.
 
 ## `null` is overloaded; `save($key, null)` **is** `remove()`
 
@@ -69,12 +69,13 @@ dependency" matrix is partly an illusion:
 
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
-only by `FileStorage` and `MemcachedStorage`; `Tags`/`Priority` need a `Journal`
-in those two, while `MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them
-natively. What a backend cannot honor, it rejects with `NotSupportedException` —
-except `MemoryStorage`, which **silently drops** `Callbacks` and `Items`. An
-agent adding a backend must reason about this **post-desugar** set, not the
-public constant list.
+by `FileStorage`, `MemcachedStorage` and `RedisStorage`; `Tags`/`Priority` need a
+`Journal` in `FileStorage` and `MemcachedStorage`, while `RedisStorage`,
+`MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them natively. What a
+backend cannot honor, it rejects with `NotSupportedException` — except
+`MemoryStorage`, which **silently drops** `Callbacks` and `Items`. An agent
+adding a backend must reason about this **post-desugar** set, not the public
+constant list.
 
 ## Conditions of `clean()`
 
@@ -132,10 +133,10 @@ user's generator and stores the result through `Cache::save()`, so the meaning o
   one that only reads it gets a miss; both would otherwise wait for the
   process's own lock.
 - **Stampede protection is real only for `FileStorage`.** No other built-in
-  storage implements `LockingReader` (`MemoryStorage`, `Memcached`, `SQLite`,
-  `DevNull`), so concurrent `load($key, $generator)` calls can all generate at
-  once there. "Nette caching prevents stampede" is a FileStorage guarantee, not a
-  universal one.
+  storage implements `LockingReader` (`MemoryStorage`, `Memcached`, `Redis`,
+  `SQLite`, `DevNull`), so concurrent `load($key, $generator)` calls can all
+  generate at once there. "Nette caching prevents stampede" is a FileStorage
+  guarantee, not a universal one.
 
 ## FileStorage on-disk format and atomic writes
 
@@ -176,7 +177,7 @@ Two more non-obvious behaviors:
 ## Backends honor different subsets of dependencies
 
 The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
-`MemoryStorage`, and `DevNullStorage` (Redis and others live outside this
+`RedisStorage`, `MemoryStorage`, and `DevNullStorage` (others live outside this
 package). They do **not** all honor the same dependencies, and the weakest are
 easy traps:
 
@@ -198,6 +199,20 @@ easy traps:
   notwithstanding. A failed `set()` (an item over the size limit) triggers
   `E_USER_WARNING`; `setMulti()` returns success even when an item was not
   stored, so `bulkWrite()` cannot tell.
+- **`RedisStorage`** honors `Expire`/`Sliding`/`Callbacks`, natively `Tags` and
+  `Priority` (auxiliary keys prefixed `"\x01"`, no journal) and cleaning by
+  `Namespaces` (a `SCAN` of the key prefix), and throws on `Items`. Its
+  `clean(All)` deletes only keys with its prefix (default `nette.cache:`); an
+  empty prefix makes it `flushDB()`. The set of tags of an item
+  (`"\x01k:"`) does **not** expire with it, so that a later write of the same key
+  still finds the old tags and removes it from their indexes; otherwise cleaning
+  by an old tag would delete the new value. Expired items leave these sets and
+  their index entries behind until `clean([])`, run probabilistically by the
+  constructor, removes them; it does so in Lua scripts, because checking and
+  removing in two steps would drop the entries of a key written in between. Every
+  value starts with 8 random bytes, its version; a sliding read extends the TTL
+  only while the item still has the version it read (Lua, `GETRANGE`), so an item
+  written in between keeps its own expiration.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).
