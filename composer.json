@@ -1,7 +1,7 @@
 {
 	"name": "nette/caching",
-	"description": "⚡ Nette Caching: a cache with an easy API and smart invalidation by expiration, tags, priorities or file changes. Storages for files, SQLite, Memcached and memory.",
-	"keywords": ["nette", "cache", "caching", "cache invalidation", "memcached", "sqlite", "psr-16"],
+	"description": "⚡ Nette Caching: a cache with an easy API and smart invalidation by expiration, tags, priorities or file changes. Storages for files, SQLite, Memcached, Redis and memory.",
+	"keywords": ["nette", "cache", "caching", "cache invalidation", "memcached", "redis", "sqlite", "psr-16"],
 	"homepage": "https://doc.nette.org/caching",
 	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
 	"authors": [
@@ -28,7 +28,8 @@
 		"latte/latte": "<3.1.4"
 	},
 	"suggest": {
-		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal"
+		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal",
+		"ext-redis": "to use RedisStorage"
 	},
 	"autoload": {
 		"classmap": ["src/"],

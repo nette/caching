@@ -66,12 +66,13 @@ dependency" matrix is partly an illusion:
 
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
-only by `FileStorage` and `MemcachedStorage`; `Tags`/`Priority` need a `Journal`
-in those two, while `MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them
-natively. What a backend cannot honor, it rejects with `NotSupportedException` —
-except `MemoryStorage`, which **silently drops** `Callbacks`, `Items` and
-`Namespaces`. An agent adding a backend must reason about this **post-desugar**
-set, not the public constant list.
+by `FileStorage`, `MemcachedStorage` and `RedisStorage`; `Tags`/`Priority` need a
+`Journal` in `FileStorage` and `MemcachedStorage`, while `RedisStorage`,
+`MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them natively. What a
+backend cannot honor, it rejects with `NotSupportedException` — except
+`MemoryStorage`, which **silently drops** `Callbacks`, `Items` and `Namespaces`.
+An agent adding a backend must reason about this **post-desugar** set, not the
+public constant list.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
@@ -97,10 +98,10 @@ The `Storage::lock` contract is explicit in the interface: *"Lock is released by
   after the lock clears), otherwise it only serializes the duplicate work
   instead of preventing it.
 - **Stampede protection is real only for `FileStorage`.** Every other built-in
-  storage (`MemoryStorage`, `Memcached`, `SQLite`, `DevNull`) implements `lock()`
-  as a **no-op**, so concurrent `load($key, $generator)` calls can all generate at
-  once there. "Nette caching prevents stampede" is a FileStorage guarantee, not a
-  universal one.
+  storage (`MemoryStorage`, `Memcached`, `Redis`, `SQLite`, `DevNull`) implements
+  `lock()` as a **no-op**, so concurrent `load($key, $generator)` calls can all
+  generate at once there. "Nette caching prevents stampede" is a FileStorage
+  guarantee, not a universal one.
 
 ## FileStorage on-disk format and atomic writes
 
@@ -139,7 +140,7 @@ Two more non-obvious behaviors:
 ## Backends honor different subsets of dependencies
 
 The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
-`MemoryStorage`, and `DevNullStorage` (Redis and others live outside this
+`RedisStorage`, `MemoryStorage`, and `DevNullStorage` (others live outside this
 package). They do **not** all honor the same dependencies, and the weakest are
 easy traps:
 
@@ -161,6 +162,19 @@ easy traps:
   notwithstanding. A failed `set()` (an item over the size limit) triggers
   `E_USER_WARNING`; `setMulti()` returns success even when an item was not
   stored, so `bulkWrite()` cannot tell.
+- **`RedisStorage`** honors `Expire`/`Sliding`/`Callbacks` and natively `Tags`,
+  `Priority` and `Namespaces` (auxiliary keys prefixed `"\x01"`, no journal), and
+  throws on `Items`. Its `clean(All)` deletes only keys with its prefix (default
+  `nette.cache:`); an empty prefix makes it `flushDB()`. The set of tags of an item
+  (`"\x01k:"`) does **not** expire with it, so that a later write of the same key
+  still finds the old tags and removes it from their indexes; otherwise cleaning
+  by an old tag would delete the new value. Expired items leave these sets and
+  their index entries behind until `clean([])`, run probabilistically by the
+  constructor, removes them; it does so in Lua scripts, because checking and
+  removing in two steps would drop the entries of a key written in between. Every
+  value starts with 8 random bytes, its version; a sliding read extends the TTL
+  only while the item still has the version it read (Lua, `GETRANGE`), so an item
+  written in between keeps its own expiration.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).

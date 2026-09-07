@@ -22,9 +22,9 @@ is extended at release time from the git history.
 ## Project Overview
 
 Nette Caching provides flexible caching with pluggable storage backends
-(File, SQLite, Memcached, Memory, DevNull), rich dependency tracking (expiration,
-tags, files, callbacks), a PSR-16 adapter, and a Latte `{cache}` tag. Part of the
-Nette Framework, usable standalone.
+(File, SQLite, Memcached, Redis, Memory, DevNull), rich dependency tracking
+(expiration, tags, files, callbacks), a PSR-16 adapter, and a Latte `{cache}`
+tag. Part of the Nette Framework, usable standalone.
 
 - **PHP Version**: 8.3 - 8.6
 - **Package**: `nette/caching`
@@ -67,11 +67,17 @@ composer phpstan
 - **`MemoryStorage` honors only `Expire`, `Sliding`, `Tags` and `Priority`**;
   `Callbacks` (so `Files`/`Constants`), `Items` and `Namespaces` are silently
   ignored - a trap when it stands in for a real backend.
-- **Unsupported dependencies throw.** `SQLiteStorage` and `MemcachedStorage`
-  throw `NotSupportedException` for a dependency or clean condition they cannot
-  honor.
+- **Unsupported dependencies throw.** `SQLiteStorage`, `MemcachedStorage` and
+  `RedisStorage` throw `NotSupportedException` for a dependency or clean condition
+  they cannot honor.
 - **FileStorage writes the real header last** (it doubles as a commit marker). Its
   constructor probabilistically runs a GC batch limited to 20 ms; only an
   explicit `clean([])` walks the whole cache.
+- **`RedisStorage` needs no Journal**: tags, priorities and namespaces live in
+  auxiliary keys prefixed with `"\x01"`; the set of tags of an item does not
+  expire with it. Expired items leave their entries there until `clean([])`, run
+  probabilistically by the constructor, removes them. The default prefix is
+  `nette.cache:`; an empty one makes the whole database the cache and
+  `clean(All)` calls `flushDB()`.
 - User-facing how-to (DI wiring, storage/journal config, PSR-16 usage, `{cache}`
   tag) is manual material and lives in the public web docs, not here.
