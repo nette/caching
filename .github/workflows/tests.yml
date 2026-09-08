@@ -12,12 +12,18 @@ jobs:
             fail-fast: false
 
         name: PHP ${{ matrix.php }} tests
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 6379:6379
         steps:
             - uses: KeisukeYamashita/memcached-actions@v1
             - uses: actions/checkout@v7
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
+                  extensions: memcached, redis
                   coverage: none
 
             - run: composer install --no-progress --prefer-dist
@@ -32,12 +38,18 @@ jobs:
     lowest_dependencies:
         name: Lowest Dependencies
         runs-on: ubuntu-latest
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 6379:6379
         steps:
             - uses: KeisukeYamashita/memcached-actions@v1
             - uses: actions/checkout@v7
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: 8.3
+                  extensions: memcached, redis
                   coverage: none
 
             - run: composer update --no-progress --prefer-dist --prefer-lowest --prefer-stable
@@ -47,12 +59,18 @@ jobs:
     code_coverage:
         name: Code Coverage
         runs-on: ubuntu-latest
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 6379:6379
         steps:
             - uses: KeisukeYamashita/memcached-actions@v1
             - uses: actions/checkout@v7
             - uses: shivammathur/setup-php@v2
               with:
                   php-version: 8.3
+                  extensions: memcached, redis
                   coverage: pcov
 
             - run: composer install --no-progress --prefer-dist
