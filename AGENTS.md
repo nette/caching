@@ -13,6 +13,12 @@ public manual is distilled.
 sense together (overloaded `null`, dependency desugaring, the cross-method lock,
 the FileStorage format). Read `docs/internals.md` before editing them.
 
+`docs/upgrading.md` records, per released version, every change visible to
+users of the package (renames, removals, deprecations, signatures, behavior,
+configuration), each with its commit hash; internal changes are not in it. It
+is the place to look up the history of a public symbol. Do not write to it; it
+is extended at release time from the git history.
+
 ## Project Overview
 
 Nette Caching provides flexible caching with pluggable storage backends
