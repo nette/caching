@@ -12,13 +12,13 @@ make sense together.
 - **`Storage`** (interface) is the backend contract: `read`/`write`/`remove`/
   `clean` (+ optional `BulkReader`/`BulkWriter` and `LockingReader`).
 - **`Journal`** (interface; the built-in implementation is `SQLiteJournal`) is an
-  **optional** side-index for tags and priorities. `FileStorage` and
-  `MemcachedStorage` need one **only** for `Tags`/`Priority` and throw if a write
-  uses them without a journal; `SQLiteStorage` never uses a journal (it has its
-  own `tags` table); everything else works journal-less. `Journal::clean()`
-  returns the list of keys to delete, **or `null` meaning "full cleanup, the
-  storage handles `All` itself"** — hence `clean(...) ?? []` in the storages;
-  don't confuse `null` with an empty list.
+  **optional** side-index for tags and priorities. `FileStorage`,
+  `MemcachedStorage` and `Psr16Storage` need one **only** for `Tags`/`Priority`
+  and throw if a write uses them without a journal; `SQLiteStorage` never uses a
+  journal (it has its own `tags` table); everything else works journal-less.
+  `Journal::clean()` returns the list of keys to delete, **or `null` meaning
+  "full cleanup, the storage handles `All` itself"** — hence `clean(...) ?? []`
+  in the storages; don't confuse `null` with an empty list.
 
 Keys are namespaced by `Cache`: the namespace has a `NamespaceSeparator`
 (`"\x00"`) appended, and `generateKey` = `namespace . xxh128(key)`. `derive()`
@@ -69,13 +69,13 @@ dependency" matrix is partly an illusion:
 
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
-by `FileStorage`, `MemcachedStorage` and `RedisStorage`; `Tags`/`Priority` need a
-`Journal` in `FileStorage` and `MemcachedStorage`, while `RedisStorage`,
-`MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them natively. What a
-backend cannot honor, it rejects with `NotSupportedException` — except
-`MemoryStorage`, which **silently drops** `Callbacks` and `Items`. An agent
-adding a backend must reason about this **post-desugar** set, not the public
-constant list.
+by `FileStorage`, `MemcachedStorage`, `RedisStorage` and `Psr16Storage`;
+`Tags`/`Priority` need a `Journal` in `FileStorage`, `MemcachedStorage` and
+`Psr16Storage`, while `RedisStorage`, `MemoryStorage` and (`Tags` only)
+`SQLiteStorage` keep them natively. What a backend cannot honor, it rejects with
+`NotSupportedException` — except `MemoryStorage`, which **silently drops**
+`Callbacks` and `Items`. An agent adding a backend must reason about this
+**post-desugar** set, not the public constant list.
 
 ## Conditions of `clean()`
 
@@ -97,9 +97,9 @@ array as a request to collect garbage, which therefore stays a matter of
 **`all` removes what the `Cache` object sees.** A `Cache` with a namespace sends
 the storage `Namespaces` with its own namespace instead of `All`, so the
 namespaces derived from it go too and the others stay; only a `Cache` without a
-namespace sends `All` and clears the entire storage. `MemcachedStorage` cannot
-clean a namespace, so `all` on a `Cache` with a namespace throws
-`NotSupportedException` there.
+namespace sends `All` and clears the entire storage. `MemcachedStorage` and
+`Psr16Storage` cannot clean a namespace, so `all` on a `Cache` with a namespace
+throws `NotSupportedException` there.
 
 ## The generator runs under the storage's lock (and only some storages lock)
 
@@ -141,7 +141,7 @@ user's generator and stores the result through `Cache::save()`, so the meaning o
   longer than the TTL therefore means duplicate work, never a wrong value.
 - **Stampede protection is real only for `FileStorage` and `RedisStorage`.** No
   other built-in storage implements `LockingReader` (`MemoryStorage`,
-  `Memcached`, `SQLite`, `DevNull`), so concurrent
+  `Memcached`, `SQLite`, `Psr16`, `DevNull`), so concurrent
   `load($key, $generator)` calls can all generate at once there. "Nette caching
   prevents stampede" is a guarantee of those two, not a universal one.
 
@@ -184,9 +184,9 @@ Two more non-obvious behaviors:
 ## Backends honor different subsets of dependencies
 
 The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
-`RedisStorage`, `MemoryStorage`, and `DevNullStorage` (others live outside this
-package). They do **not** all honor the same dependencies, and the weakest are
-easy traps:
+`RedisStorage`, `MemoryStorage`, and `DevNullStorage`, plus `Psr16Storage` in
+`Bridges\Psr` (others live outside this package). They do **not** all honor the
+same dependencies, and the weakest are easy traps:
 
 - **`MemoryStorage`** honors `Expire`/`Sliding`, `Tags`, `Priority` and cleaning
   by `Namespaces` in a process-local map, but **silently drops** `Callbacks` — so
@@ -220,6 +220,13 @@ easy traps:
   value starts with 8 random bytes, its version; a sliding read extends the TTL
   only while the item still has the version it read (Lua, `GETRANGE`), so an item
   written in between keeps its own expiration.
+- **`Psr16Storage`** puts any PSR-16 cache under Nette `Cache`: it honors
+  `Expire`/`Callbacks`, needs a `Journal` for `Tags`/`Priority`, and throws for
+  `Items`, cleaning by `Namespaces` and `Sliding` — PSR-16 cannot extend a TTL,
+  and reading the item and writing it back would restore one removed in between.
+  Keys are hashed (xxh128) into the charset PSR-16 guarantees. PSR-16 cannot list
+  keys, so its `clean(All)` calls `clear()` on the whole underlying cache —
+  **wiping foreign data sharing it**, prefix notwithstanding.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).

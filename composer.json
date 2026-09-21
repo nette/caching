@@ -31,7 +31,7 @@
 		"ext-pdo_sqlite": "to use SQLiteStorage or SQLiteJournal",
 		"ext-memcached": "to use MemcachedStorage",
 		"ext-redis": "to use RedisStorage",
-		"psr/simple-cache": "to use PsrCacheAdapter"
+		"psr/simple-cache": "to use PsrCacheAdapter or Psr16Storage"
 	},
 	"autoload": {
 		"classmap": ["src/"],

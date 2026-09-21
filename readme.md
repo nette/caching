@@ -217,7 +217,7 @@ $cache->clean(tags: ["comments/$articleId"]);
 
 What have we achieved? That our HTML cache will be invalidated (deleted) whenever the article or comments change. When editing an article with ID = 10, the tag `article/10` is forced to be invalidated and the HTML page carrying the tag is deleted from the cache. The same happens when you insert a new comment under the relevant article.
 
-In `FileStorage` and `MemcachedStorage`, tags require a [Journal](#Journal); the other storages keep them themselves.
+In `FileStorage`, `MemcachedStorage` and `Psr16Storage`, tags require a [Journal](#Journal); the other storages keep them themselves.
 
 
 Invalidation by Priority
@@ -235,7 +235,7 @@ Delete all items with a priority equal to or less than 100:
 $cache->clean(priority: 100);
 ```
 
-In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `RedisStorage` and `MemoryStorage` keep them themselves and `SQLiteStorage` does not support them.
+In `FileStorage`, `MemcachedStorage` and `Psr16Storage`, priorities require a [Journal](#Journal); `RedisStorage` and `MemoryStorage` keep them themselves and `SQLiteStorage` does not support them.
 
 
 Clear Cache
@@ -321,11 +321,13 @@ $psrCache->set('key', 'value', 3600); // stores the value for 1 hour
 $value = $psrCache->get('key', 'default');
 ```
 
+The opposite direction is covered by [Psr16Storage](#Psr16Storage), which turns any PSR-16 cache into a storage.
+
 
 Storages
 ========
 
-A storage is an object that represents where data is physically stored. We can use a database, a Memcached or Redis server, or the most available storage, which are files on disk.
+A storage is an object that represents where data is physically stored. We can use a database, a Memcached or Redis server, any PSR-16 cache, or the most available storage, which are files on disk.
 
 Storage | 			Description
 --------|----------------------
@@ -334,6 +336,7 @@ MemcachedStorage | 	uses the `Memcached` server
 RedisStorage | 	uses the `Redis` server
 MemoryStorage | 	data are temporarily in memory
 SQLiteStorage | 	data is stored in SQLite database
+Psr16Storage | 	data is stored in any PSR-16 cache
 DevNullStorage | 	data aren't stored - for testing purposes
 
 
@@ -403,6 +406,17 @@ Requires PHP extensions `pdo` and `pdo_sqlite`.
 
 ```php
 $storage = new Nette\Caching\Storages\SQLiteStorage('/path/to/cache.sdb');
+```
+
+
+Psr16Storage
+------------
+
+`Nette\Bridges\Psr\Psr16Storage` makes any [PSR-16](https://www.php-fig.org/psr/psr-16/) cache usable as a storage. Tags and priorities require a [Journal](#Journal). Clearing the whole cache calls `clear()` on the PSR-16 cache, so it also removes data of anyone else sharing it.
+
+```php
+// $simpleCache is any Psr\SimpleCache\CacheInterface
+$storage = new Nette\Bridges\Psr\Psr16Storage($simpleCache, journal: $journal);
 ```
 
 
