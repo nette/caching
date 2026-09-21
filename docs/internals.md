@@ -66,13 +66,13 @@ dependency" matrix is partly an illusion:
 
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
-by `FileStorage`, `MemcachedStorage` and `RedisStorage`; `Tags`/`Priority` need a
-`Journal` in `FileStorage` and `MemcachedStorage`, while `RedisStorage`,
-`MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them natively. What a
-backend cannot honor, it rejects with `NotSupportedException` — except
-`MemoryStorage`, which **silently drops** `Callbacks`, `Items` and `Namespaces`.
-An agent adding a backend must reason about this **post-desugar** set, not the
-public constant list.
+by `FileStorage`, `MemcachedStorage`, `RedisStorage` and `Psr16Storage`;
+`Tags`/`Priority` need a `Journal` in `FileStorage`, `MemcachedStorage` and
+`Psr16Storage`, while `RedisStorage`, `MemoryStorage` and (`Tags` only)
+`SQLiteStorage` keep them natively. What a backend cannot honor, it rejects with
+`NotSupportedException` — except `MemoryStorage`, which **silently drops**
+`Callbacks`, `Items` and `Namespaces`. An agent adding a backend must reason
+about this **post-desugar** set, not the public constant list.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
@@ -140,9 +140,9 @@ Two more non-obvious behaviors:
 ## Backends honor different subsets of dependencies
 
 The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
-`RedisStorage`, `MemoryStorage`, and `DevNullStorage` (others live outside this
-package). They do **not** all honor the same dependencies, and the weakest are
-easy traps:
+`RedisStorage`, `MemoryStorage`, and `DevNullStorage`, plus `Psr16Storage` in
+`Bridges\Psr` (others live outside this package). They do **not** all honor the
+same dependencies, and the weakest are easy traps:
 
 - **`MemoryStorage`** honors `Expire`/`Sliding`, `Tags` and `Priority` in a
   process-local map, but **silently drops** `Callbacks` — so `Files`/`Constants`
@@ -175,6 +175,13 @@ easy traps:
   value starts with 8 random bytes, its version; a sliding read extends the TTL
   only while the item still has the version it read (Lua, `GETRANGE`), so an item
   written in between keeps its own expiration.
+- **`Psr16Storage`** puts any PSR-16 cache under Nette `Cache`: it honors
+  `Expire`/`Callbacks`, needs a `Journal` for `Tags`/`Priority`, and throws for
+  `Items`, cleaning by `Namespaces` and `Sliding` — PSR-16 cannot extend a TTL,
+  and reading the item and writing it back would restore one removed in between.
+  Keys are hashed (xxh128) into the charset PSR-16 guarantees. PSR-16 cannot list
+  keys, so its `clean(All)` calls `clear()` on the whole underlying cache —
+  **wiping foreign data sharing it**, prefix notwithstanding.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).

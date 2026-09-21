@@ -23,8 +23,9 @@ is extended at release time from the git history.
 
 Nette Caching provides flexible caching with pluggable storage backends
 (File, SQLite, Memcached, Redis, Memory, DevNull), rich dependency tracking
-(expiration, tags, files, callbacks), a PSR-16 adapter, and a Latte `{cache}`
-tag. Part of the Nette Framework, usable standalone.
+(expiration, tags, files, callbacks), PSR-16 bridges in both directions
+(`PsrCacheAdapter`, `Psr16Storage`), and a Latte `{cache}` tag. Part of the
+Nette Framework, usable standalone.
 
 - **PHP Version**: 8.3 - 8.6
 - **Package**: `nette/caching`
@@ -67,9 +68,9 @@ composer phpstan
 - **`MemoryStorage` honors only `Expire`, `Sliding`, `Tags` and `Priority`**;
   `Callbacks` (so `Files`/`Constants`), `Items` and `Namespaces` are silently
   ignored - a trap when it stands in for a real backend.
-- **Unsupported dependencies throw.** `SQLiteStorage`, `MemcachedStorage` and
-  `RedisStorage` throw `NotSupportedException` for a dependency or clean condition
-  they cannot honor.
+- **Unsupported dependencies throw.** `SQLiteStorage`, `MemcachedStorage`,
+  `RedisStorage` and `Psr16Storage` throw `NotSupportedException` for a dependency
+  or clean condition they cannot honor.
 - **FileStorage writes the real header last** (it doubles as a commit marker). Its
   constructor probabilistically runs a GC batch limited to 20 ms; only an
   explicit `clean([])` walks the whole cache.
@@ -79,5 +80,8 @@ composer phpstan
   probabilistically by the constructor, removes them. The default prefix is
   `nette.cache:`; an empty one makes the whole database the cache and
   `clean(All)` calls `flushDB()`.
+- **`Psr16Storage` hashes keys** (xxh128) to the PSR-16 safe charset and needs a
+  Journal for tags and priorities; `Sliding` is not supported, and `clean(All)`
+  clears the whole underlying PSR-16 cache regardless of the prefix.
 - User-facing how-to (DI wiring, storage/journal config, PSR-16 usage, `{cache}`
   tag) is manual material and lives in the public web docs, not here.
