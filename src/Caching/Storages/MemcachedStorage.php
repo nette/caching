@@ -127,9 +127,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-	public function write(string $key, mixed $data, array $dp): void
+	public function write(string $key, mixed $data, array $dependencies): void
 	{
-		if (isset($dp[Cache::Items])) {
+		if (isset($dependencies[Cache::Items])) {
 			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
 		}
 
@@ -139,58 +139,58 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		];
 
 		$expire = 0;
-		if (isset($dp[Cache::Expire])) {
-			$expire = (int) $dp[Cache::Expire];
-			if (!empty($dp[Cache::Sliding])) {
+		if (isset($dependencies[Cache::Expire])) {
+			$expire = (int) $dependencies[Cache::Expire];
+			if (!empty($dependencies[Cache::Sliding])) {
 				$meta[self::MetaDelta] = $expire; // sliding time
 			}
 		}
 
-		if (isset($dp[Cache::Callbacks])) {
-			$meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
+		if (isset($dependencies[Cache::Callbacks])) {
+			$meta[self::MetaCallbacks] = $dependencies[Cache::Callbacks];
 		}
 
-		if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
+		if (isset($dependencies[Cache::Tags]) || isset($dependencies[Cache::Priority])) {
 			if (!$this->journal) {
 				throw new Nette\InvalidStateException('CacheJournal has not been provided.');
 			}
 
-			$this->journal->write($key, $dp);
+			$this->journal->write($key, $dependencies);
 		}
 
 		$this->memcached->set($key, $meta, $expire);
 	}
 
 
-	public function bulkWrite(array $items, array $dp): void
+	public function bulkWrite(array $items, array $dependencies): void
 	{
-		if (isset($dp[Cache::Items])) {
+		if (isset($dependencies[Cache::Items])) {
 			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
 		}
 
 		$meta = $records = [];
 		$expire = 0;
-		if (isset($dp[Cache::Expire])) {
-			$expire = (int) $dp[Cache::Expire];
-			if (!empty($dp[Cache::Sliding])) {
+		if (isset($dependencies[Cache::Expire])) {
+			$expire = (int) $dependencies[Cache::Expire];
+			if (!empty($dependencies[Cache::Sliding])) {
 				$meta[self::MetaDelta] = $expire; // sliding time
 			}
 		}
 
-		if (isset($dp[Cache::Callbacks])) {
-			$meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
+		if (isset($dependencies[Cache::Callbacks])) {
+			$meta[self::MetaCallbacks] = $dependencies[Cache::Callbacks];
 		}
 
 		foreach ($items as $key => $meta[self::MetaData]) {
 			$key = urlencode($this->prefix . $key);
 			$records[$key] = $meta;
 
-			if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
+			if (isset($dependencies[Cache::Tags]) || isset($dependencies[Cache::Priority])) {
 				if (!$this->journal) {
 					throw new Nette\InvalidStateException('CacheJournal has not been provided.');
 				}
 
-				$this->journal->write($key, $dp);
+				$this->journal->write($key, $dependencies);
 			}
 		}
 

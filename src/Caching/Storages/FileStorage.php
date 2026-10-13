@@ -131,23 +131,23 @@ class FileStorage implements Nette\Caching\Storage
 	}
 
 
-	/** @param  array<string, mixed>  $dp */
-	public function write(string $key, mixed $data, array $dp): void
+	/** @param  array<string, mixed>  $dependencies */
+	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		$meta = [
 			self::MetaTime => microtime(),
 		];
 
-		if (isset($dp[Cache::Expire])) {
-			if (empty($dp[Cache::Sliding])) {
-				$meta[self::MetaExpire] = $dp[Cache::Expire] + time(); // absolute time
+		if (isset($dependencies[Cache::Expire])) {
+			if (empty($dependencies[Cache::Sliding])) {
+				$meta[self::MetaExpire] = $dependencies[Cache::Expire] + time(); // absolute time
 			} else {
-				$meta[self::MetaDelta] = (int) $dp[Cache::Expire]; // sliding time
+				$meta[self::MetaDelta] = (int) $dependencies[Cache::Expire]; // sliding time
 			}
 		}
 
-		if (isset($dp[Cache::Items])) {
-			foreach ($dp[Cache::Items] as $item) {
+		if (isset($dependencies[Cache::Items])) {
+			foreach ($dependencies[Cache::Items] as $item) {
 				$depFile = $this->getCacheFile($item);
 				$m = $this->readMetaAndLock($depFile, LOCK_SH);
 				$meta[self::MetaItems][$depFile] = $m[self::MetaTime] ?? null;
@@ -155,8 +155,8 @@ class FileStorage implements Nette\Caching\Storage
 			}
 		}
 
-		if (isset($dp[Cache::Callbacks])) {
-			$meta[self::MetaCallbacks] = $dp[Cache::Callbacks];
+		if (isset($dependencies[Cache::Callbacks])) {
+			$meta[self::MetaCallbacks] = $dependencies[Cache::Callbacks];
 		}
 
 		if (!isset($this->locks[$key])) {
@@ -171,12 +171,12 @@ class FileStorage implements Nette\Caching\Storage
 
 		$cacheFile = $this->getCacheFile($key);
 
-		if (isset($dp[Cache::Tags]) || isset($dp[Cache::Priority])) {
+		if (isset($dependencies[Cache::Tags]) || isset($dependencies[Cache::Priority])) {
 			if (!$this->journal) {
 				throw new Nette\InvalidStateException('CacheJournal has not been provided.');
 			}
 
-			$this->journal->write($cacheFile, $dp);
+			$this->journal->write($cacheFile, $dependencies);
 		}
 
 		ftruncate($handle, 0);
