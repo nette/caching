@@ -9,7 +9,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function array_values, count, extension_loaded, implode, is_file, str_repeat, touch;
+use function count, extension_loaded;
 
 
 /**

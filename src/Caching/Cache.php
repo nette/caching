@@ -8,7 +8,7 @@
 namespace Nette\Caching;
 
 use Nette;
-use function array_keys, array_map, array_shift, array_slice, array_unique, array_values, constant, count, defined, filemtime, func_get_args, is_array, is_object, is_scalar, serialize, substr, time;
+use function count, func_get_args, is_array, is_object, is_scalar;
 
 
 /**

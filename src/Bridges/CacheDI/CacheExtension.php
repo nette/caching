@@ -9,6 +9,7 @@ namespace Nette\Bridges\CacheDI;
 
 use Nette;
 use Nette\Utils\FileSystem;
+use function extension_loaded;
 
 
 /**

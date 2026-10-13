@@ -9,8 +9,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function dirname, fclose, filemtime, flock, fopen, fseek, ftruncate, fwrite, is_array, is_dir, is_string, microtime, mkdir, mt_getrandmax, mt_rand, rmdir, serialize, str_pad, str_repeat, stream_get_contents, strlen, strrpos, substr_replace, time, touch, unlink, unserialize, urlencode;
-use const LOCK_EX, LOCK_SH, LOCK_UN, STR_PAD_LEFT;
+use function is_array, is_string, strlen;
 
 
 /**

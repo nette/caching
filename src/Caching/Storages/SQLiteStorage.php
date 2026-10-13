@@ -9,7 +9,7 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function array_merge, count, is_file, serialize, str_repeat, time, touch, unserialize;
+use function count;
 
 
 /**
