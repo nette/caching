@@ -8,8 +8,7 @@
 namespace Nette\Bridges\CacheLatte;
 
 use Latte;
-use Latte\Compiler\Nodes\AuxiliaryNode;
-use Latte\Compiler\Nodes\TemplateNode;
+use Latte\Compiler\Nodes\{AuxiliaryNode, TemplateNode};
 use Latte\Compiler\Tag;
 use Nette\Caching\Storage;
 

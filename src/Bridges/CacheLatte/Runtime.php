@@ -9,8 +9,7 @@ namespace Nette\Bridges\CacheLatte;
 
 use Latte;
 use Nette;
-use Nette\Caching\Cache;
-use Nette\Caching\OutputHelper;
+use Nette\Caching\{Cache, OutputHelper};
 use function array_key_exists, count, is_string;
 
 

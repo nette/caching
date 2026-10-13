@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-use Nette\Caching\BulkReader;
-use Nette\Caching\BulkWriter;
-use Nette\Caching\Storage;
+use Nette\Caching\{BulkReader, BulkWriter, Storage};
 
 class TestStorage implements Storage
 {

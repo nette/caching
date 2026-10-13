@@ -6,8 +6,7 @@
  */
 
 use Nette\Caching\Cache;
-use Nette\Caching\Storages\FileStorage;
-use Nette\Caching\Storages\SQLiteJournal;
+use Nette\Caching\Storages\{FileStorage, SQLiteJournal};
 use Tester\Assert;
 
 
