@@ -17,7 +17,7 @@ use function is_array, is_string, strlen;
  */
 class FileStorage implements Nette\Caching\Storage
 {
-	/**
+	/*
 	 * Atomic thread safe logic:
 	 *
 	 * 1) reading: open(r+b), lock(SH), read
@@ -47,21 +47,17 @@ class FileStorage implements Nette\Caching\Storage
 	/** Probability (0-1) that the garbage collector runs on each instantiation. */
 	public static float $gcProbability = 0.001;
 
-	private string $dir;
-	private ?Journal $journal;
-
 	/** @var array<string, resource>  key => file handle */
 	private array $locks;
 
 
-	public function __construct(string $dir, ?Journal $journal = null)
-	{
+	public function __construct(
+		private readonly string $dir,
+		private readonly ?Journal $journal = null,
+	) {
 		if (!is_dir($dir) || !Nette\Utils\FileSystem::isAbsolute($dir)) {
 			throw new Nette\DirectoryNotFoundException("Directory '$dir' not found or is not absolute.");
 		}
-
-		$this->dir = $dir;
-		$this->journal = $journal;
 
 		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
 			$this->clean([]);
@@ -262,9 +258,7 @@ class FileStorage implements Nette\Caching\Storage
 				}
 			}
 
-			if ($this->journal) {
-				$this->journal->clean($conditions);
-			}
+			$this->journal?->clean($conditions);
 
 			return;
 
@@ -279,7 +273,7 @@ class FileStorage implements Nette\Caching\Storage
 					$this->delete((string) $entry);
 				}
 
-				@rmdir($dir); // may already contain new files
+				@rmdir($dir); // @ directory may already contain new files
 			}
 		}
 

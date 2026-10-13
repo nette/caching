@@ -52,7 +52,7 @@ class Runtime
 				return true;
 			}
 
-			$key = array_merge([$key], array_intersect_key($args, range(0, count($args))));
+			$key = [$key, ...array_intersect_key($args, range(0, count($args)))];
 		}
 
 		if ($this->stack) {

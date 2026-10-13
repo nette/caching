@@ -7,7 +7,6 @@
 use Nette\Caching\Cache;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 require __DIR__ . '/Cache.php';
@@ -46,7 +45,6 @@ Assert::same('value2', $value);
 $data = $cache->load('key2', fn() => "won't load this value");
 Assert::same('value2', $data['data']);
 Assert::same($dependencies, $data['dependencies']);
-
 
 
 // load twice with fallback, pass dependencies

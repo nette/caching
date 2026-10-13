@@ -8,7 +8,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -19,7 +18,7 @@ $cache = new Cache(new FileStorage(getTempDir()));
 
 
 $dependentFile = getTempDir() . '/spec.file';
-@unlink($dependentFile);
+@unlink($dependentFile); // @ file may not exist
 
 // Writing cache...
 $cache->save($key, $value, [

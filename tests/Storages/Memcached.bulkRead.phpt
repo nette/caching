@@ -8,7 +8,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -20,7 +19,7 @@ Tester\Environment::lock('memcached-files', getTempDir());
 
 
 
-$cache = new Cache(new MemcachedStorage('localhost'));
+$cache = new Cache(new MemcachedStorage);
 
 $cache->save('foo', 'bar');
 

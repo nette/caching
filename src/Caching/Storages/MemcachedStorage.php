@@ -83,7 +83,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 		// verify dependencies
 		if (!empty($meta[self::MetaCallbacks]) && !Cache::checkCallbacks($meta[self::MetaCallbacks])) {
-			$this->memcached->delete($key, 0);
+			$this->memcached->delete($key);
 			return null;
 		}
 
@@ -115,7 +115,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		}
 
 		if (!empty($deleteKeys)) {
-			$this->memcached->deleteMulti($deleteKeys, 0);
+			$this->memcached->deleteMulti($deleteKeys);
 		}
 
 		return $result;
@@ -200,13 +200,13 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 	public function remove(string $key): void
 	{
-		$this->memcached->delete(urlencode($this->prefix . $key), 0);
+		$this->memcached->delete(urlencode($this->prefix . $key));
 	}
 
 
 	public function bulkRemove(array $keys): void
 	{
-		$this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys), 0);
+		$this->memcached->deleteMulti(array_map(fn($key) => urlencode($this->prefix . $key), $keys));
 	}
 
 
@@ -217,7 +217,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 		} elseif ($this->journal) {
 			foreach ($this->journal->clean($conditions) ?? [] as $entry) {
-				$this->memcached->delete($entry, 0);
+				$this->memcached->delete($entry);
 			}
 		}
 	}

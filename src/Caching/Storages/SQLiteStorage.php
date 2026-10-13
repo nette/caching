@@ -66,7 +66,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 	public function bulkRead(array $keys): array
 	{
 		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
-		$stmt->execute(array_merge($keys, [time()]));
+		$stmt->execute([...$keys, time()]);
 		$result = [];
 		$updateSlide = [];
 		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
@@ -79,7 +79,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 
 		if (!empty($updateSlide)) {
 			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
-			$stmt->execute(array_merge([time()], $updateSlide));
+			$stmt->execute([time(), ...$updateSlide]);
 		}
 
 		return $result;
@@ -138,7 +138,7 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 			if (!empty($conditions[Cache::Tags])) {
 				$tags = $conditions[Cache::Tags];
 				$sql .= ' OR key IN (SELECT key FROM tags WHERE tag IN (?' . str_repeat(',?', count($tags) - 1) . '))';
-				$args = array_merge($args, $tags);
+				$args = [...$args, ...$tags];
 			}
 
 			$this->pdo->prepare($sql)->execute($args);

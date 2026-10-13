@@ -2,6 +2,7 @@
 
 use Nette\Caching\{BulkReader, BulkWriter, Storage};
 
+
 class TestStorage implements Storage
 {
 	private array $data = [];

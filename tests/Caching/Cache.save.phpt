@@ -7,14 +7,13 @@
 use Nette\Caching\Cache;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 require __DIR__ . '/Cache.php';
 
 
 // save value with dependencies
-$storage = new testStorage;
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::Tags => ['tag']];
 
@@ -26,7 +25,7 @@ Assert::same($dependencies, $res['dependencies']);
 
 
 // save callback return value
-$storage = new testStorage;
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 
 $cache->save('key', fn() => 'value');
@@ -37,7 +36,7 @@ Assert::same([], $res['dependencies']);
 
 
 // save callback return value with dependencies
-$storage = new testStorage;
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::Tags => ['tag']];
 
@@ -49,7 +48,7 @@ Assert::same($dependencies, $res['dependencies']);
 
 
 // do not save already expired data
-$storage = new testStorage;
+$storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::Expire => new DateTime];
 

@@ -7,7 +7,6 @@
 use Nette\Caching\Cache;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 require __DIR__ . '/Cache.php';

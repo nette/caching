@@ -8,7 +8,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -22,11 +21,11 @@ Tester\Environment::lock('memcached-files', getTempDir());
 $key = 'nette-memcached-files-key';
 $value = 'rulez';
 
-$cache = new Cache(new MemcachedStorage('localhost'));
+$cache = new Cache(new MemcachedStorage);
 
 
 $dependentFile = getTempDir() . '/spec-memcached.file';
-@unlink($dependentFile);
+@unlink($dependentFile); // @ file may not exist
 
 // Writing cache...
 $cache->save($key, $value, [

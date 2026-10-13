@@ -8,7 +8,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -19,7 +18,7 @@ try {
 	$cache->load('key', function () {
 		throw new Exception;
 	});
-} catch (Throwable $e) {
+} catch (Throwable) {
 }
 
 Assert::noError(

@@ -8,7 +8,6 @@ use Nette\Bridges\CacheDI\CacheExtension;
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 

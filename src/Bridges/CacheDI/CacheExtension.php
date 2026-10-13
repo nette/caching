@@ -38,12 +38,12 @@ final class CacheExtension extends Nette\DI\CompilerExtension
 		if (extension_loaded('pdo_sqlite')) {
 			$builder->addDefinition($this->prefix('journal'))
 				->setType(Nette\Caching\Storages\Journal::class)
-				->setFactory(Nette\Caching\Storages\SQLiteJournal::class, [$this->tempDir . '/journal.s3db']);
+				->setCreator(Nette\Caching\Storages\SQLiteJournal::class, [$this->tempDir . '/journal.s3db']);
 		}
 
 		$builder->addDefinition($this->prefix('storage'))
 			->setType(Nette\Caching\Storage::class)
-			->setFactory(Nette\Caching\Storages\FileStorage::class, [$this->tempDir]);
+			->setCreator(Nette\Caching\Storages\FileStorage::class, [$this->tempDir]);
 
 		if ($this->name === 'cache') {
 			if (extension_loaded('pdo_sqlite')) {

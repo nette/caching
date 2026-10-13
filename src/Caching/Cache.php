@@ -63,17 +63,18 @@ class Cache
 	public const ALL = self::All;
 
 	/** @internal */
-	public const
-		NamespaceSeparator = "\x00",
-		NAMESPACE_SEPARATOR = self::NamespaceSeparator;
+	public const NamespaceSeparator = "\x00";
 
-	private Storage $storage;
-	private string $namespace;
+	/** @deprecated use Cache::NamespaceSeparator */
+	public const NAMESPACE_SEPARATOR = self::NamespaceSeparator;
+
+	private readonly string $namespace;
 
 
-	public function __construct(Storage $storage, ?string $namespace = null)
-	{
-		$this->storage = $storage;
+	public function __construct(
+		private readonly Storage $storage,
+		?string $namespace = null,
+	) {
 		$this->namespace = $namespace . self::NamespaceSeparator;
 	}
 
@@ -283,7 +284,7 @@ class Cache
 		// convert FILES into CALLBACKS
 		if (isset($dp[self::Files])) {
 			foreach (array_unique((array) $dp[self::Files]) as $item) {
-				$dp[self::Callbacks][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ - stat may fail
+				$dp[self::Callbacks][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ file may not exist
 			}
 
 			unset($dp[self::Files]);
@@ -437,6 +438,6 @@ class Cache
 	 */
 	private static function checkFile(string $file, ?int $time): bool
 	{
-		return @filemtime($file) == $time; // @ - stat may fail
+		return @filemtime($file) == $time; // @ file may not exist; intentionally ==, so that false equals null
 	}
 }

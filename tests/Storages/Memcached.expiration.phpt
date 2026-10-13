@@ -8,7 +8,6 @@ use Nette\Caching\Cache;
 use Nette\Caching\Storages\MemcachedStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -22,7 +21,7 @@ Tester\Environment::lock('memcached-expiration', getTempDir());
 $key = 'nette-memcached-expiration-key';
 $value = 'rulez';
 
-$cache = new Cache(new MemcachedStorage('localhost'));
+$cache = new Cache(new MemcachedStorage);
 
 
 // Writing cache...

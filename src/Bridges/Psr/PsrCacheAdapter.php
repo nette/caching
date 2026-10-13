@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * This file is part of the Tracy (https://tracy.nette.org)
+ * This file is part of the Nette Framework (https://nette.org)
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
@@ -29,7 +29,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	}
 
 
-	public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
+	public function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
 	{
 		$dependencies = [];
 		if ($ttl !== null) {
@@ -68,9 +68,9 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 
 
 	/**
-	 * @param iterable<int|string, mixed>  $values
+	 * @param iterable<mixed, mixed>  $values
 	 */
-	public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
+	public function setMultiple(iterable $values, int|DateInterval|null $ttl = null): bool
 	{
 		$ttl = self::ttlToSeconds($ttl);
 
@@ -82,7 +82,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	}
 
 
-	/** @param  iterable<int|string, string>  $keys */
+	/** @param  iterable<string>  $keys */
 	public function deleteMultiple(iterable $keys): bool
 	{
 		foreach ($keys as $value) {
@@ -99,7 +99,7 @@ class PsrCacheAdapter implements Psr\SimpleCache\CacheInterface
 	}
 
 
-	private static function ttlToSeconds(null|int|DateInterval $ttl = null): ?int
+	private static function ttlToSeconds(int|DateInterval|null $ttl = null): ?int
 	{
 		if ($ttl instanceof DateInterval) {
 			return self::dateIntervalToSeconds($ttl);

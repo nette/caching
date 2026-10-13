@@ -8,7 +8,6 @@
 use Nette\Caching\Storages\FileStorage;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -49,8 +48,8 @@ for ($counter = 0; $counter < 1000; $counter++) {
 	}
 
 	// remove
-	//$ok = $storage->remove((string) rand(0, COUNT_FILES));
-	//if (!$ok) $hits['cantdelete']++;
+	// $ok = $storage->remove((string) rand(0, COUNT_FILES));
+	// if (!$ok) $hits['cantdelete']++;
 
 	// read
 	$res = $storage->read((string) rand(0, COUNT_FILES));
