@@ -1,17 +1,13 @@
 {
 	"name": "nette/caching",
-	"description": "⏱ Nette Caching: library with easy-to-use API and many cache backends.",
-	"keywords": ["nette", "cache", "journal", "sqlite", "memcached"],
-	"homepage": "https://nette.org",
+	"description": "⚡ Nette Caching: a cache with an easy API and smart invalidation by expiration, tags, priorities or file changes. Storages for files, SQLite, Memcached and memory.",
+	"keywords": ["nette", "cache", "caching", "cache invalidation", "memcached", "sqlite", "psr-16"],
+	"homepage": "https://doc.nette.org/caching",
 	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
 	"authors": [
 		{
 			"name": "David Grudl",
 			"homepage": "https://davidgrudl.com"
-		},
-		{
-			"name": "Nette Community",
-			"homepage": "https://nette.org/contributors"
 		}
 	],
 	"require": {
