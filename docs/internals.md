@@ -83,6 +83,11 @@ The `Storage::lock` contract is explicit in the interface: *"Lock is released by
   handle in `$locks[$key]`; `write()` **reuses that same handle** (removing it from
   `$locks`) and unlocks at the end. The lock therefore lives across
   `lock → write`, not within one call.
+- **An item's version (`MetaTime`) is assigned by `lock()`, not by `write()`.** An
+  `Items` dependency on a key the same instance is generating takes that version
+  from `$versions` instead of reading the file, which it holds `LOCK_EX` and
+  would wait for forever (ADR `item-version-at-lock`). Any new code that reads
+  dependency metadata must go through the same check.
 - There is **no double-checked re-read** after `lock()` — `Cache::load` locks and
   runs the generator unconditionally. The protection actually manifests in
   `read()`: concurrent readers block on `flock(LOCK_SH)` while the generating
