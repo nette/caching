@@ -140,8 +140,11 @@ easy traps:
   for a single request, wrong for anything that must expire.
 - **`SQLiteStorage`** supports `Expire`/`Sliding` and `Tags` (its own `tags`
   table, no journal) but **silently drops `Callbacks`** — so `Files`/`Constants`
-  dependencies do nothing there — and ignores `Priority` and `Items`.
-- **`MemcachedStorage`** honors `Expire`/`Sliding`/`Callbacks`, throws
+  dependencies do nothing there — and ignores `Priority` and `Items`. Expired
+  rows are removed by `clean([])`, run probabilistically by the constructor like
+  in `FileStorage`.
+- **`MemcachedStorage`** honors `Expire`/`Sliding`/`Callbacks`, needs a `Journal`
+  for `Tags`/`Priority` (`InvalidStateException` without one), throws
   `NotSupportedException` on `Items`, and its `clean(All)` calls `flush()` —
   wiping the **entire memcached server**, key prefix notwithstanding.
 - **`DevNullStorage`** discards everything (always a miss).
