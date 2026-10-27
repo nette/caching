@@ -39,14 +39,14 @@ It requires PHP version 8.1 and supports PHP up to 8.6.
 Basic Usage
 ===========
 
-The center of work with the cache is the object [Nette\Caching\Cache](https://api.nette.org/3.0/Nette/Caching/Cache.html). We create its instance and pass the so-called storage to the constructor as a parameter. Which is an object representing the place where the data will be physically stored (database, Memcached, files on disk, ...). You will find out all the essentials in [section Storages](#Storages).
+The center of work with the cache is the object `Nette\Caching\Cache`. We create its instance and pass the so-called storage to the constructor as a parameter. Which is an object representing the place where the data will be physically stored (database, Memcached, files on disk, ...). You will find out all the essentials in [section Storages](#Storages).
 
 For the following examples, suppose we have an alias `Cache` and a storage in the variable `$storage`.
 
 ```php
 use Nette\Caching\Cache;
 
-$storage // instance of Nette\Caching\IStorage
+$storage // instance of Nette\Caching\Storage
 ```
 
 The cache is actually a *key–value store*, so we read and write data under keys just like associative arrays. Applications consist of a number of independent parts, and if they all used one storage (for idea: one directory on a disk), sooner or later there would be a key collision. The Nette Framework solves the problem by dividing the entire space into namespaces (subdirectories). Each part of the program then uses its own space with a unique name and no collisions can occur.
@@ -128,7 +128,7 @@ Or using the `$dependencies` parameter passed by reference to the callback in th
 $value = $cache->load($key, function (&$dependencies) {
 	$dependencies[Cache::Expire] = '20 minutes';
 	return ...;
-]);
+});
 ```
 
 Or using 3rd parameter in the `load()` method, eg:
@@ -136,7 +136,7 @@ Or using 3rd parameter in the `load()` method, eg:
 ```php
 $value = $cache->load($key, function () {
 	return ...;
-], [Cache::Expire => '20 minutes']);
+}, [Cache::Expire => '20 minutes']);
 ```
 
 In the following examples, we will assume the second variant and thus the existence of a variable `$dependencies`.
@@ -145,7 +145,7 @@ In the following examples, we will assume the second variant and thus the existe
 Expiration
 ----------
 
-The simplest exiration is the time limit. Here's how to cache data valid for 20 minutes:
+The simplest expiration is the time limit. Here's how to cache data valid for 20 minutes:
 
 ```php
 // it also accepts the number of seconds or the UNIX timestamp
@@ -158,11 +158,11 @@ If we want to extend the validity period with each reading, it can be achieved t
 $dependencies[Cache::Sliding] = true;
 ```
 
-The handy option is the ability to let the data expire when a particular file is changed or one of several files. This can be used, for example, for caching data resulting from procession these files. Use absolute paths.
+The handy option is the ability to let the data expire when a particular file is changed or one of several files. This can be used, for example, for caching data resulting from processing these files. Use absolute paths.
 
 ```php
 $dependencies[Cache::Files] = '/path/to/data.yaml';
-// nebo
+// or
 $dependencies[Cache::Files] = ['/path/to/data1.yaml', '/path/to/data2.yaml'];
 ```
 
@@ -221,7 +221,7 @@ $cache->clean([
 
 What have we achieved? That our HTML cache will be invalidated (deleted) whenever the article or comments change. When editing an article with ID = 10, the tag `article/10` is forced to be invalidated and the HTML page carrying the tag is deleted from the cache. The same happens when you insert a new comment under the relevant article.
 
-Tags require [Journal](#Journal).
+In `FileStorage` and `MemcachedStorage`, tags require a [Journal](#Journal); `SQLiteStorage` keeps them itself.
 
 
 Invalidation by Priority
@@ -241,7 +241,7 @@ $cache->clean([
 ]);
 ```
 
-Priorities require so-called [Journal](#Journal).
+In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `SQLiteStorage` does not support them.
 
 
 Clear Cache
@@ -281,7 +281,7 @@ Output Caching
 The output can be captured and cached very elegantly:
 
 ```php
-if ($capture = $cache->start($key)) {
+if ($capture = $cache->capture($key)) {
 
 	echo ... // printing some data
 
@@ -289,7 +289,7 @@ if ($capture = $cache->start($key)) {
 }
 ```
 
-In case that the output is already present in the cache, the `start()` method prints it and returns `null`, so the condition will not be executed. Otherwise, it starts to buffer the output and returns the `$capture` object using which we finally save the data to the cache.
+In case that the output is already present in the cache, the `capture()` method prints it and returns `null`, so the condition will not be executed. Otherwise, it starts to buffer the output and returns the `$capture` object using which we finally save the data to the cache.
 
 
 Caching in Latte
@@ -313,6 +313,18 @@ The use of the cache can also be conditioned by `if` - the content will then be 
 {cache $id, if => !$form->isSubmitted()}
 	{$form}
 {/cache}
+```
+
+
+Using with PSR-16
+=================
+
+Code or libraries expecting a [PSR-16](https://www.php-fig.org/psr/psr-16/) cache can use any storage through `Nette\Bridges\Psr\PsrCacheAdapter`:
+
+```php
+$psrCache = new Nette\Bridges\Psr\PsrCacheAdapter($storage);
+$psrCache->set('key', 'value', 3600); // stores the value for 1 hour
+$value = $psrCache->get('key', 'default');
 ```
 
 
