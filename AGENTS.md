@@ -66,6 +66,9 @@ composer phpstan
   `FileStorage`**; every other backend's `lock()` is a no-op.
 - **`MemoryStorage` ignores all dependencies** (no expiration, no tags) - a real
   trap when it stands in for a real backend.
+- **Unsupported dependencies throw.** `SQLiteStorage` and `MemcachedStorage`
+  throw `NotSupportedException` for a dependency or clean condition they cannot
+  honor.
 - **FileStorage writes the real header last** (it doubles as a commit marker) and
   runs GC probabilistically **in the constructor**, not at shutdown.
 - User-facing how-to (DI wiring, storage/journal config, PSR-16 usage, `{cache}`

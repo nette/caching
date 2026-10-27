@@ -133,7 +133,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		if (isset($dependencies[Cache::Items])) {
-			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
+			throw new Nette\NotSupportedException('Dependency Cache::Items is not supported by ' . static::class . '.');
 		}
 
 		$key = urlencode($this->prefix . $key);
@@ -177,7 +177,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	public function bulkWrite(array $items, array $dependencies): void
 	{
 		if (isset($dependencies[Cache::Items])) {
-			throw new Nette\NotSupportedException('Dependent items are not supported by MemcachedStorage.');
+			throw new Nette\NotSupportedException('Dependency Cache::Items is not supported by ' . static::class . '.');
 		}
 
 		$meta = $records = [];
@@ -233,6 +233,10 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 	public function clean(array $conditions): void
 	{
+		if (isset($conditions[Cache::Namespaces])) {
+			throw new Nette\NotSupportedException('Cleaning by Cache::Namespaces is not supported by ' . static::class . '.');
+		}
+
 		if (!empty($conditions[Cache::All])) {
 			$this->memcached->flush();
 
