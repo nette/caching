@@ -67,10 +67,10 @@ dependency" matrix is partly an illusion:
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored
 only by `FileStorage` and `MemcachedStorage`; `Tags`/`Priority` need a `Journal`
-in those two, while `SQLiteStorage` handles `Tags` natively. Unsupported
-dependencies either throw (`MemcachedStorage` + `Items`) or are **silently
-dropped** — nothing warns. An agent adding a backend must reason about this
-**post-desugar** set, not the public constant list.
+in those two, while `SQLiteStorage` handles `Tags` natively. What a backend
+cannot honor, it rejects with `NotSupportedException` — except `MemoryStorage`,
+which **silently drops** every dependency. An agent adding a backend must reason
+about this **post-desugar** set, not the public constant list.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
@@ -139,17 +139,17 @@ easy traps:
   no invalidation** (only `clean(All)` empties it). It is a process-local map, fine
   for a single request, wrong for anything that must expire.
 - **`SQLiteStorage`** supports `Expire`/`Sliding`, `Tags` (its own `tags` table,
-  no journal) and cleaning by `Namespaces`, but **silently drops `Callbacks`** —
-  so `Files`/`Constants` dependencies do nothing there — and ignores `Priority`
-  and `Items`. A namespace is cleaned by the key range `namespace\x00` ..
-  `namespace\x01`, not by `LIKE`: `LIKE` cuts the pattern at the NUL byte of the
-  separator and treats `_` and `%` in a namespace as wildcards. Expired rows are
-  removed by `clean([])`, run probabilistically by the constructor like in
-  `FileStorage`.
+  no journal) and cleaning by `Namespaces`, and throws for `Callbacks` (so
+  `Files`/`Constants`), `Priority`, `Items` and cleaning by `Priority`. A
+  namespace is cleaned by the key range `namespace\x00` .. `namespace\x01`, not by
+  `LIKE`: `LIKE` cuts the pattern at the NUL byte of the separator and treats `_`
+  and `%` in a namespace as wildcards. Expired rows are removed by `clean([])`,
+  run probabilistically by the constructor like in `FileStorage`.
 - **`MemcachedStorage`** honors `Expire`/`Sliding`/`Callbacks`, needs a `Journal`
   for `Tags`/`Priority` (`InvalidStateException` without one), throws
-  `NotSupportedException` on `Items`, and its `clean(All)` calls `flush()` —
-  wiping the **entire memcached server**, key prefix notwithstanding.
+  `NotSupportedException` on `Items` and cleaning by `Namespaces`, and its
+  `clean(All)` calls `flush()` — wiping the **entire memcached server**, key prefix
+  notwithstanding.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).

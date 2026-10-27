@@ -233,6 +233,10 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 
 	public function clean(array $conditions): void
 	{
+		if (isset($conditions[Cache::Namespaces])) {
+			throw new Nette\NotSupportedException('Cleaning by Cache::Namespaces is not supported by ' . static::class . '.');
+		}
+
 		if (!empty($conditions[Cache::All])) {
 			$this->memcached->flush();
 

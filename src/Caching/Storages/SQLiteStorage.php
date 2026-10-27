@@ -106,6 +106,18 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
+		if (isset($dependencies[Cache::Callbacks])) {
+			throw new Nette\NotSupportedException('Dependencies Cache::Callbacks, Cache::Files and Cache::Constants are not supported by ' . static::class . '.');
+		}
+
+		if (isset($dependencies[Cache::Priority])) {
+			throw new Nette\NotSupportedException('Dependency Cache::Priority is not supported by ' . static::class . '.');
+		}
+
+		if (isset($dependencies[Cache::Items])) {
+			throw new Nette\NotSupportedException('Dependency Cache::Items is not supported by ' . static::class . '.');
+		}
+
 		$expire = isset($dependencies[Cache::Expire])
 			? $dependencies[Cache::Expire] + time()
 			: null;
@@ -152,6 +164,10 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 
 	public function clean(array $conditions): void
 	{
+		if (isset($conditions[Cache::Priority])) {
+			throw new Nette\NotSupportedException('Cleaning by Cache::Priority is not supported by ' . static::class . '.');
+		}
+
 		if (!empty($conditions[Cache::All])) {
 			$this->pdo->prepare('DELETE FROM cache')->execute();
 
