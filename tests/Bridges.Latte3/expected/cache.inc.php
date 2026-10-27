@@ -1,4 +1,4 @@
-<?php %A%
+<?php%A%
 		if ($this->global->cache->createCache('%a%')) /* %a% */
 		try {
 			echo '	';

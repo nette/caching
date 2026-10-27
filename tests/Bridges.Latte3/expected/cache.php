@@ -1,4 +1,4 @@
-<?php %A%
+<?php%A%
 		echo 'Noncached content
 
 ';
