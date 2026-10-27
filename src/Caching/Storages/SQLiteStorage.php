@@ -17,6 +17,9 @@ use function count;
  */
 class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 {
+	/** keys per query, SQLite before 3.32 allows at most 999 query parameters */
+	private const BulkChunkSize = 500;
+
 	/** Probability (0-1) that the garbage collector runs on each instantiation. */
 	public static float $gcProbability = 0.001;
 
@@ -72,21 +75,23 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 
 	public function bulkRead(array $keys): array
 	{
-		$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($keys) - 1) . ') AND (expire IS NULL OR expire >= ?)');
-		$stmt->execute([...$keys, time()]);
 		$result = [];
-		$updateSlide = [];
-		foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
-			if ($row['slide'] !== null) {
-				$updateSlide[] = $row['key'];
+		foreach (array_chunk($keys, self::BulkChunkSize) as $chunk) {
+			$stmt = $this->pdo->prepare('SELECT key, data, slide FROM cache WHERE key IN (?' . str_repeat(',?', count($chunk) - 1) . ') AND (expire IS NULL OR expire >= ?)');
+			$stmt->execute([...$chunk, time()]);
+			$updateSlide = [];
+			foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+				if ($row['slide'] !== null) {
+					$updateSlide[] = $row['key'];
+				}
+
+				$result[$row['key']] = unserialize($row['data']);
 			}
 
-			$result[$row['key']] = unserialize($row['data']);
-		}
-
-		if (!empty($updateSlide)) {
-			$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
-			$stmt->execute([time(), ...$updateSlide]);
+			if (!empty($updateSlide)) {
+				$stmt = $this->pdo->prepare('UPDATE cache SET expire = ? + slide WHERE key IN(?' . str_repeat(',?', count($updateSlide) - 1) . ')');
+				$stmt->execute([time(), ...$updateSlide]);
+			}
 		}
 
 		return $result;
