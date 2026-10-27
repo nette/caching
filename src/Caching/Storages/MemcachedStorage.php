@@ -91,7 +91,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 		}
 
 		if (!empty($meta[self::MetaDelta])) {
-			$this->memcached->replace($key, $meta, $meta[self::MetaDelta] + time());
+			$this->memcached->touch($key, $meta[self::MetaDelta] + time()); // writing $meta back would restore an item overwritten in between
 		}
 
 		return $meta[self::MetaData];
@@ -113,7 +113,7 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 			}
 
 			if (!empty($meta[self::MetaDelta])) {
-				$this->memcached->replace($prefixedKey, $meta, $meta[self::MetaDelta] + time());
+				$this->memcached->touch($prefixedKey, $meta[self::MetaDelta] + time());
 			}
 		}
 
