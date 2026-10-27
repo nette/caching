@@ -42,3 +42,19 @@ for ($i = 0; $i < 5; $i++) {
 sleep(5);
 
 Assert::null($cache->load($key));
+
+
+// an item overwritten between the read and the extension of its expiration is not stored back
+function overwrite(string $key): bool
+{
+	(new Cache(new MemcachedStorage))->save($key, 'new');
+	return true;
+}
+
+$cache->save($key, 'old', [Cache::Expire => 100, Cache::Sliding => true, Cache::Callbacks => [['overwrite', $key]]]);
+Assert::same('old', $cache->load($key)); // the callback overwrites the item during the read
+Assert::same('new', $cache->load($key));
+
+$cache->save($key, 'old', [Cache::Expire => 100, Cache::Sliding => true, Cache::Callbacks => [['overwrite', $key]]]);
+Assert::same([$key => 'old'], $cache->bulkLoad([$key]));
+Assert::same('new', $cache->load($key));
