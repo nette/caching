@@ -9,7 +9,8 @@ namespace Nette\Caching\Storages;
 
 use Nette;
 use Nette\Caching\Cache;
-use function is_array, is_string, strlen;
+use function count, is_array, is_string, strlen;
+use const LOCK_NB, LOCK_SH;
 
 
 /**
@@ -44,8 +45,11 @@ class FileStorage implements Nette\Caching\Storage
 		File = 'file',
 		Handle = 'handle';
 
-	/** Probability (0-1) that the garbage collector runs on each instantiation. */
-	public static float $gcProbability = 0.001;
+	/** seconds that one batch of the garbage collector may spend on files */
+	private const GcBatchBudget = 0.02;
+
+	/** Probability (0-1) that a batch of the garbage collector runs on each instantiation. */
+	public static float $gcProbability = 0.01;
 
 	/** @var array<string, resource>  key => file handle */
 	private array $locks;
@@ -63,7 +67,7 @@ class FileStorage implements Nette\Caching\Storage
 		}
 
 		if (mt_rand() / mt_getrandmax() < static::$gcProbability) {
-			$this->clean([]);
+			$this->collectBatch();
 		}
 	}
 
@@ -265,20 +269,7 @@ class FileStorage implements Nette\Caching\Storage
 					$this->delete($path);
 
 				} else { // collector
-					$meta = $this->readMetaAndLock($path, LOCK_SH);
-					if (!$meta) {
-						continue;
-					}
-
-					if ((!empty($meta[self::MetaDelta]) && filemtime($meta[self::File]) + $meta[self::MetaDelta] < $now)
-						|| (!empty($meta[self::MetaExpire]) && $meta[self::MetaExpire] < $now)
-					) {
-						$this->delete($path, $meta[self::Handle]);
-						continue;
-					}
-
-					flock($meta[self::Handle], LOCK_UN);
-					fclose($meta[self::Handle]);
+					$this->collectFile($path, LOCK_SH, $now);
 				}
 			}
 
@@ -311,6 +302,67 @@ class FileStorage implements Nette\Caching\Storage
 
 
 	/**
+	 * Collects garbage in one randomly chosen directory, from a random file, until the time budget runs out,
+	 * so that no request pays for walking the whole cache. Files held by another process are skipped.
+	 */
+	private function collectBatch(): void
+	{
+		$files = $dirs = [];
+		foreach (scandir($this->dir) ?: [] as $name) {
+			if ($name[0] !== '_') {
+				continue;
+			} elseif (!str_starts_with($name, '_%00') && is_dir($this->dir . '/' . $name)) { // items without namespace start with %00
+				$dirs[] = $name;
+			} else {
+				$files[] = $name;
+			}
+		}
+
+		$pick = random_int(0, count($dirs));
+		if ($pick < count($dirs)) {
+			$dir = $this->dir . '/' . $dirs[$pick];
+			$files = array_values(array_filter(scandir($dir) ?: [], fn($name) => $name[0] === '_'));
+		} else {
+			$dir = $this->dir;
+		}
+
+		$count = count($files);
+		$start = $count ? random_int(0, $count - 1) : 0;
+		$now = time();
+		$deadline = microtime(true) + self::GcBatchBudget;
+		for ($i = 0; $i < $count && microtime(true) < $deadline; $i++) {
+			$this->collectFile($dir . '/' . $files[($start + $i) % $count], LOCK_SH | LOCK_NB, $now);
+		}
+
+		if ($i === $count && $dir !== $this->dir) {
+			@rmdir($dir); // @ - directory may already contain new files
+		}
+	}
+
+
+	/**
+	 * Deletes the file if its item has expired.
+	 * @param  int<0, 7>  $lock
+	 */
+	private function collectFile(string $file, int $lock, int $now): void
+	{
+		$meta = $this->readMetaAndLock($file, $lock);
+		if (!$meta) {
+			return;
+
+		} elseif ((!empty($meta[self::MetaDelta]) && filemtime($meta[self::File]) + $meta[self::MetaDelta] < $now)
+			|| (!empty($meta[self::MetaExpire]) && $meta[self::MetaExpire] < $now)
+		) {
+			$this->delete($file, $meta[self::Handle]);
+			return;
+		}
+
+		flock($meta[self::Handle], LOCK_UN);
+		fclose($meta[self::Handle]);
+	}
+
+
+	/**
 	 * Opens and locks a cache file and reads its metadata.
 	 * @param  int<0, 7>  $lock
 	 * @return ?array<string, mixed>  meta data with 'file' and 'handle' keys added, or null if not found
@@ -320,9 +372,11 @@ class FileStorage implements Nette\Caching\Storage
 		$handle = @fopen($file, 'r+b'); // @ - file may not exist
 		if (!$handle) {
 			return null;
-		}
 
-		flock($handle, $lock);
+		} elseif (!flock($handle, $lock)) { // with LOCK_NB, the file is locked by another process
+			fclose($handle);
+			return null;
+		}
 
 		$header = (string) stream_get_contents($handle, self::MetaHeaderLen);
 		$size = strspn($header, '0123456789') === self::MetaHeaderLen ? (int) $header : 0; // (int) '0942e7' would be 9420000000

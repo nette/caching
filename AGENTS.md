@@ -69,7 +69,8 @@ composer phpstan
 - **Unsupported dependencies throw.** `SQLiteStorage` and `MemcachedStorage`
   throw `NotSupportedException` for a dependency or clean condition they cannot
   honor.
-- **FileStorage writes the real header last** (it doubles as a commit marker) and
-  runs GC probabilistically **in the constructor**, not at shutdown.
+- **FileStorage writes the real header last** (it doubles as a commit marker). Its
+  constructor probabilistically runs a GC batch limited to 20 ms; only an
+  explicit `clean([])` walks the whole cache.
 - User-facing how-to (DI wiring, storage/journal config, PSR-16 usage, `{cache}`
   tag) is manual material and lives in the public web docs, not here.
