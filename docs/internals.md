@@ -104,7 +104,10 @@ The `Storage::lock` contract is explicit in the interface: *"Lock is released by
 ## FileStorage on-disk format and atomic writes
 
 The file layout is: **a 6-byte zero-padded meta-length header + serialized meta +
-data**. The write sequence is the subtle part and is a commit protocol:
+data**. Data other than a string go through `serializeData()`, which a subclass
+may override (igbinary); the meta always uses `serialize()`, as
+`readMetaAndLock()` recognizes foreign files by it. The write sequence is the
+subtle part and is a commit protocol:
 
 1. under the held `LOCK_EX`, `ftruncate(0)`;
 2. write a **zero-filled** header placeholder, then the data;

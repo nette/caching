@@ -205,7 +205,7 @@ class FileStorage implements Nette\Caching\Storage
 		ftruncate($handle, 0);
 
 		if (!is_string($data)) {
-			$data = serialize($data);
+			$data = $this->serializeData($data);
 			$meta[self::MetaSerialized] = true;
 		}
 
@@ -410,8 +410,24 @@ class FileStorage implements Nette\Caching\Storage
 		return match (true) {
 			$data === false => null,
 			empty($meta[self::MetaSerialized]) => $data,
-			default => unserialize($data),
+			default => $this->unserializeData($data),
 		};
+	}
+
+
+	/**
+	 * Converts non-string data to the string stored in the cache file. Override it together with unserializeData()
+	 * to use another format, such as igbinary; the files written in the previous format must then be cleaned.
+	 */
+	protected function serializeData(mixed $data): string
+	{
+		return serialize($data);
+	}
+
+
+	protected function unserializeData(string $data): mixed
+	{
+		return unserialize($data);
 	}
 
 
