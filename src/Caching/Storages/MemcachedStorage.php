@@ -170,7 +170,9 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 			$expire += time();
 		}
 
-		$this->memcached->set($key, $meta, $expire);
+		if (!$this->memcached->set($key, $meta, $expire)) {
+			trigger_error('Memcached::set() failed: ' . $this->memcached->getResultMessage() . '.', E_USER_WARNING);
+		}
 	}
 
 

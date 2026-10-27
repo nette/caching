@@ -149,7 +149,9 @@ easy traps:
   for `Tags`/`Priority` (`InvalidStateException` without one), throws
   `NotSupportedException` on `Items` and cleaning by `Namespaces`, and its
   `clean(All)` calls `flush()` — wiping the **entire memcached server**, key prefix
-  notwithstanding.
+  notwithstanding. A failed `set()` (an item over the size limit) triggers
+  `E_USER_WARNING`; `setMulti()` returns success even when an item was not
+  stored, so `bulkWrite()` cannot tell.
 - **`DevNullStorage`** discards everything (always a miss).
 - `FileStorage` is the reference implementation with the fullest support (via the
   meta header + optional `Journal`).
