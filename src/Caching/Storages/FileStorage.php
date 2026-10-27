@@ -324,7 +324,8 @@ class FileStorage implements Nette\Caching\Storage
 
 		flock($handle, $lock);
 
-		$size = (int) stream_get_contents($handle, self::MetaHeaderLen);
+		$header = (string) stream_get_contents($handle, self::MetaHeaderLen);
+		$size = strspn($header, '0123456789') === self::MetaHeaderLen ? (int) $header : 0; // (int) '0942e7' would be 9420000000
 		if ($size) {
 			$raw = stream_get_contents($handle, $size, self::MetaHeaderLen);
 			if ($raw !== false) {
