@@ -126,9 +126,16 @@ Two more non-obvious behaviors:
   extend it), callbacks, and — **recursively** — `Items` dependencies (each
   dependent file's `MetaTime` must still match). Any failure **deletes** the entry
   on the spot, so a stale read is also a cleanup.
-- **GC runs in the constructor, not at shutdown.** Each `FileStorage`
-  instantiation runs `clean([])` with probability `$gcProbability` (0.001) —
-  probabilistic garbage collection at construction time.
+- **The constructor runs a bounded GC batch, `clean([])` a full one.** With
+  probability `$gcProbability` (0.01) the constructor collects one random
+  directory (the root or a namespace), from a random file, for at most
+  `GcBatchBudget` (20 ms), skipping files other processes hold (`LOCK_NB`), so no
+  request pays for walking the whole cache. The cost of a batch beyond the budget
+  is the `scandir()` of the root and of the chosen directory; root files of items
+  without namespace are named `_%00` and the 32 digits of the hash, so only the
+  other names need `is_dir()`. Checking just the `%00` prefix would take the
+  directory of a namespace derived from the root one (`_%00sub`) for a file.
+  An explicit `clean([])` still walks everything and waits for locks.
 
 ## Backends honor different subsets of dependencies
 
@@ -172,6 +179,6 @@ assuming the public dependency constants are universally honored.
 | Lock lifetime contract | `Storage::lock` (doc), `Cache::load`, `FileStorage::lock`/`write` |
 | On-disk format, commit-last header | `FileStorage::write`, `readMetaAndLock` |
 | Read-time verify + self-delete | `FileStorage::verify` |
-| Namespace→subdir, GC | `FileStorage::getCacheFile`, constructor |
+| Namespace→subdir, GC | `FileStorage::getCacheFile`, `collectBatch`, `clean` |
 | PSR-16 (raw keys, `null` = miss) | `Bridges/Psr/PsrCacheAdapter` |
 | Latte `{cache}`: nesting → `Items`, template file → `Files` | `Bridges/CacheLatte/Runtime` |
