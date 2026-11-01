@@ -103,6 +103,7 @@ class Cache
 	/**
 	 * Returns a cached item, or generates and stores it using the given callback.
 	 * @param ?(\Closure(mixed &$dependencies): mixed)  $generator
+	 * @param-immediately-invoked-callable  $generator
 	 * @param ?array<string, mixed>  $dependencies
 	 */
 	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
@@ -130,6 +131,7 @@ class Cache
 	 * @template TKey of int|string
 	 * @param list<TKey>  $keys
 	 * @param ?(\Closure(TKey $key, mixed &$dependencies): mixed)  $generator
+	 * @param-immediately-invoked-callable  $generator
 	 * @return array<TKey, mixed>
 	 */
 	public function bulkLoad(array $keys, ?callable $generator = null): array
@@ -338,6 +340,7 @@ class Cache
 
 	/**
 	 * Calls a function and caches its result. Subsequent calls with the same arguments return the cached value.
+	 * @param-immediately-invoked-callable  $function
 	 */
 	public function call(callable $function): mixed
 	{

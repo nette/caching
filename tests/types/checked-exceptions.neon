@@ -1,0 +1,7 @@
+includes:
+	- ../../vendor/nette/phpstan-rules/extension.neon
+
+parameters:
+	exceptions:
+		check:
+			missingCheckedExceptionInThrows: true
