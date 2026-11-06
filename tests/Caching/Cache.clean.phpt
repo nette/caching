@@ -53,8 +53,14 @@ test('empty lists clean nothing', function () {
 });
 
 
-test('no condition collects garbage', function () {
-	Assert::same([[]], clean());
+test('no condition throws', function () {
+	foreach ([[], [[]], [[Cache::Tags => null]], [[Cache::All => false]]] as $args) {
+		Assert::exception(
+			fn() => clean(...$args),
+			Nette\InvalidArgumentException::class,
+			'Specify what to clean: tags, priority, namespaces or all; expired items are removed by Storage::clean([]).',
+		);
+	}
 });
 
 

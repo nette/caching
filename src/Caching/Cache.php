@@ -359,7 +359,11 @@ class Cache
 		bool $all = false,
 	): void
 	{
-		if (!$all && $priority === null && !$tags && !$namespaces && ($tags !== null || $namespaces !== null)) {
+		if (!$all && $priority === null && !$tags && !$namespaces) {
+			if ($tags === null && $namespaces === null) {
+				throw new Nette\InvalidArgumentException('Specify what to clean: tags, priority, namespaces or all; expired items are removed by Storage::clean([]).');
+			}
+
 			return; // only empty lists were given
 		}
 

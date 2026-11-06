@@ -87,10 +87,11 @@ such as `Expire` throws `InvalidArgumentException`, a value of a wrong type
 parameters, so the conversion is a spread; checking the keys first is what makes
 it safe, a numeric key would otherwise become a positional argument. `null`
 means a condition is not given, while an empty list is a given condition that
-matches nothing: `clean(tags: [])`
-returns without reaching the storage, so a computed list of tags that happens to
-be empty never turns into a garbage collection. Without any condition the
-storage gets an empty array, which it takes as a request to collect garbage.
+matches nothing: `clean(tags: [])` returns without reaching the storage, so a
+computed list of tags that happens to be empty does nothing. A call without any
+condition throws: it reads as clearing the cache, while a storage takes an empty
+array as a request to collect garbage, which therefore stays a matter of
+`Storage::clean([])`.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
