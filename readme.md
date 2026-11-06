@@ -241,7 +241,7 @@ In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal
 Clear Cache
 -----------
 
-The `all` parameter clears the entire storage, including the items of other namespaces:
+The `all` parameter clears the whole namespace of the cache, including the namespaces derived from it; a cache without a namespace clears the entire storage:
 
 ```php
 $cache->clean(all: true);

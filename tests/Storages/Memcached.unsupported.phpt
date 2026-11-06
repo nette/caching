@@ -38,4 +38,9 @@ test('cleaning by namespaces is rejected', function () use ($cache) {
 		Nette\NotSupportedException::class,
 		'Cleaning by Cache::Namespaces is not supported by Nette\Caching\Storages\MemcachedStorage.',
 	);
+	Assert::exception(
+		fn() => $cache->derive('ns')->clean(all: true),
+		Nette\NotSupportedException::class,
+		'Cleaning by Cache::Namespaces is not supported by Nette\Caching\Storages\MemcachedStorage.',
+	);
 });

@@ -93,6 +93,13 @@ condition throws: it reads as clearing the cache, while a storage takes an empty
 array as a request to collect garbage, which therefore stays a matter of
 `Storage::clean([])`.
 
+**`all` removes what the `Cache` object sees.** A `Cache` with a namespace sends
+the storage `Namespaces` with its own namespace instead of `All`, so the
+namespaces derived from it go too and the others stay; only a `Cache` without a
+namespace sends `All` and clears the entire storage. `MemcachedStorage` cannot
+clean a namespace, so `all` on a `Cache` with a namespace throws
+`NotSupportedException` there.
+
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
 The `Storage::lock` contract is explicit in the interface: *"Lock is released by

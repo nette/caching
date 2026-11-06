@@ -323,7 +323,8 @@ class Cache
 
 	/**
 	 * Removes items with any of the tags, with equal or lower priority, or in any of the namespaces;
-	 * all clears the entire storage. The conditions can also be given as an array with Cache::* keys.
+	 * all removes the whole namespace of this cache, or the entire storage when it has none.
+	 * The conditions can also be given as an array with Cache::* keys.
 	 * @param ?array<string, mixed>  $conditions
 	 * @param ?list<string>  $tags
 	 * @param ?list<string>  $namespaces
@@ -367,11 +368,16 @@ class Cache
 			return; // only empty lists were given
 		}
 
+		if ($all) {
+			$namespace = $this->getNamespace();
+			$this->storage->clean($namespace === '' ? [self::All => true] : [self::Namespaces => [$namespace]]);
+			return;
+		}
+
 		$this->storage->clean(array_filter([
 			self::Tags => $tags === null ? null : array_values($tags),
 			self::Priority => $priority,
 			self::Namespaces => $namespaces === null ? null : array_values($namespaces),
-			self::All => $all ?: null,
 		], fn($value) => $value !== null));
 	}
 

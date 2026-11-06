@@ -5,6 +5,7 @@
  */
 
 use Nette\Caching\Cache;
+use Nette\Caching\Storages\MemoryStorage;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -107,6 +108,43 @@ test('value of wrong type in array throws', function () {
 		TypeError::class,
 		'%a%($all) must be of type bool, int given%a%',
 	);
+});
+
+
+test('all on cache with namespace cleans just its namespace', function () {
+	$storage = new CleanSpyStorage;
+	$cache = new Cache($storage, 'ns');
+	$cache->clean(all: true);
+	$cache->derive('sub')->clean([Cache::All => true]);
+	$cache->clean(all: true, tags: ['a']);
+
+	Assert::same([
+		[Cache::Namespaces => ['ns']],
+		[Cache::Namespaces => ["ns\x00sub"]],
+		[Cache::Namespaces => ['ns']],
+	], $storage->conditions);
+});
+
+
+test('all keeps other namespaces, unless the cache has no namespace', function () {
+	$storage = new MemoryStorage;
+	$root = new Cache($storage);
+	$cache = new Cache($storage, 'ns');
+	$nested = $cache->derive('sub');
+	$other = new Cache($storage, 'other');
+	foreach ([$root, $cache, $nested, $other] as $item) {
+		$item->save('key', 'value');
+	}
+
+	$cache->clean(all: true);
+	Assert::same('value', $root->load('key'));
+	Assert::null($cache->load('key'));
+	Assert::null($nested->load('key'));
+	Assert::same('value', $other->load('key'));
+
+	$root->clean(all: true);
+	Assert::null($root->load('key'));
+	Assert::null($other->load('key'));
 });
 
 

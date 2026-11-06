@@ -64,7 +64,8 @@ composer phpstan
 - **The conditions of `clean()` are its named arguments**; an array is spread
   onto them after its keys are checked, which relies on the values of
   `Cache::Tags`, `Priority`, `Namespaces` and `All` being the parameter names.
-  Renaming either side breaks the array form.
+  Renaming either side breaks the array form. `all` on a `Cache` with a namespace
+  reaches the storage as `Namespaces`, only the root `Cache` sends `All`.
 - **The lock spans two calls** - `Cache` locks before running a generator, and
   `write()`/`remove()` release it. **Stampede protection is real only in
   `FileStorage`**; every other backend's `lock()` is a no-op.
