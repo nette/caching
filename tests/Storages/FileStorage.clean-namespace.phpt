@@ -88,3 +88,21 @@ Assert::null($cacheC->load('test2'));
 
 Assert::null($cacheD->load('test1'));
 Assert::null($cacheD->load('test2'));
+
+
+/*
+ * Nested namespaces are cleaned too, similar names are not affected
+ */
+$parent = new Cache($storage, 'a_b');
+$nested = $parent->derive('c');
+$similar = new Cache($storage, 'a_bc');
+$parent->save('test', 'parent');
+$nested->save('test', 'nested');
+$similar->save('test', 'similar');
+
+$storage->clean([Cache::Namespaces => [$parent->getNamespace()]]);
+
+Assert::null($parent->load('test'));
+Assert::null($nested->load('test'));
+Assert::same('similar', $similar->load('test'));
+Assert::same('David', $cacheA->load('test1'));

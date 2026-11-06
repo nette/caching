@@ -26,7 +26,9 @@ nests namespaces by concatenation. FileStorage later turns the `"\x00"` into a
 subdirectory (`getCacheFile`), so a namespace is a directory on disk — but only
 the **last** separator (`strrpos`), so nested namespaces are a single directory
 whose name still contains `%00`, and the empty root namespace (separator at
-position 0) creates no directory at all.
+position 0) creates no directory at all. Cleaning by `Namespaces` removes a
+namespace **together with the nested ones**: FileStorage deletes its directory
+and those whose name continues with `%00`.
 
 ## `null` is overloaded; `save($key, null)` **is** `remove()`
 

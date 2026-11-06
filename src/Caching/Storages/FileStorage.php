@@ -288,16 +288,14 @@ class FileStorage implements Nette\Caching\Storage
 
 		} elseif ($namespaces) {
 			foreach ($namespaces as $namespace) {
-				$dir = $this->dir . '/_' . urlencode($namespace);
-				if (!is_dir($dir)) {
-					continue;
-				}
+				$name = '_' . urlencode($namespace);
+				foreach (Nette\Utils\Finder::findDirectories([$name, $name . '%00*'])->in($this->dir) as $dir) {
+					foreach (Nette\Utils\Finder::findFiles('_*')->in((string) $dir) as $entry) {
+						$this->delete((string) $entry);
+					}
 
-				foreach (Nette\Utils\Finder::findFiles('_*')->in($dir) as $entry) {
-					$this->delete((string) $entry);
+					@rmdir((string) $dir); // @ directory may already contain new files
 				}
-
-				@rmdir($dir); // @ directory may already contain new files
 			}
 		}
 
