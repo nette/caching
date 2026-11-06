@@ -8,7 +8,7 @@
 namespace Nette\Caching;
 
 use Nette;
-use function count, func_get_args, is_array, is_object, is_scalar;
+use function func_get_args, is_array, is_object, is_scalar;
 
 
 /**
@@ -134,7 +134,7 @@ class Cache
 	 */
 	public function bulkLoad(array $keys, ?callable $generator = null): array
 	{
-		if (count($keys) === 0) {
+		if ($keys === []) {
 			return [];
 		}
 
