@@ -79,8 +79,15 @@ public constant list.
 ## Conditions of `clean()`
 
 `Cache::clean()` takes the conditions as named arguments or as an array with
-`Cache::*` keys, never both at once. `null` means a condition is not given, while
-an empty list is a given condition that matches nothing: `clean(tags: [])`
+`Cache::*` keys, never both at once. `convertConditions()` turns the array into
+the named arguments, which closes its format: an unknown key or a dependency
+such as `Expire` throws `InvalidArgumentException`, a value of a wrong type
+`TypeError`, and a single tag or namespace is wrapped into a list. The values of
+`Cache::Tags`, `Priority`, `Namespaces` and `All` are the names of the
+parameters, so the conversion is a spread; checking the keys first is what makes
+it safe, a numeric key would otherwise become a positional argument. `null`
+means a condition is not given, while an empty list is a given condition that
+matches nothing: `clean(tags: [])`
 returns without reaching the storage, so a computed list of tags that happens to
 be empty never turns into a garbage collection. Without any condition the
 storage gets an empty array, which it takes as a request to collect garbage.

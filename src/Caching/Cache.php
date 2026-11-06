@@ -68,6 +68,9 @@ class Cache
 	#[\Deprecated('use Cache::NamespaceSeparator')]
 	public const NAMESPACE_SEPARATOR = self::NamespaceSeparator;
 
+	/** keys of the conditions of clean(), which are also the names of its parameters */
+	private const Conditions = [self::Tags, self::Priority, self::Namespaces, self::All];
+
 	private readonly string $namespace;
 
 
@@ -340,11 +343,7 @@ class Cache
 			throw new Nette\InvalidArgumentException('Conditions can be given either as an array or as named arguments, not both.');
 
 		} else {
-			if (isset($conditions[self::Tags])) {
-				$conditions[self::Tags] = array_values((array) $conditions[self::Tags]);
-			}
-
-			$this->storage->clean($conditions);
+			$this->cleanStorage(...self::convertConditions($conditions));
 		}
 	}
 
@@ -370,6 +369,37 @@ class Cache
 			self::Namespaces => $namespaces === null ? null : array_values($namespaces),
 			self::All => $all ?: null,
 		], fn($value) => $value !== null));
+	}
+
+
+	/**
+	 * Converts the array with Cache::* keys to the named arguments of cleanStorage().
+	 * @param  array<mixed>  $conditions
+	 * @return array<string, mixed>
+	 */
+	private static function convertConditions(array $conditions): array
+	{
+		$args = [];
+		foreach ($conditions as $key => $value) {
+			if (!in_array($key, self::Conditions, true)) {
+				throw self::createUnknownConditionException((string) $key);
+			} elseif ($value !== null) {
+				$args[$key] = ($key === self::Tags || $key === self::Namespaces) && !is_array($value) ? [$value] : $value;
+			}
+		}
+
+		return $args;
+	}
+
+
+	private static function createUnknownConditionException(string $key): Nette\InvalidArgumentException
+	{
+		if (in_array($key, [self::Expire, self::Sliding, self::Files, self::Items, self::Constants, self::Callbacks], true)) {
+			return new Nette\InvalidArgumentException("'$key' is a dependency of an item, not a condition of Cache::clean().");
+		}
+
+		$hint = Nette\Utils\Helpers::getSuggestion(self::Conditions, $key);
+		return new Nette\InvalidArgumentException("Unknown condition '$key'" . ($hint ? ", did you mean '$hint'?" : '.'));
 	}
 
 

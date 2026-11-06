@@ -59,8 +59,48 @@ test('no condition collects garbage', function () {
 
 
 test('array of conditions', function () {
-	Assert::same([[Cache::Tags => ['a']]], clean([Cache::Tags => 'a']));
+	Assert::same([[Cache::Tags => ['a'], Cache::Priority => 50]], clean([Cache::Priority => 50, Cache::Tags => ['a']]));
 	Assert::same([[Cache::All => true]], clean([Cache::All => true]));
+	Assert::same([[Cache::Priority => 5]], clean([Cache::Tags => null, Cache::Priority => 5]));
+	Assert::same([], clean([Cache::Tags => []]));
+});
+
+
+test('single tag or namespace in array is wrapped into list', function () {
+	Assert::same([[Cache::Tags => ['a'], Cache::Namespaces => ['ns']]], clean([Cache::Tags => 'a', Cache::Namespaces => 'ns']));
+});
+
+
+test('unknown key in array throws', function () {
+	Assert::exception(
+		fn() => clean(['tag' => ['a']]),
+		Nette\InvalidArgumentException::class,
+		"Unknown condition 'tag', did you mean 'tags'?",
+	);
+	Assert::exception(
+		fn() => clean([['a']]),
+		Nette\InvalidArgumentException::class,
+		"Unknown condition '0'.",
+	);
+	Assert::exception(
+		fn() => clean([Cache::Expire => '20 minutes']),
+		Nette\InvalidArgumentException::class,
+		"'expire' is a dependency of an item, not a condition of Cache::clean().",
+	);
+});
+
+
+test('value of wrong type in array throws', function () {
+	Assert::exception(
+		fn() => clean([Cache::Priority => '100']),
+		TypeError::class,
+		'%a%($priority) must be of type ?int, string given%a%',
+	);
+	Assert::exception(
+		fn() => clean([Cache::All => 1]),
+		TypeError::class,
+		'%a%($all) must be of type bool, int given%a%',
+	);
 });
 
 

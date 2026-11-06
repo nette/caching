@@ -78,7 +78,7 @@ test('priority', function () {
 	$cache->save('key3', 'value3', [Cache::Priority => 300]);
 	$cache->save('key4', 'value4');
 
-	$cache->clean([Cache::Priority => '200']);
+	$cache->clean([Cache::Priority => 200]);
 
 	Assert::null($cache->load('key0'));
 	Assert::null($cache->load('key1'));

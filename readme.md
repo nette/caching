@@ -247,7 +247,7 @@ The `all` parameter clears the entire storage, including the items of other name
 $cache->clean(all: true);
 ```
 
-The conditions can be combined, an item matching any of them is removed. They can also be given as an array with `Cache::*` keys, such as `$cache->clean([Cache::Tags => ["article/$articleId"]])`.
+The conditions can be combined, an item matching any of them is removed. They can also be given as an array with `Cache::*` keys, such as `$cache->clean([Cache::Tags => ["article/$articleId"]])`; an unknown key or a value of a wrong type throws an exception.
 
 
 Bulk Reading

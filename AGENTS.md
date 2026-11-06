@@ -61,6 +61,10 @@ composer phpstan
   `Files`/`Constants` become `Callbacks`, `Expire` becomes a relative second count.
   Reason about a backend's support from the *post-desugar* set, not the public
   constant list.
+- **The conditions of `clean()` are its named arguments**; an array is spread
+  onto them after its keys are checked, which relies on the values of
+  `Cache::Tags`, `Priority`, `Namespaces` and `All` being the parameter names.
+  Renaming either side breaks the array form.
 - **The lock spans two calls** - `Cache` locks before running a generator, and
   `write()`/`remove()` release it. **Stampede protection is real only in
   `FileStorage`**; every other backend's `lock()` is a no-op.

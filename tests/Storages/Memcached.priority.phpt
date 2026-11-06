@@ -40,7 +40,7 @@ $cache->save('nette-memcached-priority-key4', 'value4');
 
 // Cleaning by priority...
 $cache->clean([
-	Cache::Priority => '200',
+	Cache::Priority => 200,
 ]);
 
 Assert::null($cache->load('nette-memcached-priority-key1'));
