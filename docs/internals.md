@@ -76,6 +76,15 @@ except `MemoryStorage`, which **silently drops** `Callbacks` and `Items`. An
 agent adding a backend must reason about this **post-desugar** set, not the
 public constant list.
 
+## Conditions of `clean()`
+
+`Cache::clean()` takes the conditions as named arguments or as an array with
+`Cache::*` keys, never both at once. `null` means a condition is not given, while
+an empty list is a given condition that matches nothing: `clean(tags: [])`
+returns without reaching the storage, so a computed list of tags that happens to
+be empty never turns into a garbage collection. Without any condition the
+storage gets an empty array, which it takes as a request to collect garbage.
+
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
 The `Storage::lock` contract is explicit in the interface: *"Lock is released by

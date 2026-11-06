@@ -206,17 +206,13 @@ $dependencies[Cache::Tags] = ["article/$articleId", "comments/$articleId"];
 Now, let's move to the administration. Here we have a form for article editing. Together with saving the article to a database, we call the `clean()` command, which will delete cached items by tag:
 
 ```php
-$cache->clean([
-	Cache::Tags => ["article/$articleId"],
-]);
+$cache->clean(tags: ["article/$articleId"]);
 ```
 
 Likewise, in the place of adding a new comment (or editing a comment), we will not forget to invalidate the relevant tag:
 
 ```php
-$cache->clean([
-	Cache::Tags => ["comments/$articleId"],
-]);
+$cache->clean(tags: ["comments/$articleId"]);
 ```
 
 What have we achieved? That our HTML cache will be invalidated (deleted) whenever the article or comments change. When editing an article with ID = 10, the tag `article/10` is forced to be invalidated and the HTML page carrying the tag is deleted from the cache. The same happens when you insert a new comment under the relevant article.
@@ -236,9 +232,7 @@ $dependencies[Cache::Priority] = 50;
 Delete all items with a priority equal to or less than 100:
 
 ```php
-$cache->clean([
-	Cache::Priority => 100,
-]);
+$cache->clean(priority: 100);
 ```
 
 In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal); `MemoryStorage` keeps them itself and `SQLiteStorage` does not support them.
@@ -247,13 +241,13 @@ In `FileStorage` and `MemcachedStorage`, priorities require a [Journal](#Journal
 Clear Cache
 -----------
 
-The `Cache::All` parameter clears everything:
+The `all` parameter clears the entire storage, including the items of other namespaces:
 
 ```php
-$cache->clean([
-	Cache::All => true,
-]);
+$cache->clean(all: true);
 ```
+
+The conditions can be combined, an item matching any of them is removed. They can also be given as an array with `Cache::*` keys, such as `$cache->clean([Cache::Tags => ["article/$articleId"]])`.
 
 
 Bulk Reading

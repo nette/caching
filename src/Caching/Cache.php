@@ -29,7 +29,7 @@ class Cache
 		Namespaces = 'namespaces',
 		All = 'all';
 
-	#[\Deprecated('use Cache::Priority')]
+	#[\Deprecated('use Cache::Priority or clean(priority: ...)')]
 	public const PRIORITY = self::Priority;
 
 	#[\Deprecated('use Cache::Expire')]
@@ -41,7 +41,7 @@ class Cache
 	#[\Deprecated('use Cache::Sliding')]
 	public const SLIDING = self::Sliding;
 
-	#[\Deprecated('use Cache::Tags')]
+	#[\Deprecated('use Cache::Tags or clean(tags: ...)')]
 	public const TAGS = self::Tags;
 
 	#[\Deprecated('use Cache::Files')]
@@ -56,10 +56,10 @@ class Cache
 	#[\Deprecated('use Cache::Callbacks')]
 	public const CALLBACKS = self::Callbacks;
 
-	#[\Deprecated('use Cache::Namespaces')]
+	#[\Deprecated('use Cache::Namespaces or clean(namespaces: ...)')]
 	public const NAMESPACES = self::Namespaces;
 
-	#[\Deprecated('use Cache::All')]
+	#[\Deprecated('use Cache::All or clean(all: true)')]
 	public const ALL = self::All;
 
 	/** @internal */
@@ -319,20 +319,57 @@ class Cache
 
 
 	/**
-	 * Removes items from the cache by conditions:
-	 * - Cache::Priority => (int) removes items with equal or lower priority
-	 * - Cache::Tags => (array) removes items with matching tags
-	 * - Cache::All => true clears the entire cache
+	 * Removes items with any of the tags, with equal or lower priority, or in any of the namespaces;
+	 * all clears the entire storage. The conditions can also be given as an array with Cache::* keys.
 	 * @param ?array<string, mixed>  $conditions
+	 * @param ?list<string>  $tags
+	 * @param ?list<string>  $namespaces
 	 */
-	public function clean(?array $conditions = null): void
+	public function clean(
+		?array $conditions = null,
+		?array $tags = null,
+		?int $priority = null,
+		?array $namespaces = null,
+		bool $all = false,
+	): void
 	{
-		$conditions = (array) $conditions;
-		if (isset($conditions[self::Tags])) {
-			$conditions[self::Tags] = array_values((array) $conditions[self::Tags]);
+		if ($conditions === null) {
+			$this->cleanStorage($tags, $priority, $namespaces, $all);
+
+		} elseif ($tags !== null || $priority !== null || $namespaces !== null || $all) {
+			throw new Nette\InvalidArgumentException('Conditions can be given either as an array or as named arguments, not both.');
+
+		} else {
+			if (isset($conditions[self::Tags])) {
+				$conditions[self::Tags] = array_values((array) $conditions[self::Tags]);
+			}
+
+			$this->storage->clean($conditions);
+		}
+	}
+
+
+	/**
+	 * @param ?array<string>  $tags
+	 * @param ?array<string>  $namespaces
+	 */
+	private function cleanStorage(
+		?array $tags = null,
+		?int $priority = null,
+		?array $namespaces = null,
+		bool $all = false,
+	): void
+	{
+		if (!$all && $priority === null && !$tags && !$namespaces && ($tags !== null || $namespaces !== null)) {
+			return; // only empty lists were given
 		}
 
-		$this->storage->clean($conditions);
+		$this->storage->clean(array_filter([
+			self::Tags => $tags === null ? null : array_values($tags),
+			self::Priority => $priority,
+			self::Namespaces => $namespaces === null ? null : array_values($namespaces),
+			self::All => $all ?: null,
+		], fn($value) => $value !== null));
 	}
 
 
