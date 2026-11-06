@@ -72,9 +72,9 @@ that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honore
 only by `FileStorage` and `MemcachedStorage`; `Tags`/`Priority` need a `Journal`
 in those two, while `MemoryStorage` and (`Tags` only) `SQLiteStorage` keep them
 natively. What a backend cannot honor, it rejects with `NotSupportedException` —
-except `MemoryStorage`, which **silently drops** `Callbacks`, `Items` and
-`Namespaces`. An agent adding a backend must reason about this **post-desugar**
-set, not the public constant list.
+except `MemoryStorage`, which **silently drops** `Callbacks` and `Items`. An
+agent adding a backend must reason about this **post-desugar** set, not the
+public constant list.
 
 ## The lock spans two method calls (and is mostly a FileStorage thing)
 
@@ -148,10 +148,10 @@ The built-in storages are `FileStorage`, `SQLiteStorage`, `MemcachedStorage`,
 package). They do **not** all honor the same dependencies, and the weakest are
 easy traps:
 
-- **`MemoryStorage`** honors `Expire`/`Sliding`, `Tags` and `Priority` in a
-  process-local map, but **silently drops** `Callbacks` — so `Files`/`Constants`
-  do nothing there — `Items` and `Namespaces`. A trap when it stands in for a real
-  backend where file dependencies matter.
+- **`MemoryStorage`** honors `Expire`/`Sliding`, `Tags`, `Priority` and cleaning
+  by `Namespaces` in a process-local map, but **silently drops** `Callbacks` — so
+  `Files`/`Constants` do nothing there — and `Items`. A trap when it stands in for
+  a real backend where file dependencies matter.
 - **`SQLiteStorage`** supports `Expire`/`Sliding`, `Tags` (its own `tags` table,
   no journal) and cleaning by `Namespaces`, and throws for `Callbacks` (so
   `Files`/`Constants`), `Priority`, `Items` and cleaning by `Priority`. A

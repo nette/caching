@@ -101,5 +101,13 @@ class MemoryStorage implements Nette\Caching\Storage
 				}
 			}
 		}
+
+		foreach ((array) ($conditions[Cache::Namespaces] ?? []) as $namespace) {
+			foreach ($this->data as $key => $entry) {
+				if (str_starts_with((string) $key, $namespace . Cache::NamespaceSeparator)) {
+					unset($this->data[$key]);
+				}
+			}
+		}
 	}
 }

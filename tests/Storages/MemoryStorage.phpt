@@ -98,3 +98,22 @@ test('clean all', function () {
 	Assert::null($cache->load('key1'));
 	Assert::null($cache->load('key2'));
 });
+
+
+test('clean namespaces', function () {
+	$storage = new MemoryStorage;
+	$root = new Cache($storage);
+	$parent = new Cache($storage, 'ns');
+	$nested = $parent->derive('sub');
+	$similar = new Cache($storage, 'nsx');
+	foreach ([$root, $parent, $nested, $similar] as $cache) {
+		$cache->save('key', 'value');
+	}
+
+	$storage->clean([Cache::Namespaces => ['ns']]);
+
+	Assert::same('value', $root->load('key'));
+	Assert::null($parent->load('key'));
+	Assert::null($nested->load('key'));
+	Assert::same('value', $similar->load('key'));
+});
