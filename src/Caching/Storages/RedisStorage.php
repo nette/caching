@@ -15,7 +15,7 @@ use function count, extension_loaded, is_array, is_string, strlen;
 /**
  * Redis storage using the redis extension, with native support for tags and priorities.
  */
-class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, Nette\Caching\BulkWriter
+class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, Nette\Caching\BulkWriter, Nette\Caching\LockingReader
 {
 	/** @internal cache structure */
 	private const
@@ -27,7 +27,13 @@ class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, N
 	private const
 		TagIndexPrefix = "\x01t:", // set of keys tagged by given tag
 		KeyTagsPrefix = "\x01k:", // set of tags of given key
-		PriorityKey = "\x01priority"; // sorted set of keys scored by priority
+		PriorityKey = "\x01priority", // sorted set of keys scored by priority
+		LockPrefix = "\x01l:"; // lock of given key while it is being generated
+
+	/** microseconds between the checks of a lock held by another process, doubling up to the maximum */
+	private const
+		LockPollInterval = 10_000,
+		LockPollMaxInterval = 100_000;
 
 	/** length of the random version that precedes the serialized meta structure of every item */
 	private const VersionLength = 8;
@@ -64,10 +70,21 @@ class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, N
 		end
 		LUA;
 
+	/** deletes the lock KEYS[1] if it still holds the token ARGV[1], so that an expired lock taken over by another
+	 * process stays */
+	private const ReleaseLockScript = <<<'LUA'
+		if redis.call('GET', KEYS[1]) == ARGV[1] then
+			redis.call('DEL', KEYS[1])
+		end
+		LUA;
+
 	/** Probability (0-1) that the garbage collector runs on each instantiation. */
 	public static float $gcProbability = 0.001;
 
 	private readonly \Redis $redis;
+
+	/** @var array<string, true>  keys whose lock this instance holds */
+	private array $locks = [];
 
 
 	public static function isAvailable(): bool
@@ -81,9 +98,13 @@ class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, N
 		int $port = 6379,
 		/** prefix of all keys; an empty one means the whole database belongs to the cache */
 		private readonly string $prefix = 'nette.cache:',
+		/** seconds for which the lock of an item being generated lasts and other processes wait for it */
+		private readonly int $lockTimeout = 30,
 	) {
 		if (!static::isAvailable()) {
 			throw new Nette\NotSupportedException("PHP extension 'redis' is not loaded.");
+		} elseif ($lockTimeout < 1) {
+			throw new Nette\InvalidArgumentException("Lock timeout must be at least 1 second, $lockTimeout given.");
 		}
 
 		if ($host instanceof \Redis) {
@@ -182,6 +203,51 @@ class RedisStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader, N
 		}
 
 		return $result;
+	}
+
+
+	public function readOrGenerate(string $key, \Closure $generator): mixed
+	{
+		if (isset($this->locks[$key])) {
+			throw new Nette\InvalidStateException('Cache item is already being generated, its generator must not generate it again.');
+		}
+
+		$data = $this->read($key);
+		if ($data !== null) {
+			return $data;
+		}
+
+		// after the timeout, the item is generated without the lock
+		$lockKey = $this->prefix . self::LockPrefix . $key;
+		$token = random_bytes(8);
+		$deadline = microtime(true) + $this->lockTimeout;
+		$interval = self::LockPollInterval;
+		while (!($locked = $this->redis->set($lockKey, $token, ['NX', 'PX' => $this->lockTimeout * 1000]))
+			&& microtime(true) < $deadline
+		) {
+			usleep($interval);
+			$interval = min($interval * 2, self::LockPollMaxInterval);
+			$data = $this->read($key);
+			if ($data !== null) {
+				return $data;
+			}
+		}
+
+		$this->locks[$key] = true;
+		try {
+			// another process may have generated the item between the read and taking the lock
+			if ($locked && ($data = $this->read($key)) !== null) {
+				return $data;
+			}
+
+			return $generator();
+
+		} finally {
+			unset($this->locks[$key]);
+			if ($locked) {
+				$this->runScript(self::ReleaseLockScript, [$lockKey, $token], 1);
+			}
+		}
 	}
 
 

@@ -132,11 +132,18 @@ user's generator and stores the result through `Cache::save()`, so the meaning o
   expired. A generator that generates its own key gets `InvalidStateException`,
   one that only reads it gets a miss; both would otherwise wait for the
   process's own lock.
-- **Stampede protection is real only for `FileStorage`.** No other built-in
-  storage implements `LockingReader` (`MemoryStorage`, `Memcached`, `Redis`,
-  `SQLite`, `DevNull`), so concurrent `load($key, $generator)` calls can all
-  generate at once there. "Nette caching prevents stampede" is a FileStorage
-  guarantee, not a universal one.
+- `RedisStorage::readOrGenerate()` takes the lock as the key `"\x01l:" . $key`
+  (`SET NX PX`, TTL `$lockTimeout`) holding a random token, reads again, and
+  releases it by a Lua script only while it still holds its token: a lock that
+  expired during a long generation and was taken over is not deleted. A process
+  that does not get the lock polls the item until the lock disappears, then
+  takes it itself; after `$lockTimeout` it generates without it. Generation
+  longer than the TTL therefore means duplicate work, never a wrong value.
+- **Stampede protection is real only for `FileStorage` and `RedisStorage`.** No
+  other built-in storage implements `LockingReader` (`MemoryStorage`,
+  `Memcached`, `SQLite`, `DevNull`), so concurrent
+  `load($key, $generator)` calls can all generate at once there. "Nette caching
+  prevents stampede" is a guarantee of those two, not a universal one.
 
 ## FileStorage on-disk format and atomic writes
 

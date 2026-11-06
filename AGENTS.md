@@ -68,8 +68,10 @@ composer phpstan
   reaches the storage as `Namespaces`, only the root `Cache` sends `All`.
 - **The generator runs inside `LockingReader::readOrGenerate()`** and stores its
   result through `write()`/`remove()` of the same storage while the lock is held.
-  **Stampede protection is real only in `FileStorage`**, which re-reads the item
-  under the lock; storages without `LockingReader` do `read() ?? generate`.
+  **Stampede protection is real only in `FileStorage` and `RedisStorage`**, which
+  re-read the item under the lock; storages without `LockingReader` do
+  `read() ?? generate`. The Redis lock expires after `$lockTimeout` (30 s), so an
+  overlong generation means duplicate work, not a wrong value.
 - **`MemoryStorage` honors only `Expire`, `Sliding`, `Tags`, `Priority` and
   cleaning by `Namespaces`**; `Callbacks` (so `Files`/`Constants`) and `Items` are
   silently ignored - a trap when it stands in for a real backend.
