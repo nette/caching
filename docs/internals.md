@@ -55,17 +55,30 @@ seconds via UTC on purpose, so a DST transition cannot skew the count.
 
 ## Dependencies are rewritten before they reach the storage
 
-`completeDependencies()` normalizes the user's dependency array so that storages
-see a **smaller, uniform** set — this is why the "which backend supports which
-dependency" matrix is partly an illusion:
+Inside `Cache` the dependencies are a `Dependencies` object: an array is
+converted by `Dependencies::fromArray()`, which accepts a single value for a list
+and **rejects an unknown key**, including `Namespaces` and `All`, which are
+conditions of `clean()`. It converts no types: the typed properties throw
+`TypeError` for `Sliding => 1` or a numeric string priority. The array format
+is closed on purpose, a storage cannot receive a dependency of its own through
+it. `completeDependencies()` then builds
+the array the storages get, a **smaller, uniform** set — this is why the "which
+backend supports which dependency" matrix is partly an illusion. A generator gets
+the object only when its parameter is typed `Dependencies` (decided by
+reflection in `Cache::generate()`, after the key in `bulkLoad()`), with the
+dependencies passed to `load()` already in it; any other generator keeps the
+array by reference exactly as it was given, so untyped legacy code is unaffected.
 
 - **`Files` and `Constants` are desugared into `Callbacks`** (a `checkFile`/
   `checkConst` closure with an mtime/value snapshot). Storages never see `Files`
   or `Constants` — so those two work on **every** backend that supports
   `Callbacks`.
 - `Expire` is converted to a **relative second count** (`DateTime::from - time()`).
-- `Items` keys are run through `generateKey` (namespaced); `Tags`/`Namespaces`
-  are flattened to lists.
+- `Items` keys are run through `generateKey` (namespaced); empty lists and a
+  `false` `Sliding` are left out, so an empty `Tags` does not require a journal.
+- The callbacks keep the targets `[Cache::class, 'checkFile']` and
+  `[Cache::class, 'checkConst']`: they are serialized into the stored items, and
+  an item written by an older version calls them when it is read.
 
 What genuinely needs backend support is therefore narrower than it looks, but
 that support still varies: `Callbacks` (and thus `Files`/`Constants`) are honored

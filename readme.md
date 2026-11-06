@@ -41,10 +41,11 @@ Basic Usage
 
 The center of work with the cache is the object `Nette\Caching\Cache`. We create its instance and pass the so-called storage to the constructor as a parameter. Which is an object representing the place where the data will be physically stored (database, Memcached, files on disk, ...). You will find out all the essentials in [section Storages](#Storages).
 
-For the following examples, suppose we have an alias `Cache` and a storage in the variable `$storage`.
+For the following examples, suppose we have aliases `Cache` and `Dependencies` and a storage in the variable `$storage`.
 
 ```php
 use Nette\Caching\Cache;
+use Nette\Caching\Dependencies;
 
 $storage // instance of Nette\Caching\Storage
 ```
@@ -76,7 +77,7 @@ The item is cleared from the cache using method `remove()`:
 $cache->remove($key);
 ```
 
-You can also cache an item using method `$cache->save($key, $value, array $dependencies = [])`. However, the above method using `load()` is preferred.
+You can also cache an item using method `$cache->save($key, $value, $dependencies)`. However, the above method using `load()` is preferred.
 
 
 
@@ -117,16 +118,14 @@ With caching, it is necessary to address the question that some of the previousl
 The validity of the data is set at the time of saving using the third parameter of the method `save()`, eg:
 
 ```php
-$cache->save($key, $value, [
-	Cache::Expire => '20 minutes',
-]);
+$cache->save($key, $value, new Dependencies(expire: '20 minutes'));
 ```
 
-Or using the `$dependencies` parameter passed by reference to the callback in the `load()` method, eg:
+Or using the `Dependencies` object passed to the callback in the `load()` method, eg:
 
 ```php
-$value = $cache->load($key, function (&$dependencies) {
-	$dependencies[Cache::Expire] = '20 minutes';
+$value = $cache->load($key, function (Dependencies $dp) {
+	$dp->expire = '20 minutes';
 	return ...;
 });
 ```
@@ -136,10 +135,12 @@ Or using 3rd parameter in the `load()` method, eg:
 ```php
 $value = $cache->load($key, function () {
 	return ...;
-}, [Cache::Expire => '20 minutes']);
+}, new Dependencies(expire: '20 minutes'));
 ```
 
-In the following examples, we will assume the second variant and thus the existence of a variable `$dependencies`.
+In the following examples, we will assume the second variant and thus the existence of a variable `$dp`.
+
+Dependencies can also be given as an array with `Cache::*` keys, such as `[Cache::Expire => '20 minutes']`; an unknown key or a value of a wrong type throws an exception. A callback whose parameter is not typed `Dependencies` receives this array by reference, `function (&$dependencies)`.
 
 
 Expiration
@@ -148,28 +149,28 @@ Expiration
 The simplest expiration is the time limit. Here's how to cache data valid for 20 minutes:
 
 ```php
-// it also accepts the number of seconds or the UNIX timestamp
-$dependencies[Cache::Expire] = '20 minutes';
+// it also accepts the number of seconds, the UNIX timestamp or DateTimeInterface
+$dp->expire = '20 minutes';
 ```
 
 If we want to extend the validity period with each reading, it can be achieved this way, but beware, this will increase the cache overhead:
 
 ```php
-$dependencies[Cache::Sliding] = true;
+$dp->sliding = true;
 ```
 
 The handy option is the ability to let the data expire when a particular file is changed or one of several files. This can be used, for example, for caching data resulting from processing these files. Use absolute paths.
 
 ```php
-$dependencies[Cache::Files] = '/path/to/data.yaml';
+$dp->files[] = '/path/to/data.yaml';
 // or
-$dependencies[Cache::Files] = ['/path/to/data1.yaml', '/path/to/data2.yaml'];
+$dp->files = ['/path/to/data1.yaml', '/path/to/data2.yaml'];
 ```
 
 We can let an item in the cache expired when another item (or one of several others) expires. This can be used when we cache the entire HTML page and fragments of it under other keys. Once the snippet changes, the entire page becomes invalid. If we have fragments stored under keys such as `frag1` and `frag2`, we will use:
 
 ```php
-$dependencies[Cache::Items] = ['frag1', 'frag2'];
+$dp->items = ['frag1', 'frag2'];
 ```
 
 Expiration can also be controlled using custom functions or static methods, which always decide when reading whether the item is still valid. For example, we can let the item expire whenever the PHP version changes. We will create a function that compares the current version with the parameter, and when saving we will add an array in the form `[function name, ...arguments]` to the dependencies:
@@ -180,16 +181,14 @@ function checkPhpVersion($ver): bool
 	return $ver === PHP_VERSION_ID;
 }
 
-$dependencies[Cache::Callbacks] = [
-	['checkPhpVersion', PHP_VERSION_ID] // expire when checkPhpVersion(...) === false
-];
+$dp->callbacks[] = ['checkPhpVersion', PHP_VERSION_ID]; // expire when checkPhpVersion(...) === false
 ```
 
 Of course, all criteria can be combined. The cache then expires when at least one criterion is not met.
 
 ```php
-$dependencies[Cache::Expire] = '20 minutes';
-$dependencies[Cache::Files] = '/path/to/data.yaml';
+$dp->expire = '20 minutes';
+$dp->files[] = '/path/to/data.yaml';
 ```
 
 
@@ -200,7 +199,7 @@ Invalidation using Tags
 Tags are a very useful invalidation tool. We can assign a list of tags, which are arbitrary strings, to each item stored in the cache. For example, suppose we have an HTML page with an article and comments, which we want to cache. So we specify tags when saving to cache:
 
 ```php
-$dependencies[Cache::Tags] = ["article/$articleId", "comments/$articleId"];
+$dp->tags = ["article/$articleId", "comments/$articleId"];
 ```
 
 Now, let's move to the administration. Here we have a form for article editing. Together with saving the article to a database, we call the `clean()` command, which will delete cached items by tag:
@@ -226,7 +225,7 @@ Invalidation by Priority
 We can set the priority for individual items in the cache, and it will be possible to delete them in a controlled way when, for example, the cache exceeds a certain size:
 
 ```php
-$dependencies[Cache::Priority] = 50;
+$dp->priority = 50;
 ```
 
 Delete all items with a priority equal to or less than 100:
@@ -262,7 +261,7 @@ $values = $cache->bulkLoad($keys);
 Method `bulkLoad()` works similarly to `load()` with the second callback parameter, to which the key of the generated item is passed:
 
 ```php
-$values = $cache->bulkLoad($keys, function ($key, &$dependencies) {
+$values = $cache->bulkLoad($keys, function ($key, Dependencies $dp) {
 	$computedValue = ...; // heavy computations
 	return $computedValue;
 });

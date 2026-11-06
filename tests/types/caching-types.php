@@ -4,7 +4,7 @@
  * PHPStan type tests for Caching.
  */
 
-use Nette\Caching\Cache;
+use Nette\Caching\{Cache, Dependencies};
 use function PHPStan\Testing\assertType;
 
 
@@ -15,6 +15,16 @@ function testCacheLoad(Cache $cache): void
 		return 'value';
 	});
 	assertType('mixed', $value);
+}
+
+
+function testCacheLoadWithDependencies(Cache $cache): void
+{
+	$cache->load('key', function (Dependencies $dependencies) {
+		assertType(Dependencies::class, $dependencies);
+		assertType('list<string>', $dependencies->tags);
+		return 'value';
+	}, new Dependencies(expire: '20 minutes'));
 }
 
 

@@ -29,14 +29,15 @@ class OutputHelper
 
 	/**
 	 * Stops output buffering and saves the captured output to the cache.
-	 * @param  array<string, mixed>  $dependencies
+	 * @param  Dependencies|array<string, mixed>  $dependencies
 	 */
-	public function end(array $dependencies = []): void
+	public function end(Dependencies|array $dependencies = []): void
 	{
 		if ($this->cache === null) {
 			throw new Nette\InvalidStateException('Output cache has already been saved.');
 		}
 
+		$dependencies = $dependencies instanceof Dependencies ? $dependencies->toArray() : $dependencies;
 		$this->cache->save($this->key, ob_get_flush(), $dependencies + $this->dependencies);
 		$this->cache = null;
 	}

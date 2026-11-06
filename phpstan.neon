@@ -14,11 +14,6 @@ parameters:
 			count: 1
 			path: src/Bridges/CacheLatte/Nodes/CacheNode.php
 
-		-   # Intentional by-reference parameter for dependency injection, passed to generator closures via spread
-			identifier: argument.byRef
-			count: 3
-			path: src/Caching/Cache.php
-
 		-   # Runtime validation for untyped array input
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -31,5 +26,10 @@ parameters:
 
 		-   # Intentional: API for invoking arbitrary user callbacks, a signature would only add false positives at call sites
 			identifier: missingType.callable
-			count: 3
+			count: 4
 			path: src/Caching/Cache.php
+
+		-   # Intentional: the callbacks deciding validity are arbitrary user callables, as in Cache::checkCallbacks()
+			identifier: missingType.callable
+			count: 1
+			path: src/Caching/Dependencies.php

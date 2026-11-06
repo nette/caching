@@ -8,7 +8,7 @@
 namespace Nette\Caching;
 
 use Nette;
-use function func_get_args, is_array, is_object, is_scalar;
+use function count, func_get_args, is_array, is_object, is_scalar;
 
 
 /**
@@ -29,31 +29,31 @@ class Cache
 		Namespaces = 'namespaces',
 		All = 'all';
 
-	#[\Deprecated('use Cache::Priority or clean(priority: ...)')]
+	#[\Deprecated('use Cache::Priority, Dependencies::$priority or clean(priority: ...)')]
 	public const PRIORITY = self::Priority;
 
-	#[\Deprecated('use Cache::Expire')]
+	#[\Deprecated('use Cache::Expire or Dependencies::$expire')]
 	public const EXPIRATION = self::Expire;
 
-	#[\Deprecated('use Cache::Expire')]
+	#[\Deprecated('use Cache::Expire or Dependencies::$expire')]
 	public const EXPIRE = self::Expire;
 
-	#[\Deprecated('use Cache::Sliding')]
+	#[\Deprecated('use Cache::Sliding or Dependencies::$sliding')]
 	public const SLIDING = self::Sliding;
 
-	#[\Deprecated('use Cache::Tags or clean(tags: ...)')]
+	#[\Deprecated('use Cache::Tags, Dependencies::$tags or clean(tags: ...)')]
 	public const TAGS = self::Tags;
 
-	#[\Deprecated('use Cache::Files')]
+	#[\Deprecated('use Cache::Files or Dependencies::$files')]
 	public const FILES = self::Files;
 
-	#[\Deprecated('use Cache::Items')]
+	#[\Deprecated('use Cache::Items or Dependencies::$items')]
 	public const ITEMS = self::Items;
 
-	#[\Deprecated('use Cache::Constants')]
+	#[\Deprecated('use Cache::Constants or Dependencies::$constants')]
 	public const CONSTS = self::Constants;
 
-	#[\Deprecated('use Cache::Callbacks')]
+	#[\Deprecated('use Cache::Callbacks or Dependencies::$callbacks')]
 	public const CALLBACKS = self::Callbacks;
 
 	#[\Deprecated('use Cache::Namespaces or clean(namespaces: ...)')]
@@ -104,30 +104,22 @@ class Cache
 
 
 	/**
-	 * Returns a cached item, or generates and stores it using the given callback.
+	 * Returns a cached item, or generates and stores it using the given callback. The callback receives
+	 * the dependencies as an object when its parameter is typed Dependencies, otherwise as an array by reference.
 	 * @param ?(\Closure(mixed &$dependencies): mixed)  $generator
-	 * @param ?array<string, mixed>  $dependencies
+	 * @param Dependencies|array<string, mixed>|null  $dependencies
 	 */
-	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
+	public function load(mixed $key, ?callable $generator = null, Dependencies|array|null $dependencies = null): mixed
 	{
-		$storageKey = $this->generateKey($key);
-		if (!$generator) {
-			return $this->storage->read($storageKey);
-		}
-
-		$generate = function () use ($key, $generator, $dependencies): mixed {
-			$data = $generator(...[&$dependencies]);
-			return $this->save($key, $data, $dependencies);
-		};
-
-		return $this->storage instanceof LockingReader
-			? $this->storage->readOrGenerate($storageKey, $generate)
-			: $this->storage->read($storageKey) ?? $generate();
+		return $generator
+			? $this->readOrGenerate($key, fn() => $this->generate($key, $generator, [], $dependencies))
+			: $this->storage->read($this->generateKey($key));
 	}
 
 
 	/**
-	 * Returns multiple cached items at once, generating missing ones using the given callback.
+	 * Returns multiple cached items at once, generating missing ones using the given callback, which receives
+	 * the key and then the dependencies as load() does.
 	 * @template TKey of int|string
 	 * @param list<TKey>  $keys
 	 * @param ?(\Closure(TKey $key, mixed &$dependencies): mixed)  $generator
@@ -148,12 +140,9 @@ class Cache
 		$result = [];
 		if (!$this->storage instanceof BulkReader) {
 			foreach ($keys as $key) {
-				$result[$key] = $this->load(
-					$key,
-					$generator
-						? fn(&$dependencies) => $generator(...[$key, &$dependencies])
-						: null,
-				);
+				$result[$key] = $generator
+					? $this->readOrGenerate($key, fn() => $this->generate($key, $generator, [$key], null))
+					: $this->load($key);
 			}
 
 			return $result;
@@ -166,13 +155,46 @@ class Cache
 			if (isset($cacheData[$storageKey])) {
 				$result[$key] = $cacheData[$storageKey];
 			} elseif ($generator) {
-				$result[$key] = $this->load($key, fn(&$dependencies) => $generator(...[$key, &$dependencies]));
+				$result[$key] = $this->readOrGenerate($key, fn() => $this->generate($key, $generator, [$key], null));
 			} else {
 				$result[$key] = null;
 			}
 		}
 
 		return $result;
+	}
+
+
+	/**
+	 * Reads the item, or lets the storage run the generator, under its lock when it has one.
+	 * @param  \Closure(): mixed  $generate
+	 */
+	private function readOrGenerate(mixed $key, \Closure $generate): mixed
+	{
+		$storageKey = $this->generateKey($key);
+		return $this->storage instanceof LockingReader
+			? $this->storage->readOrGenerate($storageKey, $generate)
+			: $this->storage->read($storageKey) ?? $generate();
+	}
+
+
+	/**
+	 * Runs the generator with the dependencies in the form it asks for and stores the result.
+	 * @param  mixed[]  $args  arguments preceding the dependencies
+	 * @param  Dependencies|array<string, mixed>|null  $dependencies
+	 */
+	private function generate(mixed $key, callable $generator, array $args, Dependencies|array|null $dependencies): mixed
+	{
+		$type = (Nette\Utils\Callback::toReflection($generator)->getParameters()[count($args)] ?? null)?->getType();
+		if ($type instanceof \ReflectionNamedType && $type->getName() === Dependencies::class) {
+			$dependencies = $dependencies instanceof Dependencies ? clone $dependencies : Dependencies::fromArray($dependencies ?? []);
+			$data = $generator(...[...$args, $dependencies]);
+		} else {
+			$dependencies = $dependencies instanceof Dependencies ? $dependencies->toArray() : $dependencies;
+			$data = $generator(...[...$args, &$dependencies]);
+		}
+
+		return $this->save($key, $data, $dependencies);
 	}
 
 
@@ -186,11 +208,11 @@ class Cache
 	 * - Cache::Files => (array|string) file paths
 	 * - Cache::Items => (array|string) dependent cache keys
 	 * - Cache::Constants => (array|string) PHP constant names
-	 * @param ?array<string, mixed>  $dependencies
+	 * @param Dependencies|array<string, mixed>|null  $dependencies
 	 * @return mixed  value itself
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function save(mixed $key, mixed $data, ?array $dependencies = null): mixed
+	public function save(mixed $key, mixed $data, Dependencies|array|null $dependencies = null): mixed
 	{
 		$key = $this->generateKey($key);
 
@@ -218,9 +240,9 @@ class Cache
 	/**
 	 * Stores multiple items in the cache at once.
 	 * @param mixed[]  $items
-	 * @param ?array<string, mixed>  $dependencies
+	 * @param Dependencies|array<string, mixed>|null  $dependencies
 	 */
-	public function bulkSave(array $items, ?array $dependencies = null): void
+	public function bulkSave(array $items, Dependencies|array|null $dependencies = null): void
 	{
 		$write = $remove = [];
 
@@ -257,54 +279,32 @@ class Cache
 
 
 	/**
-	 * @param ?array<string, mixed>  $dp
+	 * Converts the dependencies to the array the storages get: expiration in seconds from now, files and constants
+	 * as callbacks, items under their storage keys.
+	 * @param Dependencies|array<string, mixed>|null  $dp
 	 * @return array<string, mixed>
 	 */
-	private function completeDependencies(?array $dp): array
+	private function completeDependencies(Dependencies|array|null $dp): array
 	{
-		// convert expire into relative amount of seconds
-		if (isset($dp[self::Expire])) {
-			$dp[self::Expire] = Nette\Utils\DateTime::from($dp[self::Expire])->format('U') - time();
+		$dp = $dp instanceof Dependencies ? $dp : Dependencies::fromArray($dp ?? []);
+
+		$callbacks = $dp->callbacks;
+		foreach (array_unique($dp->files) as $file) {
+			$callbacks[] = [[self::class, 'checkFile'], $file, @filemtime($file) ?: null]; // @ file may not exist
 		}
 
-		// make list from TAGS
-		if (isset($dp[self::Tags])) {
-			$dp[self::Tags] = array_values((array) $dp[self::Tags]);
+		foreach (array_unique($dp->constants) as $const) {
+			$callbacks[] = [[self::class, 'checkConst'], $const, constant($const)];
 		}
 
-		// make list from NAMESPACES
-		if (isset($dp[self::Namespaces])) {
-			$dp[self::Namespaces] = array_values((array) $dp[self::Namespaces]);
-		}
-
-		// convert FILES into CALLBACKS
-		if (isset($dp[self::Files])) {
-			foreach (array_unique((array) $dp[self::Files]) as $item) {
-				$dp[self::Callbacks][] = [[self::class, 'checkFile'], $item, @filemtime($item) ?: null]; // @ file may not exist
-			}
-
-			unset($dp[self::Files]);
-		}
-
-		// add namespaces to items
-		if (isset($dp[self::Items])) {
-			$dp[self::Items] = array_unique(array_map($this->generateKey(...), (array) $dp[self::Items]));
-		}
-
-		// convert CONSTS into CALLBACKS
-		if (isset($dp[self::Constants])) {
-			foreach (array_unique((array) $dp[self::Constants]) as $item) {
-				$dp[self::Callbacks][] = [[self::class, 'checkConst'], $item, constant($item)];
-			}
-
-			unset($dp[self::Constants]);
-		}
-
-		if (!is_array($dp)) {
-			$dp = [];
-		}
-
-		return $dp;
+		return array_filter([
+			self::Expire => $dp->expire === null ? null : Nette\Utils\DateTime::from($dp->expire)->getTimestamp() - time(),
+			self::Sliding => $dp->sliding ?: null,
+			self::Tags => $dp->tags ?: null,
+			self::Priority => $dp->priority,
+			self::Items => $dp->items ? array_unique(array_map($this->generateKey(...), $dp->items)) : null,
+			self::Callbacks => $callbacks ?: null,
+		], fn($value) => $value !== null);
 	}
 
 
@@ -422,10 +422,10 @@ class Cache
 
 	/**
 	 * Returns a cached wrapper around a function. Each unique set of arguments is cached separately.
-	 * @param  ?array<string, mixed>  $dependencies
+	 * @param  Dependencies|array<string, mixed>|null  $dependencies
 	 * @return \Closure(mixed...): mixed
 	 */
-	public function wrap(callable $function, ?array $dependencies = null): \Closure
+	public function wrap(callable $function, Dependencies|array|null $dependencies = null): \Closure
 	{
 		return function () use ($function, $dependencies) {
 			$key = [$function, $args = func_get_args()];
@@ -433,10 +433,7 @@ class Cache
 				$key[0][0] = $function[0]::class;
 			}
 
-			return $this->load($key, function (&$deps) use ($function, $args, $dependencies) {
-				$deps = $dependencies;
-				return $function(...$args);
-			});
+			return $this->load($key, fn() => $function(...$args), $dependencies);
 		};
 	}
 

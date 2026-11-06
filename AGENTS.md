@@ -58,15 +58,23 @@ composer phpstan
 - **`null` is overloaded: `save($key, null)` *is* `remove()`.** `null` means cache
   miss on read, delete on write, and an already-expired `Expire` also deletes.
   Never add a path that stores `null` as a real value.
-- **Dependencies are desugared before storages see them** (`completeDependencies`):
-  `Files`/`Constants` become `Callbacks`, `Expire` becomes a relative second count.
-  Reason about a backend's support from the *post-desugar* set, not the public
-  constant list.
+- **Dependencies are a `Dependencies` object inside `Cache`**: an array is converted
+  by `Dependencies::fromArray()`, which throws for an unknown key and, through the
+  typed properties, for a value of a wrong type, so the array format is closed.
+  `completeDependencies` then desugars it for the storages: `Files`/`Constants`
+  become `Callbacks` (whose targets `Cache::checkFile` and `checkConst` are
+  persisted in stored items and must not move), `Expire` becomes a relative
+  second count. Reason about a backend's support from the *post-desugar* set,
+  not the public constant list.
 - **The conditions of `clean()` are its named arguments**; an array is spread
   onto them after its keys are checked, which relies on the values of
   `Cache::Tags`, `Priority`, `Namespaces` and `All` being the parameter names.
   Renaming either side breaks the array form. `all` on a `Cache` with a namespace
   reaches the storage as `Namespaces`, only the root `Cache` sends `All`.
+- **A generator gets `Dependencies` only when its parameter is typed so**; an
+  untyped one gets the array by reference. Do not widen the generator phpDoc to a
+  union with `Dependencies`: PHPStan would then infer `array|Dependencies|null` for
+  untyped parameters and flag every `$dependencies[...] = ...` of existing code.
 - **The generator runs inside `LockingReader::readOrGenerate()`** and stores its
   result through `write()`/`remove()` of the same storage while the lock is held.
   **Stampede protection is real only in `FileStorage` and `RedisStorage`**, which
