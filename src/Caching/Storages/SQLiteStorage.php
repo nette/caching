@@ -99,11 +99,6 @@ class SQLiteStorage implements Nette\Caching\Storage, Nette\Caching\BulkReader
 	}
 
 
-	public function lock(string $key): void
-	{
-	}
-
-
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		if (isset($dependencies[Cache::Callbacks])) {

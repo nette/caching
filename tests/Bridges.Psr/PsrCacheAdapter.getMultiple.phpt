@@ -34,11 +34,6 @@ class BulkTestStorage implements Storage, BulkReader
 	}
 
 
-	public function lock(string $key): void
-	{
-	}
-
-
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		$this->data[$key] = $data;

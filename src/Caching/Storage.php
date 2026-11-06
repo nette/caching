@@ -19,11 +19,6 @@ interface Storage
 	function read(string $key): mixed;
 
 	/**
-	 * Prevents item reading and writing. Lock is released by write() or remove().
-	 */
-	function lock(string $key): void;
-
-	/**
 	 * Writes item into the cache.
 	 * @param  array<string, mixed>  $dependencies
 	 */

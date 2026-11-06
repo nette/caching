@@ -20,8 +20,10 @@ $cache = new Cache(new FileStorage(getTempDir()));
 Assert::null($cache->load($key));
 
 
-// Writing cache using Closure...
-$res = $cache->save($key, fn() => $value);
+// Writing cache using Closure, which is deprecated...
+Assert::error(function () use ($cache, $key, $value, &$res) {
+	$res = $cache->save($key, fn() => $value);
+}, E_USER_DEPRECATED);
 
 Assert::same($res, $value);
 
@@ -29,6 +31,6 @@ Assert::same($cache->load($key), $value);
 
 
 // Removing from cache using null callback...
-$cache->save($key, fn() => null);
+Assert::error(fn() => $cache->save($key, fn() => null), E_USER_DEPRECATED);
 
 Assert::null($cache->load($key));

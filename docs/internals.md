@@ -2,15 +2,15 @@
 
 How `nette/caching` works underneath, for agents editing it. Medium depth, one
 file: `Cache` → `Storage` → `Journal` is a single layered mechanism, and the traps
-(overloaded `null`, the cross-method lock, the FileStorage format) only make sense
-together.
+(overloaded `null`, the lock around the generator, the FileStorage format) only
+make sense together.
 
 ## The three layers and where responsibility sits
 
 - **`Cache`** is the high-level, storage-agnostic API: namespacing, dependency
   normalization, memoization, output capture. It never touches files or sockets.
 - **`Storage`** (interface) is the backend contract: `read`/`write`/`remove`/
-  `lock`/`clean` (+ optional `BulkReader`/`BulkWriter`).
+  `clean` (+ optional `BulkReader`/`BulkWriter` and `LockingReader`).
 - **`Journal`** (interface; the built-in implementation is `SQLiteJournal`) is an
   **optional** side-index for tags and priorities. `FileStorage` and
   `MemcachedStorage` need one **only** for `Tags`/`Priority` and throw if a write
@@ -44,8 +44,8 @@ Do not add a code path that stores `null` as a value; the whole layer assumes
 `null` means absence.
 
 `\Closure` is overloaded the same way: `save($key, $closure)` does not store the
-closure, it **runs** it under the lock exactly like `load()`'s generator and
-stores the result. A closure can never be cached as a value.
+closure, it **runs** it (deprecated, without any lock) and stores the result. A
+closure can never be cached as a value.
 
 The PSR-16 adapter (`PsrCacheAdapter`) inherits this: it wraps the **`Storage`**
 directly, not `Cache` — keys go to the backend raw (no namespace, no hashing) —
@@ -100,32 +100,40 @@ namespace sends `All` and clears the entire storage. `MemcachedStorage` cannot
 clean a namespace, so `all` on a `Cache` with a namespace throws
 `NotSupportedException` there.
 
-## The lock spans two method calls (and is mostly a FileStorage thing)
+## The generator runs under the storage's lock (and only some storages lock)
 
-The `Storage::lock` contract is explicit in the interface: *"Lock is released by
-`write()` or `remove()`."* This is the non-local invariant:
+`Cache::load()` with a generator hands the storage a callback when it implements
+`LockingReader`, otherwise it does `read() ?? callback()`. The callback runs the
+user's generator and stores the result through `Cache::save()`, so the meaning of
+`null`, `Expire` and the desugared dependencies stays in `Cache`. The invariants:
 
-- `Cache::load`/`save` call `storage->lock($key)` **before** running a generator,
-  then either `write()` (success) or `remove()` (generator threw) releases it.
-- `FileStorage::lock` opens the file `c+b`, takes `flock(LOCK_EX)`, and stores the
-  handle in `$locks[$key]`; `write()` **reuses that same handle** (removing it from
-  `$locks`) and unlocks at the end. The lock therefore lives across
-  `lock → write`, not within one call.
-- **An item's version (`MetaTime`) is assigned by `lock()`, not by `write()`.** An
-  `Items` dependency on a key the same instance is generating takes that version
-  from `$versions` instead of reading the file, which it holds `LOCK_EX` and
-  would wait for forever (ADR `item-version-at-lock`). Any new code that reads
+- **The callback writes through `write()` or `remove()` of the same storage while
+  the lock is held**, and the storage releases the lock in `finally`. A
+  `LockingReader` whose `write()` cannot work under its own lock deadlocks.
+- `FileStorage::readOrGenerate()` reads, opens the file `c+b`, takes
+  `flock(LOCK_EX)` and keeps the handle in `$locks[$key]`; `write()` **reuses that
+  same handle** (removing it from `$locks`) and unlocks at the end. Before
+  calling the generator it **reads again through the locked handle**: a process
+  that found the item missing while another was generating it waits for the lock
+  and returns the fresh value instead of generating it twice. The re-read must not go through
+  `read()` (a second handle of the same file blocks on the process's own lock)
+  and must not delete an invalid item, which would close the locked handle; the
+  write truncates it anyway, after `rewind()`, as the re-read moved the pointer.
+- **An item's version (`MetaTime`) is assigned when the re-read misses, right
+  before the generator runs, not by `write()`.** An `Items` dependency on a key
+  the same instance is generating takes that version from `$versions` instead of
+  reading the file, which it holds `LOCK_EX` and would wait for forever (ADR
+  `item-version-at-lock`). Assigning it before the re-read would judge the items
+  depending on the old version against the new one. Any new code that reads
   dependency metadata must go through the same check.
-- There is **no double-checked re-read** after `lock()` — `Cache::load` locks and
-  runs the generator unconditionally. The protection actually manifests in
-  `read()`: concurrent readers block on `flock(LOCK_SH)` while the generating
-  process holds `LOCK_EX`, and read the fresh value once `write()` unlocks. A
-  lock implementation for another backend must replicate this (waiters re-read
-  after the lock clears), otherwise it only serializes the duplicate work
-  instead of preventing it.
-- **Stampede protection is real only for `FileStorage`.** Every other built-in
-  storage (`MemoryStorage`, `Memcached`, `SQLite`, `DevNull`) implements `lock()`
-  as a **no-op**, so concurrent `load($key, $generator)` calls can all generate at
+- A generator that fails stores nothing, so `finally` deletes the file `c+b`
+  created; an empty file would stay forever, the GC does not recognize it as
+  expired. A generator that generates its own key gets `InvalidStateException`,
+  one that only reads it gets a miss; both would otherwise wait for the
+  process's own lock.
+- **Stampede protection is real only for `FileStorage`.** No other built-in
+  storage implements `LockingReader` (`MemoryStorage`, `Memcached`, `SQLite`,
+  `DevNull`), so concurrent `load($key, $generator)` calls can all generate at
   once there. "Nette caching prevents stampede" is a FileStorage guarantee, not a
   universal one.
 
@@ -143,8 +151,8 @@ subtle part and is a commit protocol:
 
 Writing the real (non-zero) header last means a reader that sees a non-zero size
 is guaranteed a complete record — the header doubles as the commit marker. Reads
-take `LOCK_SH`; the class docblock enumerates the three atomic operations
-(read/delete/write) and the **NTFS-vs-ext3 delete fallback**: `unlink` can fail on
+take `LOCK_SH`; the class docblock enumerates the atomic operations
+(read/delete/write/generate) and the **NTFS-vs-ext3 delete fallback**: `unlink` can fail on
 a locked NTFS file, so `delete()` falls back to `lock(EX) → truncate → close →
 unlink`.
 
@@ -204,7 +212,7 @@ assuming the public dependency constants are universally honored.
 | Namespacing, key hashing | `Cache::generateKey`, `NamespaceSeparator`, `derive` |
 | `null` = remove, expire semantics | `Cache::save`, `remove` |
 | Dependency desugaring | `Cache::completeDependencies` |
-| Lock lifetime contract | `Storage::lock` (doc), `Cache::load`, `FileStorage::lock`/`write` |
+| Generator under the lock | `LockingReader` (doc), `Cache::load`, `FileStorage::readOrGenerate`/`write` |
 | On-disk format, commit-last header | `FileStorage::write`, `readMetaAndLock` |
 | Read-time verify + self-delete | `FileStorage::verify` |
 | Namespace→subdir, GC | `FileStorage::getCacheFile`, `collectBatch`, `clean` |

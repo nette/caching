@@ -47,11 +47,6 @@ class MemoryStorage implements Nette\Caching\Storage
 	}
 
 
-	public function lock(string $key): void
-	{
-	}
-
-
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		$expire = isset($dependencies[Cache::Expire])

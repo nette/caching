@@ -24,11 +24,15 @@ Assert::same('value', $res['data']);
 Assert::same($dependencies, $res['dependencies']);
 
 
-// save callback return value
+// save callback return value, which is deprecated
 $storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 
-$cache->save('key', fn() => 'value');
+Assert::error(
+	fn() => $cache->save('key', fn() => 'value'),
+	E_USER_DEPRECATED,
+	'Nette\Caching\Cache::save() with a closure is deprecated, use load() with a generator.',
+);
 
 $res = $cache->load('key');
 Assert::same('value', $res['data']);
@@ -40,7 +44,7 @@ $storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::Tags => ['tag']];
 
-$cache->save('key', fn() => 'value', $dependencies);
+Assert::error(fn() => $cache->save('key', fn() => 'value', $dependencies), E_USER_DEPRECATED);
 
 $res = $cache->load('key');
 Assert::same('value', $res['data']);
@@ -52,8 +56,5 @@ $storage = new TestStorage;
 $cache = new Cache($storage, 'ns');
 $dependencies = [Cache::Expire => new DateTime];
 
-$res = $cache->save('key', fn() => 'value', $dependencies);
-Assert::same('value', $res);
-
-$res = $cache->load('key');
-Assert::null($res);
+Assert::same('value', $cache->save('key', 'value', $dependencies));
+Assert::null($cache->load('key'));

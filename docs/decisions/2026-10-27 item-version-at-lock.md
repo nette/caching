@@ -66,3 +66,12 @@ item that has not been written yet.
   deadlock in this pattern, as `$versions` is per instance. Rare, as DI provides a
   single storage.
 - No change of API or on-disk format.
+
+## Amendment in 4.0
+
+`Storage::lock()` is gone and `FileStorage::readOrGenerate()` takes the lock and
+reads the item again before generating it. The version is therefore assigned
+after that re-read misses, right before the generator runs: assigned at the
+lock, it would make the re-read judge items depending on the old version
+against the new one. A failed generator leaves the item unstored and the
+storage discards the version itself.

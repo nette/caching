@@ -10,8 +10,8 @@ Consult it before non-trivial changes; it is the source of truth from which the
 public manual is distilled.
 
 `Cache` -> `Storage` -> `Journal` is one layered mechanism whose traps only make
-sense together (overloaded `null`, dependency desugaring, the cross-method lock,
-the FileStorage format). Read `docs/internals.md` before editing them.
+sense together (overloaded `null`, dependency desugaring, the lock around the
+generator, the FileStorage format). Read `docs/internals.md` before editing them.
 
 `docs/upgrading.md` records, per released version, every change visible to
 users of the package (renames, removals, deprecations, signatures, behavior,
@@ -66,9 +66,10 @@ composer phpstan
   `Cache::Tags`, `Priority`, `Namespaces` and `All` being the parameter names.
   Renaming either side breaks the array form. `all` on a `Cache` with a namespace
   reaches the storage as `Namespaces`, only the root `Cache` sends `All`.
-- **The lock spans two calls** - `Cache` locks before running a generator, and
-  `write()`/`remove()` release it. **Stampede protection is real only in
-  `FileStorage`**; every other backend's `lock()` is a no-op.
+- **The generator runs inside `LockingReader::readOrGenerate()`** and stores its
+  result through `write()`/`remove()` of the same storage while the lock is held.
+  **Stampede protection is real only in `FileStorage`**, which re-reads the item
+  under the lock; storages without `LockingReader` do `read() ?? generate`.
 - **`MemoryStorage` honors only `Expire`, `Sliding`, `Tags`, `Priority` and
   cleaning by `Namespaces`**; `Callbacks` (so `Files`/`Constants`) and `Items` are
   silently ignored - a trap when it stands in for a real backend.

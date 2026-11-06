@@ -125,11 +125,6 @@ class MemcachedStorage implements Nette\Caching\Storage, Nette\Caching\BulkReade
 	}
 
 
-	public function lock(string $key): void
-	{
-	}
-
-
 	public function write(string $key, mixed $data, array $dependencies): void
 	{
 		if (isset($dependencies[Cache::Items])) {

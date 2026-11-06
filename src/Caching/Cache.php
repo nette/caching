@@ -111,20 +111,18 @@ class Cache
 	public function load(mixed $key, ?callable $generator = null, ?array $dependencies = null): mixed
 	{
 		$storageKey = $this->generateKey($key);
-		$data = $this->storage->read($storageKey);
-		if ($data === null && $generator) {
-			$this->storage->lock($storageKey);
-			try {
-				$data = $generator(...[&$dependencies]);
-			} catch (\Throwable $e) {
-				$this->storage->remove($storageKey);
-				throw $e;
-			}
-
-			$this->save($key, $data, $dependencies);
+		if (!$generator) {
+			return $this->storage->read($storageKey);
 		}
 
-		return $data;
+		$generate = function () use ($key, $generator, $dependencies): mixed {
+			$data = $generator(...[&$dependencies]);
+			return $this->save($key, $data, $dependencies);
+		};
+
+		return $this->storage instanceof LockingReader
+			? $this->storage->readOrGenerate($storageKey, $generate)
+			: $this->storage->read($storageKey) ?? $generate();
 	}
 
 
@@ -197,13 +195,8 @@ class Cache
 		$key = $this->generateKey($key);
 
 		if ($data instanceof \Closure) {
-			$this->storage->lock($key);
-			try {
-				$data = $data(...[&$dependencies]);
-			} catch (\Throwable $e) {
-				$this->storage->remove($key);
-				throw $e;
-			}
+			trigger_error(__METHOD__ . '() with a closure is deprecated, use load() with a generator.', E_USER_DEPRECATED);
+			$data = $data(...[&$dependencies]);
 		}
 
 		if ($data === null) {
